@@ -8,10 +8,6 @@ build:
     - arjen/hugo-build:
         version: "HEAD"
         disable_pygments: true
-    - script:
-        name: copy wercker.yml
-        code: |
-          cp wercker.yml public
 deploy:
   steps:
     - lukevivier/gh-pages:
