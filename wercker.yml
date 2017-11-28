@@ -1,0 +1,20 @@
+box: golang
+build:
+  steps:
+    - script:
+        name: initialize git submodules
+        code: |
+          git submodule update --init --recursive
+    - arjen/hugo-build:
+        version: "HEAD"
+        disable_pygments: true
+    - script:
+        name: copy wercker.yml
+        code: |
+          cp wercker.yml public
+deploy:
+  steps:
+    - lukevivier/gh-pages:
+        token: $GIT_TOKEN
+        domain: harasou.jp
+        basedir: public
