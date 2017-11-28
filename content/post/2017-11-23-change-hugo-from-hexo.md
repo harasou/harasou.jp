@@ -42,7 +42,7 @@ git commit -m "initial commit."
 
 ```
 hugo new post/hugo-test.md
-vim $_
+vim content/post/hugo-test.md
 hugo server -D
 ```
 
