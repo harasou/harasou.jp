@@ -1,10 +1,10 @@
 ---
 title: "Linux シグナルの基礎"
-date: 2017-01-24T14:36:22+09:00
+date: 2017-01-23T14:36:22+09:00
 tags:
 - linux
-slug:           2017/01/24/linux-signal
-thumbnailImage: 2017/01/24/linux-signal/linux-programming-interface.png
+slug:           2017/01/23/linux-signal
+thumbnailImage: 2017/01/23/linux-signal/linux-programming-interface.png
 ---
 
 TLPI (The Linux Programming Interface) 再々。
