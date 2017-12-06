@@ -142,8 +142,8 @@ pygmentsCodeFences = true
 
   # Custom CSS. Put here your custom CSS files. They are loaded after the theme CSS;
   # they have to be referred from static root. Example
-  # [[params.customCSS]]
-  #   href = "css/mystyle.css"
+  [[params.customCSS]]
+    href = "css/style.css"
 
   # Custom JS. Put here your custom JS files. They are loaded after the theme JS;
   # they have to be referred from static root. Example
@@ -159,6 +159,16 @@ pygmentsCodeFences = true
   # If you wanna add a sharing option, read user documentation :
   # Tranquilpeak configuration > Theme configuration > sharing-options
   [[params.sharingOptions]]
+    name = "Hatebu"
+    icon = "icon-hatebu"
+    url = "http://b.hatena.ne.jp/entry/%s"
+
+  [[params.sharingOptions]]
+    name = "Pocket"
+    icon = "icon-pocket"
+    url = "http://getpocket.com/edit?url=%s"
+
+  [[params.sharingOptions]]
     name = "Facebook"
     icon = "fa-facebook-official"
     url = "https://www.facebook.com/sharer/sharer.php?u=%s"
@@ -167,11 +177,6 @@ pygmentsCodeFences = true
     name = "Twitter"
     icon = "fa-twitter"
     url = "https://twitter.com/intent/tweet?text=%s"
-
-  [[params.sharingOptions]]
-    name = "Google+"
-    icon = "fa-google-plus"
-    url = "https://plus.google.com/share?url=%s"
 
   [params.header.rightLink]
     class = ""
