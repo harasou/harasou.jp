@@ -47,7 +47,7 @@ mrbgems はじめの一歩
     ```
     vim mruby-yourname/mrblib/yourname.rb
     ```
-    ```rb mruby-yourname/mrblib/yourname.rb
+    ```rb
     class Yourname
       def initialize name
         @name = name
@@ -63,7 +63,7 @@ mrbgems はじめの一歩
     ```
     vim mruby-yourname/mrbgem.rake
     ```
-    ```rb mruby-yourname/mrbgem.rake
+    ```rb
     MRuby::Gem::Specification.new('mruby-yourname') do |spec|
       spec.license= 'MIT'
       spec.authors= 'harasou'

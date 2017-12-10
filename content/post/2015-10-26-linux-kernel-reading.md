@@ -53,7 +53,7 @@ ctags は、もともと vim の機能だったものが独立したらしいの
 
 少しだけカスタマイズ。やるのは、現在のところ２つだけ。
 
-```vim .vimrc
+```
 nnoremap  <C-]>    g<C-]>
 nnoremap  v<C-]>   :vsp +:exec("tag\ ".expand("<cword>"))<CR>
 set splitright     "新しいウィンドウを右にひらく

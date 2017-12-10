@@ -84,7 +84,7 @@ root      2836 66.1  0.2 106056  1268 pts/2    R    21:47   1:43      \_ sh -c w
 
 - CPU を使用するシェルスクリプト
 
-    ```sh loop.sh
+    ```sh
     #!/bin/bash
     CGROUP=$(mount|grep -w cpu|awk '{print $3}')
     echo $$ > $CGROUP/tasks || exit 1

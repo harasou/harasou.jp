@@ -22,7 +22,7 @@ Linux のカーネルモジュールで Hello World してみる。insmod、rmmo
 
 1. ソースファイル
 
-    ```c helloworld.c
+    ```c
     #include <linux/module.h>
     #include <linux/init.h>
     
@@ -52,7 +52,7 @@ Linux のカーネルモジュールで Hello World してみる。insmod、rmmo
 1. Makefile
 
     カーネルモジュールをコンパイルするための Makefile 。
-    ```makefile Makefile
+    ```makefile
     KERNEL_DIR = /lib/modules/$(shell uname -r)/build
     BUILD_DIR := $(shell pwd)
     VERBOSE   := 0

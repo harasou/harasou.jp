@@ -26,7 +26,7 @@ hexo とは
 hexo 実行環境の構築
 ----------------------------------------------------------------------
 
-```sh anyanv
+```sh
 git clone https://github.com/riywo/anyenv ~/.anyenv
 cat <<'EOD'>> ~/.bash_profile
 
@@ -38,13 +38,13 @@ fi
 EOD
 exec $SHELL -l
 ```
-```sh node
+```sh
 anyenv install ndenv
 exec $SHELL -l
 ndenv install v0.12.2
 ndenv global v0.12.2
 ```
-```sh hexo
+```sh
 npm install hexo-cli -g 
 ndenv rehash
 ```
@@ -54,13 +54,13 @@ blog の作成
 ----------------------------------------------------------------------
 blog を管理するディレクトリ「harasou.github.io」を作成し、初期設定およびテーマを変更。ローカルで動作確認を行う。
 
-```sh hexo init
+```sh
 hexo init ~/src/github.com/harasou/harasou.github.io
 cd $_
 npm install
 npm install hexo-deployer-git --save
 ```
-```sh hexo config
+```sh
 hexo config title harasou.github.io
 hexo config author harasou
 hexo config language ja
@@ -70,13 +70,13 @@ hexo config post_asset_folder true
 hexo config deploy.type git
 hexo config deploy.repo git@github.com:harasou/harasou.github.io.git
 ```
-```sh Theme を Light に変更
+```sh
 git clone https://github.com/hexojs/hexo-theme-light.git themes/light
 rm -rf themes/light/.git
 cp themes/light/languages/default.yml themes/light/languages/ja.yml
 hexo config theme light
 ```
-```sh ローカルで動作確認
+```sh
 hexo server
 open http://0.0.0.0:4000/
 ```

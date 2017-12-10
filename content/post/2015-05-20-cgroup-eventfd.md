@@ -26,7 +26,7 @@ kill されたことは syslog など見ればわかるが、cgroup には`通�
 ### サンプル
 source にすると以下のような感じ。
 
-```c oom-notify.c
+```c
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
