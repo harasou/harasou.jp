@@ -1,8 +1,11 @@
-.PHONY: build server public clean new 
+.PHONY: deploy build server public clean new
 
 HUGO := hugo
 PREFIX := $(shell date +post/%Y-%m-%d)
 IMGDIR := $(shell date +static/%Y/%m/%d)
+
+deploy: build
+	gcloud app deploy
 
 build: clean
 	$(HUGO)
