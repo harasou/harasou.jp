@@ -1,10 +1,10 @@
 runtime: go
 api_version: go1
 
+skip_files:
+- ^(?!main\.go|public)
+
 handlers:
 - url: /.*
   secure: always
   script: _go_app
-
-skip_files:
-- ^(?!main\.go|public)
