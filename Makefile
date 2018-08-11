@@ -14,8 +14,8 @@ server:
 	$(HUGO) server -vD
 
 public: clean
-	$(HUGO) --baseURL http://127.0.0.1:8000/
-	cd public; python -m http.server 8000 --bind 127.0.0.1
+	$(HUGO) --baseURL http://127.0.0.1:8080/
+	docker run -it --rm -p 8080:8080 -v $(CURDIR)/public:/public harasou/http-fileserver
 
 clean:
 	@-rm -rf public/
