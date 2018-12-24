@@ -6,7 +6,6 @@ tags:
   - yum
 url:            2018/12/24/make-centos-core-image
 thumbnailImage: 2018/12/24/make-centos-core-image/vertical.png
-draft: true
 ---
 
 仕事で CentOS6.4 の Docker イメージが欲しかったのだが、Officialには 6.6 までしかなかった。
