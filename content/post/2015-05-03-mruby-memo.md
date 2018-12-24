@@ -3,7 +3,7 @@ title: "mruby についてのメモ"
 date: 2015-05-03T04:16:53+09:00
 tags:
   - mruby
-slug: 2015/05/03/mruby-memo
+url:  2015/05/03/mruby-memo
 ---
 
 mruby の動作

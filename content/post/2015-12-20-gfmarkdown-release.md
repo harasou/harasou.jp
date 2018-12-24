@@ -3,7 +3,7 @@ title: "markdown(GFM) を変換するコマンドを mruby-cli で作ってみ�
 date: 2015-12-20T13:41:27+09:00
 tags:
   - mruby
-slug:           2015/12/20/gfmarkdown-release
+url:            2015/12/20/gfmarkdown-release
 thumbnailImage: 2015/12/20/gfmarkdown-release/mruby_logo_red_icon.png
 ---
 

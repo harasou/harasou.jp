@@ -3,7 +3,7 @@ title: "trello クローンの Libreboard を動かしてみた"
 date: 2015-07-28T01:47:46+09:00
 tags:
   - others
-slug:           2015/07/28/libreboard
+url:            2015/07/28/libreboard
 thumbnailImage: 2015/07/28/libreboard/libreboard-1.png
 ---
 

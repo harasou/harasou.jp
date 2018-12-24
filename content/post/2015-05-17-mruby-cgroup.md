@@ -4,7 +4,7 @@ date: 2015-05-17T18:38:33+09:00
 tags:
   - mruby
   - cgroup
-slug: 2015/05/17/mruby-cgroup
+url:  2015/05/17/mruby-cgroup
 ---
 
 mruby-cgroup は、mruby から cgroup を利用するためのモジュールで、いわゆる libcgroup のバインディング。現在、mruby-cgroup [9cad17343][] で対応しているサブシテムは以下のとおり。

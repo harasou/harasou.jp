@@ -3,7 +3,7 @@ title: "Docker Toolbox for Mac OS X"
 date: 2015-08-15T07:58:08+09:00
 tags:
   - docker
-slug:           2015/08/15/docker-toolbox
+url:            2015/08/15/docker-toolbox
 thumbnailImage: 2015/08/15/docker-toolbox/toolbox.png
 ---
 

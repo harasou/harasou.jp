@@ -3,7 +3,7 @@ title: "hexo セットアップメモ"
 date: 2015-04-28T00:52:14+09:00
 tags:
   - hexo
-slug: 2015/04/28/hexo-setup
+url:  2015/04/28/hexo-setup
 ---
 
 hexo とは

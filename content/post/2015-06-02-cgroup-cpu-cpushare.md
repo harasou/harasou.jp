@@ -4,7 +4,7 @@ date: 2015-06-02T04:09:33+09:00
 update: 2015-06-03 04:09:33
 tags:
   - cgroup
-slug: 2015/06/02/cgroup-cpu-cpushare
+url:  2015/06/02/cgroup-cpu-cpushare
 ---
 
 cgroup には複数のサブシステム（controller）があるが、その中の `cpu.shares` について検証してみた。

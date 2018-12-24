@@ -4,7 +4,7 @@ date: 2016-03-24T01:33:20+09:00
 tags:
   - kernel
   - filesystem
-slug:           2016/03/24/sparse-file
+url:            2016/03/24/sparse-file
 thumbnailImage: 2016/03/24/sparse-file/linux-programming-interface.png
 ---
 

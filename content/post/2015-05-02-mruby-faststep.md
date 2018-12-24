@@ -3,7 +3,7 @@ title: "mruby をさわってみた"
 date: 2015-05-02T23:23:18+09:00
 tags:
   - mruby
-slug: 2015/05/02/mruby-faststep
+url:  2015/05/02/mruby-faststep
 ---
 
 mruby とは

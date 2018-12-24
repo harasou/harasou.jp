@@ -3,7 +3,7 @@ title: "カーネルモジュールの modinfo について"
 date: 2015-11-04T00:00:36+09:00
 tags:
   - kernel
-slug:           2015/11/04/kernel-module-modinfo
+url:            2015/11/04/kernel-module-modinfo
 thumbnailImage: 2015/11/04/kernel-module-modinfo/elf.png
 ---
 

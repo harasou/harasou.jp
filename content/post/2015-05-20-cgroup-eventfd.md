@@ -3,7 +3,7 @@ title: "cgroup による oom-killer の状態を eventfd 経由で受け取る"
 date: 2015-05-20T21:30:05+09:00
 tags:
   - cgroup
-slug: 2015/05/20/cgroup-eventfd
+url:  2015/05/20/cgroup-eventfd
 ---
 
 cgroup の通知API

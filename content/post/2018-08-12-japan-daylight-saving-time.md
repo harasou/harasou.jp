@@ -3,7 +3,7 @@ title: "Linuxでのサマータイム - JDTの来襲"
 date: 2018-08-12T13:48:25+09:00
 tags:
   - linux
-slug:           2018/08/12/japan-daylight-saving-time
+url:            2018/08/12/japan-daylight-saving-time
 thumbnailImage: 2018/08/12/japan-daylight-saving-time/blackclock.png
 draft: false
 ---

@@ -3,7 +3,7 @@ title: "カーネルモジュールで Hello World !"
 date: 2015-11-03T01:14:38+09:00
 tags:
   - kernel
-slug: 2015/11/03/loadable-kernel-module
+url:  2015/11/03/loadable-kernel-module
 ---
 
 Linux のカーネルモジュールで Hello World してみる。insmod、rmmod した時に dmesg にログを吐くだけの単純なもの。試した環境は、CentOS7 (3.10.0-123.4.4.el7.x86_64)。

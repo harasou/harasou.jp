@@ -3,7 +3,7 @@ title: "ブログを hexo から hugo に変更した"
 date: 2017-11-23T13:40:00+09:00
 tags:
   - hugo
-slug:           2017/11/23/change-hugo-from-hexo
+url:            2017/11/23/change-hugo-from-hexo
 thumbnailImage: 2017/11/23/change-hugo-from-hexo/hugo-logo-h.png
 ---
 
@@ -126,7 +126,7 @@ title: "hugo-test"
 date: 2017-11-23T20:30:51+09:00
 tags:
   -
-slug:           2017/11/23/hugo-test
+url:            2017/11/23/hugo-test
 thumbnailImage: 2017/11/23/hugo-test/
 ---
 ```

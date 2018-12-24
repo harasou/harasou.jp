@@ -3,7 +3,7 @@ title: "hexo に DISQUS を追加"
 date: 2015-05-05T17:22:31+09:00
 tags:
   - hexo
-slug: 2015/05/05/hexo-disqus
+url:  2015/05/05/hexo-disqus
 ---
 
 DISQUS はコメント機能を提供するサービスで、hexo では簡単に導入できる。

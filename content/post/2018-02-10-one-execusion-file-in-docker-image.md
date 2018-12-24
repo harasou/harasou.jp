@@ -4,7 +4,7 @@ date: 2018-02-10T11:36:50+09:00
 tags:
   - docker
   - golang
-slug:           2018/02/10/one-execusion-file-in-docker-image
+url:            2018/02/10/one-execusion-file-in-docker-image
 thumbnailImage: 2018/02/10/one-execusion-file-in-docker-image/vertical.png
 ---
 

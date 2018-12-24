@@ -3,7 +3,7 @@ title: "関西Ruby会議06 に登壇させてもらった"
 date: 2015-07-15T01:45:57+09:00
 tags:
   - mruby
-slug:           2015/07/15/kansai-ruby-kaigi
+url:            2015/07/15/kansai-ruby-kaigi
 thumbnailImage: 2015/07/15/kansai-ruby-kaigi/rubykaigi.png
 ---
 

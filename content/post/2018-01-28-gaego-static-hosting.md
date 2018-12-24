@@ -4,7 +4,7 @@ date: 2018-01-28T02:21:58+09:00
 tags:
   - GCP
   - Hugo
-slug:           2018/01/28/gaego-static-hosting
+url:            2018/01/28/gaego-static-hosting
 thumbnailImage: 2018/01/28/gaego-static-hosting/gaessl.png
 ---
 

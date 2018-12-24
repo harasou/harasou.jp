@@ -3,7 +3,7 @@ title: lego と Cloud DNS で Let's Encrypt の自動更新
 date: 2018-01-27T16:26:25+09:00
 tags:
   - GCP
-slug:           2018/01/27/lego-and-clouddns
+url:            2018/01/27/lego-and-clouddns
 thumbnailImage: 2018/01/27/lego-and-clouddns/le-logo-lockonly.png
 ---
 

@@ -3,7 +3,7 @@ title: "5分でつくる mrbgems"
 date: 2015-07-26T21:32:19+09:00
 tags:
   - mruby
-slug: 2015/07/26/minutes-mrbgems
+url:  2015/07/26/minutes-mrbgems
 ---
 
 先日の関西Ruby会議の帰りの飛行機の中、着陸５分前ぐらいの出来事。

@@ -4,7 +4,7 @@ date: 2015-05-06T02:47:32+09:00
 tags:
   - mruby
   - cgroup
-slug: 2015/05/06/mruby-cgroups-build-on-boot2docker
+url:  2015/05/06/mruby-cgroups-build-on-boot2docker
 ---
 
 mruby-cgroup とは

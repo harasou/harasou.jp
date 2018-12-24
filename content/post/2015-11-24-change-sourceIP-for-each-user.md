@@ -3,7 +3,7 @@ title: "外部へ通信時のソースIP をユーザごとに変更する"
 date: 2015-11-24T02:52:38+09:00
 tags:
     - iptables
-slug:           2015/11/24/change-sourceip-for-each-user
+url:            2015/11/24/change-sourceip-for-each-user
 thumbnailImage: 2015/11/24/change-sourceip-for-each-user/processes.png
 ---
 

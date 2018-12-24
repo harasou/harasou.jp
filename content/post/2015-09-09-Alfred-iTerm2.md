@@ -3,7 +3,7 @@ title: "Alfred をバージョンアップすると iTerm2 でのコマンド実
 date: 2015-09-09T23:58:11+09:00
 tags:
   - alfred
-slug:           2015/09/09/alfred-iterm2
+url:            2015/09/09/alfred-iterm2
 thumbnailImage: 2015/09/09/alfred-iterm2/alfred.png
 ---
 

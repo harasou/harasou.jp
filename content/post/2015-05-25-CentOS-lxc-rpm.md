@@ -3,7 +3,7 @@ title: "CentOS 用に LXC の rpm を作成する"
 date: 2015-05-25T02:40:46+09:00
 tags:
   - lxc
-slug: 2015/05/25/CentOS-lxc-rpm
+url:  2015/05/25/CentOS-lxc-rpm
 ---
 
 Linux でコンテナといえば docker しかさわったことがなかった。LXC は docker よりシンプルで面白そうだったので、勉強用に先づ rpm を作成した。

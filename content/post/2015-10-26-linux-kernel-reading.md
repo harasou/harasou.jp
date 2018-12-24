@@ -3,7 +3,7 @@ title: "Linux kernel を読むための準備"
 date: 2015-10-26T05:06:59+09:00
 tags:
   - kernel
-slug: 2015/10/26/linux-kernel-reading
+url:  2015/10/26/linux-kernel-reading
 ---
 
 仕事で kernel のソースが見る機会が度々ありそうなので、MAC上でソースをいつでも追えるように準備しておく。
