@@ -45,6 +45,8 @@ packer とかで Official の kickstart をベースに作ることも可能そ�
 
 作業は macOS で上で行い、yum とかは docker の centos を利用。大まか流れは以下の通り。
 
+![](dockerbuild.png)
+
 手順：
 
 1. macOS 上で CentOS の ISOイメージをダウンロード
