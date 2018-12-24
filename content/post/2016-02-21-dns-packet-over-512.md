@@ -3,7 +3,8 @@ title: "512バイトを超える DNSパケット"
 date: 2016-02-21T11:46:00+09:00
 tags:
   - dns
-slug: 2016/02/21/dns-packet-over-512
+slug:           2016/02/21/dns-packet-over-512
+thumbnailImage: 2016/02/21/dns-packet-over-512/sitemap.png
 ---
 
 glibc の脆弱性 [CVE-2015-7547] でも話題になった 512バイトを超える DNS パケットについてのメモ。
