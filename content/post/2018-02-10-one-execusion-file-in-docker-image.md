@@ -8,8 +8,6 @@ slug:           2018/02/10/one-execusion-file-in-docker-image
 thumbnailImage: 2018/02/10/one-execusion-file-in-docker-image/vertical.png
 ---
 
-![](horizontal.png)
-
 「Go で書かれた実行ファイルを一つだけいれた Dockerイメージを作る」って話が [こちらのサイト][1]
 に載っていて、なるほどなぁと思ったので試して見た。
 
@@ -24,6 +22,8 @@ thumbnailImage: 2018/02/10/one-execusion-file-in-docker-image/vertical.png
 
 Dcckerイメージの作り方
 -----------------------------------------------------------------------------------
+![](horizontal.png)
+
 Dockerfile は、ベースとして利用するイメージを `FROM` で指定するが、`FROM scratch` と
 指定すると何もない状態をベースにできる。あとは、実行ファイルをひとつだけ `ADD` して
 あげれば「実行ファイル一つだけの Docker イメージ」ができあがり。
