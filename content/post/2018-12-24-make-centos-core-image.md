@@ -9,7 +9,7 @@ thumbnailImage: 2018/12/24/make-centos-core-image/vertical.png
 ---
 
 仕事で CentOS6.4 の Docker イメージが欲しかったのだが、Officialには 6.6 までしかなかった。
-せっかくなので、ISOイメージから core グループのみインストールしたイメージを作成してみた。
+せっかくなので、iso から core グループのみインストールした Docker イメージを作成してみた。
 
 <!--more-->
 
@@ -33,7 +33,7 @@ LABEL org.label-schema.schema-version="1.0" \
 CMD ["/bin/bash"]
 ```
 
-kickstart を見ると、coreグループや baseブループもいれずに、必要なパッケージだけ指定している。
+[kickstart] を見ると、coreグループや baseブループもいれずに、必要なパッケージだけ指定している。
 さらに依存？で入った不要なパッケージを削除し、不要なディレクトリを消す処理もあった。
 
 
@@ -43,7 +43,7 @@ packer とかで Official の kickstart をベースに作ることも可能そ�
 そこまで削られてなくていい。ググったら、yum の installroot オプションを使用すれば作れそうなので、
 やってみた。
 
-作業は macOS で上で行い、yum とかは docker の centos を利用。大まか流れは以下の通り。
+作業は macOS で上で行い、yum コマンドなどは、CentOS のコンテナを利用。大まか流れは以下の通り。
 
 ![](dockerbuild.png)
 
@@ -102,7 +102,7 @@ Docker Desktop がはいった macOS で実施。
     - 結構容量があるが不要な`*-firmware`パッケージは除外
     - 依存で kernel や fuse がエラーになるので、無視するため `--skip-broken` を追加
     - centos7 のコンテナを使用しているせいか、作成したイメージで起動した際、rpm がエラーを出すので、
-      ここで修復しておく
+      ここで修復
 
 
 1. インストールされたディレクトリを tar.gz で固めて、volume 配下に設置
@@ -142,7 +142,10 @@ docker container run -it --rm harasou/centos-core:6.4
 
 ```
 curl -o buildcentcore https://gist.githubusercontent.com/harasou/460efe82c0e3a0e57eb9e28080ece471/raw
+
 bash buildcentcore 6.4
+bash buildcentcore 6.10
+bash buildcentcore 7.6.1810
 ```
 
 便利。
