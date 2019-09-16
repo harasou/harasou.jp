@@ -1,10 +1,6 @@
-runtime: go
-api_version: go1
-
-skip_files:
-- ^(?!main\.go|public)
+runtime: go112
 
 handlers:
 - url: /.*
+  script: auto
   secure: always
-  script: _go_app
