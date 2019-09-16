@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.59.0-DEV with theme Tranquilpeak 0.4.7-BETA">
+<meta name="author" content="harasou">
+<meta name="keywords" content="">
+<meta name="description" content="Hugo tranquilpeak theme demo">
+
+
+<meta property="og:description" content="Hugo tranquilpeak theme demo">
+<meta property="og:type" content="website">
+<meta property="og:title" content="harasou.jp">
+<meta name="twitter:title" content="harasou.jp">
+<meta property="og:url" content="https://harasou.jp/">
+<meta property="twitter:url" content="https://harasou.jp/">
+<meta property="og:site_name" content="harasou.jp">
+<meta property="og:description" content="Hugo tranquilpeak theme demo">
+<meta name="twitter:description" content="Hugo tranquilpeak theme demo">
+<meta property="og:locale" content="ja">
+
+
+<meta name="twitter:card" content="summary">
+
+  <meta name="twitter:site" content="@harasou5">
+
+
+  <meta name="twitter:creator" content="@harasou5">
+
+
+
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
+
+
+    <title>harasou.jp</title>
+
+    <link rel="icon" href="/favicon.png">
+    
+      <link rel="alternate" type="application/rss+xml" title="RSS" href="/index.xml">
+    
+
+    
+
+    <link rel="canonical" href="https://harasou.jp/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css" />
+    
+    
+      
+        <link rel="stylesheet"  href="https://harasou.jp/css/style.css" swapPaginator="true">
+      
+    
+
+    
+      
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-62541096-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="2">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="/">harasou.jp</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=90" alt="プロフィール画像" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="2">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="/#about">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt="プロフィール画像" />
+        </a>
+        <h4 class="sidebar-profile-name">harasou</h4>
+        
+          <h5 class="sidebar-profile-bio">めくじらを立てない</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">ホーム</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">タグ</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">アーカイブ</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">プロフィール</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/harasou" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="2"
+        class="
+               hasCoverMetaIn
+               ">
+        <section class="postShorten-group main-content-wrap">
+          
+          
+            
+  
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-right" itemscope itemType="http://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://harasou.jp/2015/08/05/h2o-mruby/">
+          h2o &#43; mruby セットアップメモ
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2015-08-05T04:49:54&#43;09:00">
+        
+  
+  
+  
+  
+    2015/8/5
+  
+
+      </time>
+    
+    
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        <p>最近、h2o で mruby がサポートされたので、まずはコンパイルしてみた。</p>
+
+<p><img src="h2o.png" alt="" />
+<a href="https://github.com/h2o/h2o">https://github.com/h2o/h2o</a></p>
+
+<p>h2o は、@kazuho さんが作成されている HTTP/2 ＆ HTTP/1.x 対応の高速な WEBサーバです。</p>
+      
+      <p>
+        <a href="https://harasou.jp/2015/08/05/h2o-mruby/" class="postShorten-excerpt_link link">続きを読む</a>
+        
+      </p>
+    </div>
+  </div>
+  
+    <a href="https://harasou.jp/2015/08/05/h2o-mruby/">
+      <div class="postShorten-thumbnailimg">
+        <img alt="" itemprop="image" src="https://harasou.jp/2015/08/05/h2o-mruby/h2o.png"/>
+      </div>
+    </a>
+  
+</article>
+
+          
+            
+  
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-right" itemscope itemType="http://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://harasou.jp/2015/07/28/libreboard/">
+          trello クローンの Libreboard を動かしてみた
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2015-07-28T01:47:46&#43;09:00">
+        
+  
+  
+  
+  
+    2015/7/28
+  
+
+      </time>
+    
+    
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        <p>社内で便利に活用しているかんばんソフト<a href="https://trello.com/">trello</a> 。このクローンである <a href="https://github.com/libreboard/libreboard/wiki">Libreboard</a> を boot2docker で動かしてみた。</p>
+
+<p><img src="libreboard-1.png" alt="" /></p>
+      
+      <p>
+        <a href="https://harasou.jp/2015/07/28/libreboard/" class="postShorten-excerpt_link link">続きを読む</a>
+        
+      </p>
+    </div>
+  </div>
+  
+    <a href="https://harasou.jp/2015/07/28/libreboard/">
+      <div class="postShorten-thumbnailimg">
+        <img alt="" itemprop="image" src="https://harasou.jp/2015/07/28/libreboard/libreboard-1.png"/>
+      </div>
+    </a>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-right" itemscope itemType="http://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://harasou.jp/2015/07/26/minutes-mrbgems/">
+          5分でつくる mrbgems
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2015-07-26T21:32:19&#43;09:00">
+        
+  
+  
+  
+  
+    2015/7/26
+  
+
+      </time>
+    
+    
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        <p>先日の関西Ruby会議の帰りの飛行機の中、着陸５分前ぐらいの出来事。</p>
+
+<p>harasou: 「松本さん、mrbgems の作り方教えてくださいよ」
+matusmotory:「じゃあ、まづ mrblib ってディレクトリ作って&hellip;」</p>
+
+<p>おもむろに二人並んで PC を取り出し、mrbgems を作り始めた（着陸直前だったので、PC出して良かったのかよくわからないが&hellip;）
+というわけで、その時のことを簡単にご紹介。</p>
+      
+      <p>
+        <a href="https://harasou.jp/2015/07/26/minutes-mrbgems/" class="postShorten-excerpt_link link">続きを読む</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-right" itemscope itemType="http://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://harasou.jp/2015/07/15/kansai-ruby-kaigi/">
+          関西Ruby会議06 に登壇させてもらった
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2015-07-15T01:45:57&#43;09:00">
+        
+  
+  
+  
+  
+    2015/7/15
+  
+
+      </time>
+    
+    
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        <p>2015/07/11(土)に行われた「<a href="http://regional.rubykaigi.org/kansai06/">関西Ruby会議06</a>」に登壇させてもらい、mruby の利用事例について紹介してきた。
+インフラしか知らないエンジニアが、matz さんを前に mruby の説明なんて、かなり場違いで恐縮な状況でした。</p>
+
+<p><a href="http://regional.rubykaigi.org/kansai06/"><img src="knsrb.png" alt="" /></a></p>
+      
+      <p>
+        <a href="https://harasou.jp/2015/07/15/kansai-ruby-kaigi/" class="postShorten-excerpt_link link">続きを読む</a>
+        
+      </p>
+    </div>
+  </div>
+  
+    <a href="https://harasou.jp/2015/07/15/kansai-ruby-kaigi/">
+      <div class="postShorten-thumbnailimg">
+        <img alt="" itemprop="image" src="https://harasou.jp/2015/07/15/kansai-ruby-kaigi/rubykaigi.png"/>
+      </div>
+    </a>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-right" itemscope itemType="http://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://harasou.jp/2015/07/06/pepabo-tech-conference/">
+          第2回ペパボテックカンファレンスで mruby について発表
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2015-07-06T01:44:39&#43;09:00">
+        
+  
+  
+  
+  
+    2015/7/6
+  
+
+      </time>
+    
+    
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        <p>ブログ書くまでがペパボテックカンファレンス！というプレシャーをうけたので、一昨日(<sup>7</sup>&frasl;<sub>4</sub>)、福岡天神で開催された「第２回ペパボテックカンファレンス」について記録。</p>
+
+<p>５時間超におよぶカンファレンスに参加してくださったみなさま、本当にお疲れ様でした。</p>
+
+<ul>
+<li>connpass : <a href="http://pepabo.connpass.com/event/16457/">http://pepabo.connpass.com/event/16457/</a></li>
+<li>youtube : <a href="https://www.youtube.com/watch?v=SUuaugJ4p7o">https://www.youtube.com/watch?v=SUuaugJ4p7o</a></li>
+<li>twitter : <a href="http://togetter.com/li/842661">http://togetter.com/li/842661</a></li>
+<li>slides : <a href="http://kimromi.hatenablog.jp/entry/2015/07/04/211334">http://kimromi.hatenablog.jp/entry/2015/07/04/211334</a></li>
+</ul>
+
+<p>@takesi_yosimura さんが、twitter をまとめてくださっていました。ありがとうございます！また、@kimroi さんは発表スライドをまとめてくれていました。ありがとうございます！</p>
+      
+      <p>
+        <a href="https://harasou.jp/2015/07/06/pepabo-tech-conference/" class="postShorten-excerpt_link link">続きを読む</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-right" itemscope itemType="http://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://harasou.jp/2015/06/28/hexo-goodby-404/">
+          hexo の 404 File not found さようなら
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2015-06-28T12:48:38&#43;09:00">
+        
+  
+  
+  
+  
+    2015/6/28
+  
+
+      </time>
+    
+    
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        <p>Mac 上で hexo の記事を書いていると、記事へのリンクが 404 File not found になることがあった。
+<a href="/2015/05/10/hexo-404-file-not-found/">以前の記事</a>では、sed でダサい対応をしていたのだが、@kazu69 が hexo-plugin を作成してくれました。</p>
+
+<p><a href="https://www.npmjs.com/package/hexo-filter-permalink-normalization">npm: hexo-filter-permalink-normalization</a>
+<a href="https://www.npmjs.com/package/hexo-filter-permalink-normalization"><img src="npm.png" alt="" /></a></p>
+      
+      <p>
+        <a href="https://harasou.jp/2015/06/28/hexo-goodby-404/" class="postShorten-excerpt_link link">続きを読む</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-right" itemscope itemType="http://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://harasou.jp/2015/06/07/mysql-trigger/">
+          MySQL のトリガで mruby を実行する
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2015-06-07T02:06:30&#43;09:00">
+        
+  
+  
+  
+  
+    2015/6/7
+  
+
+      </time>
+    
+    
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        <p>先日会社で「mysql のテーブルと、プロセス上の共有メモリを連携させたい」って話が出たとき、トリガで外部プログラムが実行できればいけるのでは？と思ったので、調べてみた。</p>
+
+<h2 id="mysql-で外部コマンドを実行するには">MySQL で外部コマンドを実行するには</h2>
+
+<p>mysql で外部コマンドを実行するには <code>system</code> が使える。</p>
+
+<pre><code>mysql&gt; system uname -a
+Linux cent6 2.6.32-504.16.2.el6.x86_64 #1 SMP Wed Apr 22 06:48:29 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux
+</code></pre>
+
+<p>ただ、これはターミナル上からとかでないと使えない。</p>
+
+<p>調べてみると、mysql には UDF(User Defined Function) という仕組みがあって、自作関数を作成することができるらしい。これは、C や C++ で書いて共有ライブラリ(.so)を作成し、mysql の plugindir に放り込めば使えるようになる。</p>
+
+<ul>
+<li><a href="http://aoking.hatenablog.jp/entry/20120824/1345778096">MySQL で UDF を定義しよう</a></li>
+<li><a href="http://d.hatena.ne.jp/download_takeshi/20071124/1195915196">はじめてのUDF</a></li>
+<li><a href="http://zentoo.hatenablog.com/entry/20110925/1316961032">やったーJavaScriptの動くMySQLできたよー</a></li>
+</ul>
+      
+      <p>
+        <a href="https://harasou.jp/2015/06/07/mysql-trigger/" class="postShorten-excerpt_link link">続きを読む</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-right" itemscope itemType="http://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://harasou.jp/2015/06/02/cgroup-cpu-cpushare/">
+          cgroup の cpu.shares を検証した
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2015-06-02T04:09:33&#43;09:00">
+        
+  
+  
+  
+  
+    2015/6/2
+  
+
+      </time>
+    
+    
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        <p>cgroup には複数のサブシステム（controller）があるが、その中の <code>cpu.shares</code> について検証してみた。</p>
+
+<h2 id="cpu-shares-とは">cpu.shares とは</h2>
+
+<p>cpu.shares を設定すると、タスクが使用できる CPU 時間の<code>割合</code>を変更することができる。</p>
+
+<p>具体的に言うと、<code>A</code> <code>B</code>２つのグループを作り、cpu.shares をそれぞれ<code>1024</code> <code>2048</code>とした場合、B のグループにいるプロセスが、A のグループにいるプロセスより 2倍 CPU を使えるようになる。以下、実行例。</p>
+      
+      <p>
+        <a href="https://harasou.jp/2015/06/02/cgroup-cpu-cpushare/" class="postShorten-excerpt_link link">続きを読む</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-right" itemscope itemType="http://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://harasou.jp/2015/05/25/centos-lxc-rpm/">
+          CentOS 用に LXC の rpm を作成する
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2015-05-25T02:40:46&#43;09:00">
+        
+  
+  
+  
+  
+    2015/5/25
+  
+
+      </time>
+    
+    
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        <p>Linux でコンテナといえば docker しかさわったことがなかった。LXC は docker よりシンプルで面白そうだったので、勉強用に先づ rpm を作成した。</p>
+
+<h2 id="環境">環境</h2>
+
+<ul>
+<li>LXC: 1.1.2</li>
+<li>OS:
+
+<ul>
+<li>CentOS6.6 (2.6.32-504.16.2.el6.x86_64)</li>
+<li>CentOS7.1 (3.10.0-229.el7.x86_64)</li>
+</ul></li>
+</ul>
+      
+      <p>
+        <a href="https://harasou.jp/2015/05/25/centos-lxc-rpm/" class="postShorten-excerpt_link link">続きを読む</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-right" itemscope itemType="http://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://harasou.jp/2015/05/20/cgroup-eventfd/">
+          cgroup による oom-killer の状態を eventfd 経由で受け取る
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2015-05-20T21:30:05&#43;09:00">
+        
+  
+  
+  
+  
+    2015/5/20
+  
+
+      </time>
+    
+    
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        <h2 id="cgroup-の通知api">cgroup の通知API</h2>
+
+<p>cgroup の memory サブシテムを利用すると、登録したプロセスがメモリを使いすぎた際、oom-killer が動作し、対象プロセスを kill することができる（デフォルト動作)。</p>
+
+<p>kill されたことは syslog など見ればわかるが、cgroup には<code>通知API</code>といった機能があり、アプリ側で oom-killer が動作した際のイベントを受け取ることが可能なので、この機能を試してみる。</p>
+      
+      <p>
+        <a href="https://harasou.jp/2015/05/20/cgroup-eventfd/" class="postShorten-excerpt_link link">続きを読む</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+          
+  <div class="pagination-bar">
+    <ul class="pagination">
+      
+        
+          <li class="pagination-prev">
+            <a class="btn btn--default btn--small" href="/page/2/">
+              <i class="fa fa-angle-left text-base icon-mr"></i>
+              <span>新しい投稿</span>
+            </a>
+          </li>
+        
+        
+          <li class="pagination-next">
+            <a class="btn btn--default btn--small" href="/page/4/">
+              <span>古い投稿</span>
+              <i class="fa fa-angle-right text-base icon-ml"></i>
+            </a>
+          </li>
+        
+      
+      <li class="pagination-number">page 3 of 4</li>
+    </ul>
+  </div>
+
+
+        </section>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2019 harasou. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt="プロフィール画像" />
+    
+    <h4 id="about-card-name">harasou</h4>
+    
+      <div id="about-card-bio">めくじらを立てない</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Infra Engineer
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        Fukuoka Japan
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      
+      <div id="cover" style="background-image:url('https://harasou.jp/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js"></script>
+
+
+<script lang="javascript">
+window.onload = updateMinWidth;
+window.onresize = updateMinWidth;
+document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
+function updateMinWidth() {
+  var sidebar = document.getElementById("sidebar");
+  var main = document.getElementById("main");
+  main.style.minWidth = "";
+  var w1 = getComputedStyle(main).getPropertyValue("min-width");
+  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
+  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
+  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
+}
+</script>
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+
+    
+  </body>
+</html>
+

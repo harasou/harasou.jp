@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.59.0-DEV with theme Tranquilpeak 0.4.7-BETA">
+<meta name="author" content="harasou">
+<meta name="keywords" content="">
+<meta name="description" content=" mruby の動作 mruby の実行基盤であるRiteVMは、Rubyスクリプトを逐次解釈して実行するのではなくコンパイル結果のバイナリコード（Rite中間表現）を直接実行する。
+Rite中間表現をバイナリ出力したものがmrbファイル(Riteバイナリファイル)。
+mrbgem とは mruby にライブラリを追加するための仕組み。mruby は require などで動的にライブラリを読み込めないので、mruby ビルド時に組み込む必要がある。 追加する際は、build_config.rb に追記してビルドする。
+なお、mrbgem の実装には、以下３パターンがある。 - C拡張 - Ruby拡張 - C &amp; Ruby 拡張
+作り方については、この辺りが参考になりそう。 - mrubyの拡張モジュールであるmrbgemのテンプレートを自動で生成するmrbgem作った - mrbgemsの作り方メモ(勉強中)
+ireq とは まだ全然わかってないが、この辺り。
+ https://github.com/mruby/mruby/issues/944#issuecomment-14556703  ライブラリ構成 以下の４つが定義されているが、現在提供されているのはミニマルのみ？
+ ミニマル: 実行に必要な最低限の機能 スタンダード: JIS X 3017 規格相当 フル: MRI(CRuby) のフル機能相当 ドメイン別: 製品ドメイン別の拡張ライブラリ  参考リンク  オフィシャルページ ソース Github 軽量 Ruby のご紹介と 軽量 Ruby フォーラムのご案内 IIJ 軽量Rubyへの取り組み mruby Advent Calendar 2013  mruby のビルド方法 mrubyのバイトコードフォーマット解説   ">
+
+
+<meta property="og:description" content=" mruby の動作 mruby の実行基盤であるRiteVMは、Rubyスクリプトを逐次解釈して実行するのではなくコンパイル結果のバイナリコード（Rite中間表現）を直接実行する。
+Rite中間表現をバイナリ出力したものがmrbファイル(Riteバイナリファイル)。
+mrbgem とは mruby にライブラリを追加するための仕組み。mruby は require などで動的にライブラリを読み込めないので、mruby ビルド時に組み込む必要がある。 追加する際は、build_config.rb に追記してビルドする。
+なお、mrbgem の実装には、以下３パターンがある。 - C拡張 - Ruby拡張 - C &amp; Ruby 拡張
+作り方については、この辺りが参考になりそう。 - mrubyの拡張モジュールであるmrbgemのテンプレートを自動で生成するmrbgem作った - mrbgemsの作り方メモ(勉強中)
+ireq とは まだ全然わかってないが、この辺り。
+ https://github.com/mruby/mruby/issues/944#issuecomment-14556703  ライブラリ構成 以下の４つが定義されているが、現在提供されているのはミニマルのみ？
+ ミニマル: 実行に必要な最低限の機能 スタンダード: JIS X 3017 規格相当 フル: MRI(CRuby) のフル機能相当 ドメイン別: 製品ドメイン別の拡張ライブラリ  参考リンク  オフィシャルページ ソース Github 軽量 Ruby のご紹介と 軽量 Ruby フォーラムのご案内 IIJ 軽量Rubyへの取り組み mruby Advent Calendar 2013  mruby のビルド方法 mrubyのバイトコードフォーマット解説   ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mruby についてのメモ">
+<meta name="twitter:title" content="mruby についてのメモ">
+<meta property="og:url" content="https://harasou.jp/2015/05/03/mruby-memo/">
+<meta property="twitter:url" content="https://harasou.jp/2015/05/03/mruby-memo/">
+<meta property="og:site_name" content="harasou.jp">
+<meta property="og:description" content=" mruby の動作 mruby の実行基盤であるRiteVMは、Rubyスクリプトを逐次解釈して実行するのではなくコンパイル結果のバイナリコード（Rite中間表現）を直接実行する。
+Rite中間表現をバイナリ出力したものがmrbファイル(Riteバイナリファイル)。
+mrbgem とは mruby にライブラリを追加するための仕組み。mruby は require などで動的にライブラリを読み込めないので、mruby ビルド時に組み込む必要がある。 追加する際は、build_config.rb に追記してビルドする。
+なお、mrbgem の実装には、以下３パターンがある。 - C拡張 - Ruby拡張 - C &amp; Ruby 拡張
+作り方については、この辺りが参考になりそう。 - mrubyの拡張モジュールであるmrbgemのテンプレートを自動で生成するmrbgem作った - mrbgemsの作り方メモ(勉強中)
+ireq とは まだ全然わかってないが、この辺り。
+ https://github.com/mruby/mruby/issues/944#issuecomment-14556703  ライブラリ構成 以下の４つが定義されているが、現在提供されているのはミニマルのみ？
+ ミニマル: 実行に必要な最低限の機能 スタンダード: JIS X 3017 規格相当 フル: MRI(CRuby) のフル機能相当 ドメイン別: 製品ドメイン別の拡張ライブラリ  参考リンク  オフィシャルページ ソース Github 軽量 Ruby のご紹介と 軽量 Ruby フォーラムのご案内 IIJ 軽量Rubyへの取り組み mruby Advent Calendar 2013  mruby のビルド方法 mrubyのバイトコードフォーマット解説   ">
+<meta name="twitter:description" content=" mruby の動作 mruby の実行基盤であるRiteVMは、Rubyスクリプトを逐次解釈して実行するのではなくコンパイル結果のバイナリコード（Rite中間表現）を直接実行する。
+Rite中間表現をバイナリ出力したものがmrbファイル(Riteバイナリファイル)。
+mrbgem とは mruby にライブラリを追加するための仕組み。mruby は require などで動的にライブラリを読み込めないので、mruby ビルド時に組み込む必要がある。 追加する際は、build_config.rb に追記してビルドする。
+なお、mrbgem の実装には、以下３パターンがある。 - C拡張 - Ruby拡張 - C &amp; Ruby 拡張
+作り方については、この辺りが参考になりそう。 - mrubyの拡張モジュールであるmrbgemのテンプレートを自動で生成するmrbgem作った - mrbgemsの作り方メモ(勉強中)
+ireq とは まだ全然わかってないが、この辺り。
+ https://github.com/mruby/mruby/issues/944#issuecomment-14556703  ライブラリ構成 以下の４つが定義されているが、現在提供されているのはミニマルのみ？
+ ミニマル: 実行に必要な最低限の機能 スタンダード: JIS X 3017 規格相当 フル: MRI(CRuby) のフル機能相当 ドメイン別: 製品ドメイン別の拡張ライブラリ  参考リンク  オフィシャルページ ソース Github 軽量 Ruby のご紹介と 軽量 Ruby フォーラムのご案内 IIJ 軽量Rubyへの取り組み mruby Advent Calendar 2013  mruby のビルド方法 mrubyのバイトコードフォーマット解説   ">
+<meta property="og:locale" content="ja">
+
+  
+    <meta property="article:published_time" content="2015-05-03T04:16:53">
+  
+  
+    <meta property="article:modified_time" content="2015-05-03T04:16:53">
+  
+  
+  
+  
+    
+      <meta property="article:tag" content="mruby">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+  <meta name="twitter:site" content="@harasou5">
+
+
+  <meta name="twitter:creator" content="@harasou5">
+
+
+
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
+
+
+    <title>mruby についてのメモ</title>
+
+    <link rel="icon" href="/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://harasou.jp/2015/05/03/mruby-memo/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css" />
+    
+    
+      
+        <link rel="stylesheet"  href="https://harasou.jp/css/style.css" swapPaginator="true">
+      
+    
+
+    
+      
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-62541096-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="5">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="/">harasou.jp</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=90" alt="プロフィール画像" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="5">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="/#about">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt="プロフィール画像" />
+        </a>
+        <h4 class="sidebar-profile-name">harasou</h4>
+        
+          <h5 class="sidebar-profile-bio">めくじらを立てない</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">ホーム</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">タグ</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">アーカイブ</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">プロフィール</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/harasou" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="5"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title" itemprop="headline">
+      mruby についてのメモ
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2015-05-03T04:16:53&#43;09:00">
+        
+  
+  
+  
+  
+    2015/5/3
+  
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown" itemprop="articleBody">
+            <div class="main-content-wrap">
+              
+
+<h2 id="mruby-の動作">mruby の動作</h2>
+
+<p>mruby の実行基盤である<code>RiteVM</code>は、Rubyスクリプトを逐次解釈して実行するのではなくコンパイル結果の<code>バイナリコード（Rite中間表現）</code>を直接実行する。</p>
+
+<p>Rite中間表現をバイナリ出力したものが<code>mrbファイル(Riteバイナリファイル)</code>。</p>
+
+<h2 id="mrbgem-とは">mrbgem とは</h2>
+
+<p>mruby にライブラリを追加するための仕組み。mruby は require などで動的にライブラリを読み込めないので、mruby ビルド時に組み込む必要がある。
+追加する際は、<code>build_config.rb</code> に追記してビルドする。</p>
+
+<p>なお、mrbgem の実装には、以下３パターンがある。
+- C拡張
+- Ruby拡張
+- C &amp; Ruby 拡張</p>
+
+<p>作り方については、この辺りが参考になりそう。
+- <a href="http://blog.matsumoto-r.jp/?p=3923">mrubyの拡張モジュールであるmrbgemのテンプレートを自動で生成するmrbgem作った</a>
+- <a href="http://qiita.com/hiroeorz@github/items/d6fa2978d9f53a41c777">mrbgemsの作り方メモ(勉強中)</a></p>
+
+<h2 id="ireq-とは">ireq とは</h2>
+
+<p>まだ全然わかってないが、この辺り。</p>
+
+<ul>
+<li><a href="https://github.com/mruby/mruby/issues/944#issuecomment-14556703">https://github.com/mruby/mruby/issues/944#issuecomment-14556703</a></li>
+</ul>
+
+<h2 id="ライブラリ構成">ライブラリ構成</h2>
+
+<p>以下の４つが定義されているが、現在提供されているのはミニマルのみ？</p>
+
+<ul>
+<li>ミニマル: 実行に必要な最低限の機能</li>
+<li>スタンダード: JIS X 3017 規格相当</li>
+<li>フル: MRI(CRuby) のフル機能相当</li>
+<li>ドメイン別: 製品ドメイン別の拡張ライブラリ</li>
+</ul>
+
+<h2 id="参考リンク">参考リンク</h2>
+
+<ul>
+<li><a href="http://forum.mruby.org/index.html">オフィシャルページ</a></li>
+<li><a href="https://github.com/mruby/mruby">ソース Github</a></li>
+<li><a href="http://forum.mruby.org/doc/Aboiut_mruby_forumJP.pdf">軽量 Ruby のご紹介と 軽量 Ruby フォーラムのご案内</a></li>
+<li><a href="http://www.iij.ad.jp/company/development/tech/activities/mruby/">IIJ 軽量Rubyへの取り組み</a></li>
+<li><a href="http://qiita.com/advent-calendar/2013/mruby">mruby Advent Calendar 2013</a>
+
+<ul>
+<li><a href="http://qiita.com/masuidrive/items/e516c23b4feab73d139f">mruby のビルド方法</a></li>
+<li><a href="http://resemblances.click3.org/?p=1594">mrubyのバイトコードフォーマット解説</a></li>
+</ul></li>
+</ul>
+
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">タグ</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="/tags/mruby/">mruby</a>
+
+                  </div>
+                
+              
+            
+            <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="/2015/05/05/hexo-disqus/" data-tooltip="hexo に DISQUS を追加">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">次</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="/2015/05/02/mruby-faststep/" data-tooltip="mruby をさわってみた">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">前</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="http://b.hatena.ne.jp/entry/https://harasou.jp/2015/05/03/mruby-memo/">
+              <i class="fa icon-hatebu"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="http://getpocket.com/edit?url=https://harasou.jp/2015/05/03/mruby-memo/">
+              <i class="fa icon-pocket"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2015/05/03/mruby-memo/">
+              <i class="fa fa-facebook-official"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://harasou.jp/2015/05/03/mruby-memo/">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </li>
+        
+      
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+            
+              
+            
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2019 harasou. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+        <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="/2015/05/05/hexo-disqus/" data-tooltip="hexo に DISQUS を追加">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">次</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="/2015/05/02/mruby-faststep/" data-tooltip="mruby をさわってみた">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">前</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="http://b.hatena.ne.jp/entry/https://harasou.jp/2015/05/03/mruby-memo/">
+              <i class="fa icon-hatebu"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="http://getpocket.com/edit?url=https://harasou.jp/2015/05/03/mruby-memo/">
+              <i class="fa icon-pocket"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2015/05/03/mruby-memo/">
+              <i class="fa fa-facebook-official"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://harasou.jp/2015/05/03/mruby-memo/">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </li>
+        
+      
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="http://b.hatena.ne.jp/entry/https%3A%2F%2Fharasou.jp%2F2015%2F05%2F03%2Fmruby-memo%2F">
+          <i class="fa icon-hatebu"></i><span>Hatebuで共有</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="http://getpocket.com/edit?url=https%3A%2F%2Fharasou.jp%2F2015%2F05%2F03%2Fmruby-memo%2F">
+          <i class="fa icon-pocket"></i><span>Pocketで共有</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fharasou.jp%2F2015%2F05%2F03%2Fmruby-memo%2F">
+          <i class="fa fa-facebook-official"></i><span>Facebookで共有</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fharasou.jp%2F2015%2F05%2F03%2Fmruby-memo%2F">
+          <i class="fa fa-twitter"></i><span>Twitterで共有</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt="プロフィール画像" />
+    
+    <h4 id="about-card-name">harasou</h4>
+    
+      <div id="about-card-bio">めくじらを立てない</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Infra Engineer
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        Fukuoka Japan
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      
+      <div id="cover" style="background-image:url('https://harasou.jp/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js"></script>
+
+
+<script lang="javascript">
+window.onload = updateMinWidth;
+window.onresize = updateMinWidth;
+document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
+function updateMinWidth() {
+  var sidebar = document.getElementById("sidebar");
+  var main = document.getElementById("main");
+  main.style.minWidth = "";
+  var w1 = getComputedStyle(main).getPropertyValue("min-width");
+  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
+  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
+  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
+}
+</script>
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+  
+    
+  
+
+
+
+
+    
+  </body>
+</html>
+

@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.59.0-DEV with theme Tranquilpeak 0.4.7-BETA">
+<meta name="author" content="harasou">
+<meta name="keywords" content="">
+<meta name="description" content="Linux のカーネルモジュールで Hello World してみる。insmod、rmmod した時に dmesg にログを吐くだけの単純なもの。試した環境は、CentOS7 (3.10.0-123.4.4.el7.x86_64)。">
+
+
+<meta property="og:description" content="Linux のカーネルモジュールで Hello World してみる。insmod、rmmod した時に dmesg にログを吐くだけの単純なもの。試した環境は、CentOS7 (3.10.0-123.4.4.el7.x86_64)。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="カーネルモジュールで Hello World !">
+<meta name="twitter:title" content="カーネルモジュールで Hello World !">
+<meta property="og:url" content="https://harasou.jp/2015/11/03/loadable-kernel-module/">
+<meta property="twitter:url" content="https://harasou.jp/2015/11/03/loadable-kernel-module/">
+<meta property="og:site_name" content="harasou.jp">
+<meta property="og:description" content="Linux のカーネルモジュールで Hello World してみる。insmod、rmmod した時に dmesg にログを吐くだけの単純なもの。試した環境は、CentOS7 (3.10.0-123.4.4.el7.x86_64)。">
+<meta name="twitter:description" content="Linux のカーネルモジュールで Hello World してみる。insmod、rmmod した時に dmesg にログを吐くだけの単純なもの。試した環境は、CentOS7 (3.10.0-123.4.4.el7.x86_64)。">
+<meta property="og:locale" content="ja">
+
+  
+    <meta property="article:published_time" content="2015-11-03T01:14:38">
+  
+  
+    <meta property="article:modified_time" content="2015-11-03T01:14:38">
+  
+  
+  
+  
+    
+      <meta property="article:tag" content="kernel">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+  <meta name="twitter:site" content="@harasou5">
+
+
+  <meta name="twitter:creator" content="@harasou5">
+
+
+
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
+
+
+    <title>カーネルモジュールで Hello World !</title>
+
+    <link rel="icon" href="/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://harasou.jp/2015/11/03/loadable-kernel-module/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css" />
+    
+    
+      
+        <link rel="stylesheet"  href="https://harasou.jp/css/style.css" swapPaginator="true">
+      
+    
+
+    
+      
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-62541096-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="5">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="/">harasou.jp</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=90" alt="プロフィール画像" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="5">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="/#about">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt="プロフィール画像" />
+        </a>
+        <h4 class="sidebar-profile-name">harasou</h4>
+        
+          <h5 class="sidebar-profile-bio">めくじらを立てない</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">ホーム</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">タグ</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">アーカイブ</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">プロフィール</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/harasou" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="5"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title" itemprop="headline">
+      カーネルモジュールで Hello World !
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2015-11-03T01:14:38&#43;09:00">
+        
+  
+  
+  
+  
+    2015/11/3
+  
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown" itemprop="articleBody">
+            <div class="main-content-wrap">
+              <p>Linux のカーネルモジュールで Hello World してみる。insmod、rmmod した時に dmesg にログを吐くだけの単純なもの。試した環境は、CentOS7 (3.10.0-123.4.4.el7.x86_64)。</p>
+
+<h2 id="カーネルモジュールの作成">カーネルモジュールの作成</h2>
+
+<ol>
+<li><p>適当なディレクトリを作成</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">mkdir -p ~/lkm/helloworld
+cd $_</code></pre></div></li>
+
+<li><p>ソースファイル</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;linux/module.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;linux/init.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>    
+<span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> __init <span style="color:#a6e22e">helloworld_init</span>(<span style="color:#66d9ef">void</span>)
+{
+    pr_info(<span style="color:#e6db74">&#34;Hello World!</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+}
+    
+<span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> __exit <span style="color:#a6e22e">helloworld_exit</span>(<span style="color:#66d9ef">void</span>)
+{
+    pr_info(<span style="color:#e6db74">&#34;Goodby World.</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+}
+    
+module_init(helloworld_init);
+module_exit(helloworld_exit);
+MODULE_AUTHOR(<span style="color:#e6db74">&#34;harasou&#34;</span>);
+MODULE_DESCRIPTION(<span style="color:#e6db74">&#34;Hello World Module&#34;</span>);
+MODULE_LICENSE(<span style="color:#e6db74">&#34;MIT&#34;</span>);</code></pre></div>
+<p>ロードされた時と、アンロードされた時に、メッセージを出力するだけの単純なモジュール。</p>
+
+<ul>
+<li><code>module_init</code>： insmod したタイミングで呼ばれる関数を登録する</li>
+<li><code>module_exit</code>： rmmod したタイミグで呼ばれる関数を登録する</li>
+<li><code>MODULE_XXXX</code>： modinfo した時に表示される値を設定する</li>
+</ul></li>
+
+<li><p>Makefile</p>
+
+<p>カーネルモジュールをコンパイルするための Makefile 。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-makefile" data-lang="makefile">KERNEL_DIR <span style="color:#f92672">=</span> /lib/modules/<span style="color:#66d9ef">$(</span>shell uname -r<span style="color:#66d9ef">)</span>/build
+BUILD_DIR <span style="color:#f92672">:=</span> <span style="color:#66d9ef">$(</span>shell pwd<span style="color:#66d9ef">)</span>
+VERBOSE   <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>
+    
+obj-m <span style="color:#f92672">:=</span> helloworld.o
+    
+<span style="color:#a6e22e">all</span><span style="color:#f92672">:</span>
+    make -C <span style="color:#66d9ef">$(</span>KERNEL_DIR<span style="color:#66d9ef">)</span> SUBDIRS<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>BUILD_DIR<span style="color:#66d9ef">)</span> KBUILD_VERBOSE<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>VERBOSE<span style="color:#66d9ef">)</span> modules
+    
+<span style="color:#a6e22e">clean</span><span style="color:#f92672">:</span>
+    rm -rf  *.o *.ko *.mod.c *.symvers *.order .tmp_versions .helloworld.*
+</code></pre></div></li>
+
+<li><p>カーネルモジュールの作成</p>
+
+<p>make するだけで hellowrold.ko が作成される。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ ll
+合計 <span style="color:#ae81ff">8</span>
+-rw-rw-r--. <span style="color:#ae81ff">1</span> vagrant vagrant <span style="color:#ae81ff">300</span> 10月 <span style="color:#ae81ff">31</span> <span style="color:#ae81ff">17</span>:09 Makefile
+-rw-rw-r--. <span style="color:#ae81ff">1</span> vagrant vagrant <span style="color:#ae81ff">367</span> 10月 <span style="color:#ae81ff">31</span> <span style="color:#ae81ff">16</span>:42 helloworld.c
+$
+$ make
+make -C /lib/modules/3.10.0-123.4.4.el7.x86_64/build SUBDIRS<span style="color:#f92672">=</span>/home/vagrant/lkm/helloworld KBUILD_VERBOSE<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span> modules
+make<span style="color:#f92672">[</span><span style="color:#ae81ff">1</span><span style="color:#f92672">]</span>: ディレクトリ <span style="color:#e6db74">`</span>/usr/src/kernels/3.10.0-123.4.4.el7.x86_64<span style="color:#e6db74">&#39; に入ります
+</span><span style="color:#e6db74">  CC [M]  /home/vagrant/lkm/helloworld/helloworld.o
+</span><span style="color:#e6db74">  Building modules, stage 2.
+</span><span style="color:#e6db74">  MODPOST 1 modules
+</span><span style="color:#e6db74">  CC      /home/vagrant/lkm/helloworld/helloworld.mod.o
+</span><span style="color:#e6db74">  LD [M]  /home/vagrant/lkm/helloworld/helloworld.ko
+</span><span style="color:#e6db74">make[1]: ディレクトリ `/usr/src/kernels/3.10.0-123.4.4.el7.x86_64&#39;</span> から出ます
+$
+$ ll
+合計 <span style="color:#ae81ff">204</span>
+-rw-rw-r--. <span style="color:#ae81ff">1</span> vagrant vagrant   <span style="color:#ae81ff">300</span> 10月 <span style="color:#ae81ff">31</span> <span style="color:#ae81ff">17</span>:09 Makefile
+-rw-rw-r--. <span style="color:#ae81ff">1</span> vagrant vagrant     <span style="color:#ae81ff">0</span> 10月 <span style="color:#ae81ff">31</span> <span style="color:#ae81ff">17</span>:36 Module.symvers
+-rw-rw-r--. <span style="color:#ae81ff">1</span> vagrant vagrant   <span style="color:#ae81ff">367</span> 10月 <span style="color:#ae81ff">31</span> <span style="color:#ae81ff">16</span>:42 helloworld.c
+-rw-rw-r--. <span style="color:#ae81ff">1</span> vagrant vagrant <span style="color:#ae81ff">91485</span> 10月 <span style="color:#ae81ff">31</span> <span style="color:#ae81ff">17</span>:36 helloworld.ko
+-rw-rw-r--. <span style="color:#ae81ff">1</span> vagrant vagrant   <span style="color:#ae81ff">703</span> 10月 <span style="color:#ae81ff">31</span> <span style="color:#ae81ff">17</span>:36 helloworld.mod.c
+-rw-rw-r--. <span style="color:#ae81ff">1</span> vagrant vagrant <span style="color:#ae81ff">51112</span> 10月 <span style="color:#ae81ff">31</span> <span style="color:#ae81ff">17</span>:36 helloworld.mod.o
+-rw-rw-r--. <span style="color:#ae81ff">1</span> vagrant vagrant <span style="color:#ae81ff">41896</span> 10月 <span style="color:#ae81ff">31</span> <span style="color:#ae81ff">17</span>:36 helloworld.o
+-rw-rw-r--. <span style="color:#ae81ff">1</span> vagrant vagrant    <span style="color:#ae81ff">50</span> 10月 <span style="color:#ae81ff">31</span> <span style="color:#ae81ff">17</span>:36 modules.order</code></pre></div></li>
+</ol>
+
+<h2 id="動作確認">動作確認</h2>
+
+<p>insmod 時にログが表示される。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ sudo /sbin/insmod helloworld.ko
+$ lsmod | grep hellow
+helloworld             <span style="color:#ae81ff">12430</span>  <span style="color:#ae81ff">0</span>
+$
+$ dmesg |tail -1
+<span style="color:#f92672">[</span><span style="color:#ae81ff">84783</span>.294666<span style="color:#f92672">]</span> Hello World!</code></pre></div>
+<p>rmmod 時にも表示される。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ sudo /sbin/rmmod helloworld
+$ dmesg |tail -1
+<span style="color:#f92672">[</span><span style="color:#ae81ff">84802</span>.982990<span style="color:#f92672">]</span> Goodby World.</code></pre></div>
+<p>modinfo で先ほど MODULE_XXXX で設定した内容が確認できる。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ modinfo helloworld.ko
+filename:       /home/vagrant/lkm/helloworld/helloworld.ko
+license:        MIT
+description:    Hello World Module
+author:         harasou
+srcversion:     9F090E897E652AF5A8BC5ED
+depends:
+vermagic:       <span style="color:#ae81ff">3</span>.10.0-123.4.4.el7.x86_64 SMP mod_unload modversions</code></pre></div>
+<h2 id="感想">感想</h2>
+
+<p>iptables まわりを調べてる最中に、横道に逸れてカーネルモジュールの作り方を試した。時間があれば、モジュールパラメータ（/sys/module/modxxxx/parameters/xxxx）や proc ファイルシステムを利用したユーザプロセスとのやりとりなども調べてみたい。</p>
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">タグ</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="/tags/kernel/">kernel</a>
+
+                  </div>
+                
+              
+            
+            <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="/2015/11/04/kernel-module-modinfo/" data-tooltip="カーネルモジュールの modinfo について">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">次</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="/2015/10/26/linux-kernel-reading/" data-tooltip="Linux kernel を読むための準備">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">前</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="http://b.hatena.ne.jp/entry/https://harasou.jp/2015/11/03/loadable-kernel-module/">
+              <i class="fa icon-hatebu"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="http://getpocket.com/edit?url=https://harasou.jp/2015/11/03/loadable-kernel-module/">
+              <i class="fa icon-pocket"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2015/11/03/loadable-kernel-module/">
+              <i class="fa fa-facebook-official"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://harasou.jp/2015/11/03/loadable-kernel-module/">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </li>
+        
+      
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+            
+              
+            
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2019 harasou. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+        <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="/2015/11/04/kernel-module-modinfo/" data-tooltip="カーネルモジュールの modinfo について">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">次</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="/2015/10/26/linux-kernel-reading/" data-tooltip="Linux kernel を読むための準備">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">前</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="http://b.hatena.ne.jp/entry/https://harasou.jp/2015/11/03/loadable-kernel-module/">
+              <i class="fa icon-hatebu"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="http://getpocket.com/edit?url=https://harasou.jp/2015/11/03/loadable-kernel-module/">
+              <i class="fa icon-pocket"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2015/11/03/loadable-kernel-module/">
+              <i class="fa fa-facebook-official"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://harasou.jp/2015/11/03/loadable-kernel-module/">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </li>
+        
+      
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="http://b.hatena.ne.jp/entry/https%3A%2F%2Fharasou.jp%2F2015%2F11%2F03%2Floadable-kernel-module%2F">
+          <i class="fa icon-hatebu"></i><span>Hatebuで共有</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="http://getpocket.com/edit?url=https%3A%2F%2Fharasou.jp%2F2015%2F11%2F03%2Floadable-kernel-module%2F">
+          <i class="fa icon-pocket"></i><span>Pocketで共有</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fharasou.jp%2F2015%2F11%2F03%2Floadable-kernel-module%2F">
+          <i class="fa fa-facebook-official"></i><span>Facebookで共有</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fharasou.jp%2F2015%2F11%2F03%2Floadable-kernel-module%2F">
+          <i class="fa fa-twitter"></i><span>Twitterで共有</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt="プロフィール画像" />
+    
+    <h4 id="about-card-name">harasou</h4>
+    
+      <div id="about-card-bio">めくじらを立てない</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Infra Engineer
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        Fukuoka Japan
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      
+      <div id="cover" style="background-image:url('https://harasou.jp/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js"></script>
+
+
+<script lang="javascript">
+window.onload = updateMinWidth;
+window.onresize = updateMinWidth;
+document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
+function updateMinWidth() {
+  var sidebar = document.getElementById("sidebar");
+  var main = document.getElementById("main");
+  main.style.minWidth = "";
+  var w1 = getComputedStyle(main).getPropertyValue("min-width");
+  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
+  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
+  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
+}
+</script>
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+  
+    
+  
+
+
+
+
+    
+  </body>
+</html>
+

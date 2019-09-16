@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>h2o on harasou.jp</title>
+    <link>https://harasou.jp/tags/h2o/</link>
+    <description>Recent content in h2o on harasou.jp</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja</language>
+    <lastBuildDate>Wed, 05 Aug 2015 04:49:54 +0900</lastBuildDate>
+    
+	<atom:link href="https://harasou.jp/tags/h2o/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>h2o &#43; mruby セットアップメモ</title>
+      <link>https://harasou.jp/2015/08/05/h2o-mruby/</link>
+      <pubDate>Wed, 05 Aug 2015 04:49:54 +0900</pubDate>
+      
+      <guid>https://harasou.jp/2015/08/05/h2o-mruby/</guid>
+      <description>&lt;p&gt;最近、h2o で mruby がサポートされたので、まずはコンパイルしてみた。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;h2o.png&#34; alt=&#34;&#34; /&gt;
+&lt;a href=&#34;https://github.com/h2o/h2o&#34;&gt;https://github.com/h2o/h2o&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;h2o は、@kazuho さんが作成されている HTTP/2 ＆ HTTP/1.x 対応の高速な WEBサーバです。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

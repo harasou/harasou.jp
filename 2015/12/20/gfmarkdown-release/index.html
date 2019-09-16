@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.59.0-DEV with theme Tranquilpeak 0.4.7-BETA">
+<meta name="author" content="harasou">
+<meta name="keywords" content="">
+<meta name="description" content="この記事は、mruby advent calendar 2015 20日目の記事です。みなさん難しい記事が多いですが、私にそういうのは無理なので軽めの内容になっています。">
+
+
+<meta property="og:description" content="この記事は、mruby advent calendar 2015 20日目の記事です。みなさん難しい記事が多いですが、私にそういうのは無理なので軽めの内容になっています。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="markdown(GFM) を変換するコマンドを mruby-cli で作ってみた">
+<meta name="twitter:title" content="markdown(GFM) を変換するコマンドを mruby-cli で作ってみた">
+<meta property="og:url" content="https://harasou.jp/2015/12/20/gfmarkdown-release/">
+<meta property="twitter:url" content="https://harasou.jp/2015/12/20/gfmarkdown-release/">
+<meta property="og:site_name" content="harasou.jp">
+<meta property="og:description" content="この記事は、mruby advent calendar 2015 20日目の記事です。みなさん難しい記事が多いですが、私にそういうのは無理なので軽めの内容になっています。">
+<meta name="twitter:description" content="この記事は、mruby advent calendar 2015 20日目の記事です。みなさん難しい記事が多いですが、私にそういうのは無理なので軽めの内容になっています。">
+<meta property="og:locale" content="ja">
+
+  
+    <meta property="article:published_time" content="2015-12-20T13:41:27">
+  
+  
+    <meta property="article:modified_time" content="2015-12-20T13:41:27">
+  
+  
+  
+  
+    
+      <meta property="article:tag" content="mruby">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+  <meta name="twitter:site" content="@harasou5">
+
+
+  <meta name="twitter:creator" content="@harasou5">
+
+
+
+
+
+
+  <meta property="og:image" content="https://harasou.jp/2015/12/20/gfmarkdown-release/mruby_logo_red_icon.png">
+  <meta property="twitter:image" content="https://harasou.jp/2015/12/20/gfmarkdown-release/mruby_logo_red_icon.png">
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
+
+
+    <title>markdown(GFM) を変換するコマンドを mruby-cli で作ってみた</title>
+
+    <link rel="icon" href="/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://harasou.jp/2015/12/20/gfmarkdown-release/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css" />
+    
+    
+      
+        <link rel="stylesheet"  href="https://harasou.jp/css/style.css" swapPaginator="true">
+      
+    
+
+    
+      
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-62541096-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="5">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="/">harasou.jp</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=90" alt="プロフィール画像" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="5">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="/#about">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt="プロフィール画像" />
+        </a>
+        <h4 class="sidebar-profile-name">harasou</h4>
+        
+          <h5 class="sidebar-profile-bio">めくじらを立てない</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">ホーム</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">タグ</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">アーカイブ</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">プロフィール</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/harasou" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="5"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title" itemprop="headline">
+      markdown(GFM) を変換するコマンドを mruby-cli で作ってみた
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2015-12-20T13:41:27&#43;09:00">
+        
+  
+  
+  
+  
+    2015/12/20
+  
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown" itemprop="articleBody">
+            <div class="main-content-wrap">
+              <p>この記事は、<a href="http://qiita.com/advent-calendar/2015/mruby">mruby advent calendar 2015</a> 20日目の記事です。みなさん難しい記事が多いですが、私にそういうのは無理なので軽めの内容になっています。</p>
+
+<h1 id="はじめに">はじめに</h1>
+
+<p>mruby でコマンドラインツールを作成できる <a href="https://github.com/hone/mruby-cli">mruby-cli</a> を使って、markdown を html に変換する <code>gfmarkdown</code> というコマンドを作ってみました。</p>
+
+<p>mruby-cli は、コマンドを作成するための雛形の作成とコンパイルなどを行ってくれるもので、一つのソースから、Linux や Mac、Windows などで動作するバイナリを生成してくれます。</p>
+
+<p>markdown から html への変換は、<a href="https://developer.github.com/v3/markdown/">Github の API</a> を利用しました。このため、インターネットへ接続できない環境では使用できません。</p>
+
+<h1 id="gfmarkdown-のインストール">gfmarkdown のインストール</h1>
+
+<p>各アーキテクチャごとのバイナリを用意しているので、ダウンロード＆展開する。(現状、windows 版はないです)</p>
+
+<p><a href="https://github.com/harasou/gfmarkdown/releases">https://github.com/harasou/gfmarkdown/releases</a></p>
+
+<pre><code>curl -fsSLO https://github.com/harasou/gfmarkdown/releases/download/v0.0.1/gfmarkdown-0.0.1-x86_64-apple-darwin14.zip
+unzip gfmarkdown-*.zip
+</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ ./gfmarkdown
+
+Usage: gfmarkdown <span style="color:#f92672">[</span>options<span style="color:#f92672">]</span> file
+      --mode<span style="color:#f92672">=</span>markdown|gfm
+                      The rendering mode. markdown or gfm. default markdwon.
+      --context<span style="color:#f92672">=</span>repository
+                      he repository context. Only taken into account when rendering as gfm
+      --url<span style="color:#f92672">=</span>url       domain <span style="color:#f92672">(</span>or through https://yourdomain.com/api/v3/markdown <span style="color:#66d9ef">for</span> enterprise<span style="color:#f92672">)</span>
+      --token<span style="color:#f92672">=</span>token   OAuth2 Token
+      --version       print the version
+      --help          show this message, -h <span style="color:#66d9ef">for</span> short message</code></pre></div>
+<h1 id="使い方">使い方</h1>
+
+<p>テスト用の markdown ファイル <code>TEST.md</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ cat TEST.md
+<span style="color:#75715e">## rendering</span>
+- harasou/mruby-gfmarkdown#1
+- <span style="color:#75715e">#1</span></code></pre></div>
+<ol>
+<li><p>通常の変換</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">$ ./gfmarkdown TEST.md
+&lt;<span style="color:#f92672">h2</span>&gt;
+&lt;<span style="color:#f92672">a</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;user-content-rendering&#34;</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;anchor&#34;</span> <span style="color:#a6e22e">href</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;#rendering&#34;</span> <span style="color:#a6e22e">aria-hidden</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;true&#34;</span>&gt;&lt;<span style="color:#f92672">span</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;octicon octicon-link&#34;</span>&gt;&lt;/<span style="color:#f92672">span</span>&gt;&lt;/<span style="color:#f92672">a</span>&gt;rendering&lt;/<span style="color:#f92672">h2</span>&gt;
+    
+&lt;<span style="color:#f92672">ul</span>&gt;
+&lt;<span style="color:#f92672">li</span>&gt;harasou/mruby-gfmarkdown#1&lt;/<span style="color:#f92672">li</span>&gt;
+&lt;<span style="color:#f92672">li</span>&gt;#1&lt;/<span style="color:#f92672">li</span>&gt;
+&lt;/<span style="color:#f92672">ul</span>&gt;</code></pre></div></li>
+
+<li><p><code>mode=gfm</code> を指定すると、Issue へのリンクが追加される</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">$ ./gfmarkdown --mode=gfm TEST.md
+&lt;<span style="color:#f92672">h2</span>&gt;rendering&lt;/<span style="color:#f92672">h2</span>&gt;
+    
+&lt;<span style="color:#f92672">ul</span>&gt;
+&lt;<span style="color:#f92672">li</span>&gt;&lt;<span style="color:#f92672">a</span> <span style="color:#a6e22e">href</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://github.com/harasou/mruby-gfmarkdown/issues/1&#34;</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;issue-link js-issue-link&#34;</span> <span style="color:#a6e22e">data-url</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://github.com/harasou/mruby-gfmarkdown/issues/1&#34;</span> <span style="color:#a6e22e">data-id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;123095833&#34;</span> <span style="color:#a6e22e">data-error-text</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Failed to load issue title&#34;</span> <span style="color:#a6e22e">data-permission-text</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Issue title is private&#34;</span>&gt;harasou/mruby-gfmarkdown#1&lt;/<span style="color:#f92672">a</span>&gt;&lt;/<span style="color:#f92672">li</span>&gt;
+&lt;<span style="color:#f92672">li</span>&gt;#1&lt;/<span style="color:#f92672">li</span>&gt;
+&lt;/<span style="color:#f92672">ul</span>&gt;</code></pre></div></li>
+
+<li><p><code>context</code> を追加すると <code>#1</code> などが context で指定したリポジトリのリンクになる</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">$ ./gfmarkdown --mode=gfm --context=harasou/mruby-gfmarkdown TEST.md
+&lt;<span style="color:#f92672">h2</span>&gt;rendering&lt;/<span style="color:#f92672">h2</span>&gt;
+    
+&lt;<span style="color:#f92672">ul</span>&gt;
+&lt;<span style="color:#f92672">li</span>&gt;&lt;<span style="color:#f92672">a</span> <span style="color:#a6e22e">href</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://github.com/harasou/mruby-gfmarkdown/issues/1&#34;</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;issue-link js-issue-link&#34;</span> <span style="color:#a6e22e">data-url</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://github.com/harasou/mruby-gfmarkdown/issues/1&#34;</span> <span style="color:#a6e22e">data-id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;123095833&#34;</span> <span style="color:#a6e22e">data-error-text</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Failed to load issue title&#34;</span> <span style="color:#a6e22e">data-permission-text</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Issue title is private&#34;</span>&gt;harasou/mruby-gfmarkdown#1&lt;/<span style="color:#f92672">a</span>&gt;&lt;/<span style="color:#f92672">li</span>&gt;
+&lt;<span style="color:#f92672">li</span>&gt;&lt;<span style="color:#f92672">a</span> <span style="color:#a6e22e">href</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://github.com/harasou/mruby-gfmarkdown/issues/1&#34;</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;issue-link js-issue-link&#34;</span> <span style="color:#a6e22e">data-url</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://github.com/harasou/mruby-gfmarkdown/issues/1&#34;</span> <span style="color:#a6e22e">data-id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;123095833&#34;</span> <span style="color:#a6e22e">data-error-text</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Failed to load issue title&#34;</span> <span style="color:#a6e22e">data-permission-text</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Issue title is private&#34;</span>&gt;#1&lt;/<span style="color:#f92672">a</span>&gt;&lt;/<span style="color:#f92672">li</span>&gt;
+&lt;/<span style="color:#f92672">ul</span>&gt;</code></pre></div></li>
+</ol>
+
+<p><a href="http://rtomayko.github.io/bcat/">bcat</a> などを使うとブラウザで確認できるので便利です。</p>
+
+<pre><code>./gfmarkdown TEST.md | bcat
+</code></pre>
+
+<h1 id="markdown-の変換">markdown の変換</h1>
+
+<p>Github の API を利用しているので、https での通信が必要ですが、これは matsumoto-r さんの <a href="https://github.com/matsumoto-r/mruby-httprequest">mruby-httprequest</a> を利用しました。
+これを使えば、API の通信がワンライナーでかけてしまいます。実際、<code>gfmarkdown</code> で利用している mgem はこんなシンプルなものです。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">GFMarkdown</span>
+
+  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">initialize</span>(opt <span style="color:#f92672">=</span> {})
+    @url <span style="color:#f92672">=</span> opt<span style="color:#f92672">[</span><span style="color:#e6db74">:url</span><span style="color:#f92672">]</span> ? opt<span style="color:#f92672">[</span><span style="color:#e6db74">:url</span><span style="color:#f92672">]</span> : <span style="color:#e6db74">&#34;https://api.github.com/markdown&#34;</span>
+    @token <span style="color:#f92672">=</span> opt<span style="color:#f92672">[</span><span style="color:#e6db74">:token</span><span style="color:#f92672">]</span>
+    @mode <span style="color:#f92672">=</span> opt<span style="color:#f92672">[</span><span style="color:#e6db74">:mode</span><span style="color:#f92672">]</span>
+    @context <span style="color:#f92672">=</span> opt<span style="color:#f92672">[</span><span style="color:#e6db74">:context</span><span style="color:#f92672">]</span>
+  <span style="color:#66d9ef">end</span>
+
+  <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">render</span> text
+    headers <span style="color:#f92672">=</span> {
+      <span style="color:#e6db74">&#39;User-Agent&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#34;mruby-gfmarkdown&#34;</span>,
+    }
+    headers<span style="color:#f92672">[</span><span style="color:#e6db74">&#39;Authorization&#39;</span><span style="color:#f92672">]</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;token </span><span style="color:#e6db74">#{</span>@token<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> <span style="color:#66d9ef">if</span> @token
+
+    postdata <span style="color:#f92672">=</span> {
+      <span style="color:#e6db74">:text</span> <span style="color:#f92672">=&gt;</span> text,
+    }
+    postdata<span style="color:#f92672">[</span><span style="color:#e6db74">:mode</span><span style="color:#f92672">]</span> <span style="color:#f92672">=</span> @mode <span style="color:#66d9ef">if</span> @mode
+    postdata<span style="color:#f92672">[</span><span style="color:#e6db74">:context</span><span style="color:#f92672">]</span> <span style="color:#f92672">=</span> @context <span style="color:#66d9ef">if</span> @context
+
+    <span style="color:#66d9ef">HttpRequest</span><span style="color:#f92672">.</span>new()<span style="color:#f92672">.</span>post(@url,<span style="color:#66d9ef">JSON</span><span style="color:#f92672">.</span>generate(postdata),headers)<span style="color:#f92672">.</span>body
+  <span style="color:#66d9ef">end</span>
+
+<span style="color:#66d9ef">end</span></code></pre></div>
+<h1 id="コマンドの作成">コマンドの作成</h1>
+
+<p>バイナリの作成は、hone さんの <a href="https://github.com/hone/mruby-cli">mruby-cli</a> を利用しています。簡単に mruby-cli を使ったバイナリの作り方を紹介します。</p>
+
+<ol>
+<li><p>mruby-cli コマンドの取得</p>
+
+<p>mruby-cli のリポジトリ自体は <code>mruby-cli</code> コマンドを作成するものなので特に不要で release からダウンロードできるコマンドがあればよいです。</p>
+
+<pre><code>curl -fsSL https://github.com/hone/mruby-cli/releases/download/v0.0.4/mruby-cli-0.0.4-x86_64-apple-darwin14.tgz | tar zx -
+</code></pre></li>
+
+<li><p>テンプレートの作成</p>
+
+<p>取得したバイナリを実行してテンプレートを作成します</p>
+
+<pre><code>./mruby-cli --setup gfmarkdown
+</code></pre>
+
+<pre><code>$ la gfmarkdown/{,mrblib*,tools/*}
+gfmarkdown/:
+total 48
+drwxr-xr-x  12 harasou  harasou   408 12 20 16:46 ./
+drwx------+ 14 harasou  harasou   476 12 20 16:46 ../
+-rw-r--r--   1 harasou  harasou     7 12 20 16:46 .gitignore
+-rw-r--r--   1 harasou  harasou    20 12 20 16:46 Dockerfile
+-rw-r--r--   1 harasou  harasou  1939 12 20 16:46 Rakefile
+drwxr-xr-x   3 harasou  harasou   102 12 20 16:46 bintest/
+-rw-r--r--   1 harasou  harasou  2163 12 20 16:46 build_config.rb
+-rw-r--r--   1 harasou  harasou   324 12 20 16:46 docker-compose.yml
+-rw-r--r--   1 harasou  harasou   299 12 20 16:46 mrbgem.rake
+drwxr-xr-x   4 harasou  harasou   136 12 20 16:46 mrblib/
+drwxr-xr-x   3 harasou  harasou   102 12 20 16:46 test/
+drwxr-xr-x   3 harasou  harasou   102 12 20 16:46 tools/
+    
+gfmarkdown/mrblib:
+total 8
+drwxr-xr-x   4 harasou  harsou  136 12 20 16:46 ./
+drwxr-xr-x  12 harasou  harsou  408 12 20 16:46 ../
+drwxr-xr-x   3 harasou  harsou  102 12 20 16:46 gfmarkdown/
+-rw-r--r--   1 harasou  harsou  120 12 20 16:46 gfmarkdown.rb
+    
+gfmarkdown/tools/gfmarkdown:
+total 8
+drwxr-xr-x  3 harasou  harasou  102 12 20 16:46 ./
+drwxr-xr-x  3 harasou  harasou  102 12 20 16:46 ../
+-rw-r--r--  1 harasou  harasou  700 12 20 16:46 gfmarkdown.c
+</code></pre>
+
+<p>コマンド実装する mruby の処理は <code>gfmarkdown/mrblib/gfmarkdown.rb</code> に書きます。必要な mgem などは、普通に mruby をビルドするときと同様に <code>gfmarkdown/build_config.rb</code> です。</p>
+
+<p><code>gfmarkdown/tools/gfmarkdown/gfmarkdown.c</code> ここに main() があり、gfmarkdown.rb の処理がバイトコードとして組み込まれてバイナリが作成される感じになります。</p>
+
+<p>refs: <a href="https://github.com/harasou/gfmarkdown/commit/18afad0db8dc7146602dd94f3d122d59f989287c">gfmarkdown でのテンプレートからの変更箇所</a></p></li>
+
+<li><p>コンパイル</p>
+
+<p>mruby-cli はコンパイルで docker を利用しています(クロスビルドが必要なければ、docker がなくても大丈夫です)。Mac の場合だと Docker Toolbox を利用するかと思います。</p>
+
+<p>refs: <a href="http://harasou.github.io/2015/08/15/Docker-Toolbox/">http://harasou.github.io/2015/08/15/Docker-Toolbox/</a></p>
+
+<p>Docker Toolbox がインストールされているとこんな感じでコンパイルします。(default という仮想マシンを利用しています)</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">cd gfmarkdown
+eval <span style="color:#66d9ef">$(</span>docker-machine env default<span style="color:#66d9ef">)</span>
+docker-compose run compile</code></pre></div>
+<p>mruby 本体及び、必要な mgem がダウンロードされ、コンテナ上でコンパイルされます。コンパイルされたバイナリは下記ディレクトリにされます。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ ls -l mruby/build/*/bin/gfmarkdown
+-rwxr-xr-x  <span style="color:#ae81ff">1</span> harasou  harasou   <span style="color:#ae81ff">884064</span> <span style="color:#ae81ff">12</span> <span style="color:#ae81ff">20</span> <span style="color:#ae81ff">17</span>:10 mruby/build/host/bin/gfmarkdown*
+-rwxr-xr-x  <span style="color:#ae81ff">1</span> harasou  harasou   <span style="color:#ae81ff">421612</span> <span style="color:#ae81ff">12</span> <span style="color:#ae81ff">20</span> <span style="color:#ae81ff">17</span>:10 mruby/build/i386-apple-darwin14/bin/gfmarkdown*
+-rwxr-xr-x  <span style="color:#ae81ff">1</span> harasou  harasou  <span style="color:#ae81ff">1508291</span> <span style="color:#ae81ff">12</span> <span style="color:#ae81ff">20</span> <span style="color:#ae81ff">17</span>:10 mruby/build/i686-pc-linux-gnu/bin/gfmarkdown*
+-rwxr-xr-x  <span style="color:#ae81ff">1</span> harasou  harasou   <span style="color:#ae81ff">421056</span> <span style="color:#ae81ff">12</span> <span style="color:#ae81ff">20</span> <span style="color:#ae81ff">17</span>:10 mruby/build/x86_64-apple-darwin14/bin/gfmarkdown*
+-rwxr-xr-x  <span style="color:#ae81ff">1</span> harasou  harasou   <span style="color:#ae81ff">395992</span> <span style="color:#ae81ff">12</span> <span style="color:#ae81ff">20</span> <span style="color:#ae81ff">17</span>:10 mruby/build/x86_64-pc-linux-gnu/bin/gfmarkdown*</code></pre></div>
+<p>なお、debug などでコンテナ環境を見たいときは、以下のような感じでコンテナにログインできます。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ docker-compose run shell
+root@bb22c9acb029:/home/mruby/code# uname -a
+Linux bb22c9acb029 <span style="color:#ae81ff">4</span>.0.9-boot2docker <span style="color:#75715e">#1 SMP Thu Aug 13 03:05:44 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux</span></code></pre></div></li>
+</ol>
+
+<h1 id="さいごに">さいごに</h1>
+
+<p>コマンドラインツールの作成とかだと、最近では golang の方が一般的だと思いますが、ライブラリとして組み込めるのは mruby の良さだと思います。</p>
+
+<p>今回、mruby-gfmarkdown という mgem を作成してコマンドを作りましたが、次は、この mgem を組み込んだライブラリ <code>libmruby.a</code> を利用して、Mac の Quilck Look アプリ(.md をプレビューする)を作成したいと画策してます。</p>
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">タグ</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="/tags/mruby/">mruby</a>
+
+                  </div>
+                
+              
+            
+            <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="/2016/02/21/dns-packet-over-512/" data-tooltip="512バイトを超える DNSパケット">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">次</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="/2015/11/24/change-sourceip-for-each-user/" data-tooltip="外部へ通信時のソースIP をユーザごとに変更する">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">前</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="http://b.hatena.ne.jp/entry/https://harasou.jp/2015/12/20/gfmarkdown-release/">
+              <i class="fa icon-hatebu"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="http://getpocket.com/edit?url=https://harasou.jp/2015/12/20/gfmarkdown-release/">
+              <i class="fa icon-pocket"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2015/12/20/gfmarkdown-release/">
+              <i class="fa fa-facebook-official"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://harasou.jp/2015/12/20/gfmarkdown-release/">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </li>
+        
+      
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+            
+              
+            
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2019 harasou. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+        <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="/2016/02/21/dns-packet-over-512/" data-tooltip="512バイトを超える DNSパケット">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">次</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="/2015/11/24/change-sourceip-for-each-user/" data-tooltip="外部へ通信時のソースIP をユーザごとに変更する">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">前</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="http://b.hatena.ne.jp/entry/https://harasou.jp/2015/12/20/gfmarkdown-release/">
+              <i class="fa icon-hatebu"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="http://getpocket.com/edit?url=https://harasou.jp/2015/12/20/gfmarkdown-release/">
+              <i class="fa icon-pocket"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2015/12/20/gfmarkdown-release/">
+              <i class="fa fa-facebook-official"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://harasou.jp/2015/12/20/gfmarkdown-release/">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </li>
+        
+      
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="http://b.hatena.ne.jp/entry/https%3A%2F%2Fharasou.jp%2F2015%2F12%2F20%2Fgfmarkdown-release%2F">
+          <i class="fa icon-hatebu"></i><span>Hatebuで共有</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="http://getpocket.com/edit?url=https%3A%2F%2Fharasou.jp%2F2015%2F12%2F20%2Fgfmarkdown-release%2F">
+          <i class="fa icon-pocket"></i><span>Pocketで共有</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fharasou.jp%2F2015%2F12%2F20%2Fgfmarkdown-release%2F">
+          <i class="fa fa-facebook-official"></i><span>Facebookで共有</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fharasou.jp%2F2015%2F12%2F20%2Fgfmarkdown-release%2F">
+          <i class="fa fa-twitter"></i><span>Twitterで共有</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt="プロフィール画像" />
+    
+    <h4 id="about-card-name">harasou</h4>
+    
+      <div id="about-card-bio">めくじらを立てない</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Infra Engineer
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        Fukuoka Japan
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      
+      <div id="cover" style="background-image:url('https://harasou.jp/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js"></script>
+
+
+<script lang="javascript">
+window.onload = updateMinWidth;
+window.onresize = updateMinWidth;
+document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
+function updateMinWidth() {
+  var sidebar = document.getElementById("sidebar");
+  var main = document.getElementById("main");
+  main.style.minWidth = "";
+  var w1 = getComputedStyle(main).getPropertyValue("min-width");
+  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
+  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
+  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
+}
+</script>
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+  
+    
+  
+
+
+
+
+    
+  </body>
+</html>
+

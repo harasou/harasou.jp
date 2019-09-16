@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>yum on harasou.jp</title>
+    <link>https://harasou.jp/tags/yum/</link>
+    <description>Recent content in yum on harasou.jp</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja</language>
+    <lastBuildDate>Mon, 24 Dec 2018 14:42:00 +0900</lastBuildDate>
+    
+	<atom:link href="https://harasou.jp/tags/yum/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>古い CentOS の Docker イメージを作成する</title>
+      <link>https://harasou.jp/2018/12/24/make-centos-core-image/</link>
+      <pubDate>Mon, 24 Dec 2018 14:42:00 +0900</pubDate>
+      
+      <guid>https://harasou.jp/2018/12/24/make-centos-core-image/</guid>
+      <description>&lt;p&gt;仕事で CentOS6.4 の Docker イメージが欲しかったのだが、Officialには 6.6 までしかなかった。
+せっかくなので、iso から core グループのみインストールした Docker イメージを作成してみた。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

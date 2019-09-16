@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>mysql on harasou.jp</title>
+    <link>https://harasou.jp/tags/mysql/</link>
+    <description>Recent content in mysql on harasou.jp</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja</language>
+    <lastBuildDate>Sun, 07 Jun 2015 02:06:30 +0900</lastBuildDate>
+    
+	<atom:link href="https://harasou.jp/tags/mysql/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>MySQL のトリガで mruby を実行する</title>
+      <link>https://harasou.jp/2015/06/07/mysql-trigger/</link>
+      <pubDate>Sun, 07 Jun 2015 02:06:30 +0900</pubDate>
+      
+      <guid>https://harasou.jp/2015/06/07/mysql-trigger/</guid>
+      <description>&lt;p&gt;先日会社で「mysql のテーブルと、プロセス上の共有メモリを連携させたい」って話が出たとき、トリガで外部プログラムが実行できればいけるのでは？と思ったので、調べてみた。&lt;/p&gt;
+
+&lt;h2 id=&#34;mysql-で外部コマンドを実行するには&#34;&gt;MySQL で外部コマンドを実行するには&lt;/h2&gt;
+
+&lt;p&gt;mysql で外部コマンドを実行するには &lt;code&gt;system&lt;/code&gt; が使える。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mysql&amp;gt; system uname -a
+Linux cent6 2.6.32-504.16.2.el6.x86_64 #1 SMP Wed Apr 22 06:48:29 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ただ、これはターミナル上からとかでないと使えない。&lt;/p&gt;
+
+&lt;p&gt;調べてみると、mysql には UDF(User Defined Function) という仕組みがあって、自作関数を作成することができるらしい。これは、C や C++ で書いて共有ライブラリ(.so)を作成し、mysql の plugindir に放り込めば使えるようになる。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://aoking.hatenablog.jp/entry/20120824/1345778096&#34;&gt;MySQL で UDF を定義しよう&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://d.hatena.ne.jp/download_takeshi/20071124/1195915196&#34;&gt;はじめてのUDF&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://zentoo.hatenablog.com/entry/20110925/1316961032&#34;&gt;やったーJavaScriptの動くMySQLできたよー&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

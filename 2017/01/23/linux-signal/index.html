@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.59.0-DEV with theme Tranquilpeak 0.4.7-BETA">
+<meta name="author" content="harasou">
+<meta name="keywords" content="">
+<meta name="description" content="TLPI (The Linux Programming Interface) 再々。
+
+TLPI の輪読の際に @matsumotory よりシグナルセットあたりをまとめるようにと指令が出たので、拙遅な感じでまとめました。">
+
+
+<meta property="og:description" content="TLPI (The Linux Programming Interface) 再々。
+
+TLPI の輪読の際に @matsumotory よりシグナルセットあたりをまとめるようにと指令が出たので、拙遅な感じでまとめました。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux シグナルの基礎">
+<meta name="twitter:title" content="Linux シグナルの基礎">
+<meta property="og:url" content="https://harasou.jp/2017/01/23/linux-signal/">
+<meta property="twitter:url" content="https://harasou.jp/2017/01/23/linux-signal/">
+<meta property="og:site_name" content="harasou.jp">
+<meta property="og:description" content="TLPI (The Linux Programming Interface) 再々。
+
+TLPI の輪読の際に @matsumotory よりシグナルセットあたりをまとめるようにと指令が出たので、拙遅な感じでまとめました。">
+<meta name="twitter:description" content="TLPI (The Linux Programming Interface) 再々。
+
+TLPI の輪読の際に @matsumotory よりシグナルセットあたりをまとめるようにと指令が出たので、拙遅な感じでまとめました。">
+<meta property="og:locale" content="ja">
+
+  
+    <meta property="article:published_time" content="2017-01-23T14:36:22">
+  
+  
+    <meta property="article:modified_time" content="2017-01-23T14:36:22">
+  
+  
+  
+  
+    
+      <meta property="article:tag" content="linux">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+  <meta name="twitter:site" content="@harasou5">
+
+
+  <meta name="twitter:creator" content="@harasou5">
+
+
+
+
+
+
+  <meta property="og:image" content="https://harasou.jp/2017/01/23/linux-signal/linux-programming-interface.png">
+  <meta property="twitter:image" content="https://harasou.jp/2017/01/23/linux-signal/linux-programming-interface.png">
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
+
+
+    <title>Linux シグナルの基礎</title>
+
+    <link rel="icon" href="/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://harasou.jp/2017/01/23/linux-signal/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css" />
+    
+    
+      
+        <link rel="stylesheet"  href="https://harasou.jp/css/style.css" swapPaginator="true">
+      
+    
+
+    
+      
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-62541096-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="5">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="/">harasou.jp</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=90" alt="プロフィール画像" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="5">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="/#about">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt="プロフィール画像" />
+        </a>
+        <h4 class="sidebar-profile-name">harasou</h4>
+        
+          <h5 class="sidebar-profile-bio">めくじらを立てない</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">ホーム</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">タグ</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">アーカイブ</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">プロフィール</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/harasou" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="5"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title" itemprop="headline">
+      Linux シグナルの基礎
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-01-23T14:36:22&#43;09:00">
+        
+  
+  
+  
+  
+    2017/1/23
+  
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown" itemprop="articleBody">
+            <div class="main-content-wrap">
+              <p>TLPI (The Linux Programming Interface) 再々。</p>
+
+<p>TLPI の輪読の際に @matsumotory よりシグナルセットあたりをまとめるようにと指令が出たので、拙遅な感じでまとめました。</p>
+
+<h2 id="シグナルとは">シグナルとは</h2>
+
+<p>プロセス間通信の一種。「プロセスにシグナルを送信すると、そのプロセスの正常処理に割り込んで、シグナル固有の処理(シグナルハンドラ) が実行される」プロセス側では、シグナルを受信した際の動作(シグナルハンドラ) を設定することや、シグナルをブロックすることも可能。</p>
+
+<p><img src="signal.png" alt="" /></p>
+
+<p>コンソールで、プロセスを終了させるために<code>kill -9 &lt;PID&gt;</code>とか<code>Ctrl+C</code>とかした際にも、対象プロセスにシグナルが送信されている。
+ちなみに、PID「1」の init や systemd に<code>kill -9 1</code>しても何も起らない。(そういえば昔、oom-killer に init を殺された覚えがあるな。勘違いだったか…)</p>
+
+<h2 id="シグナルの主な特徴">シグナルの主な特徴</h2>
+
+<ul>
+<li>シグナルの状態
+
+<ul>
+<li>シグナルを送ることを「生成」といい、そのシグナルが処理されることを「配送」という。また、生成から配送まで間の状態を「保留」という</li>
+</ul></li>
+<li>シグナルの生成
+
+<ul>
+<li>シグナルは、別プロセスや自身からも送信可能だが主にカーネルから送られることが多い</li>
+<li>シグナルは、プロセスだけでなく特定スレッドに対しても送信可能</li>
+</ul></li>
+<li>シグナルの配送
+
+<ul>
+<li>シグナルの種類によって、受信した際の標準の動作が決められている(SIGINTはプロセス終了、など)</li>
+<li>シグナルを受信するプロセスは、シグナル受信時の動作を変更できる(シグナルハンドラの登録)</li>
+</ul></li>
+<li>シグナルの保留
+
+<ul>
+<li>シグナルを受信するプロセスは、特定のシグナルをブロック・アンブロックすることができる(ブロック中にきたシグナルはアンブロック時に配送される)</li>
+</ul></li>
+</ul>
+
+<h2 id="シグナルの種類">シグナルの種類</h2>
+
+<p>シグナルには、古くからある「標準シグナル」と機能が追加された「リアルタイムシグナル」の 2種類がある。 シグナルには一意の整数(シグナル番号) が割り当てられていて、標準シグナルの場合は 1 から 32(NSIG) となっている。</p>
+
+<pre><code>[/usr/include/asm/signal.h]
+ 12 /* Here we must cater to libcs that poke about in kernel headers.  */
+ 13
+ 14 #define NSIG            32
+ 15 typedef unsigned long sigset_t;
+ 16
+ 17 #endif /* __ASSEMBLY__ */
+ 18
+ 19
+ 20 #define SIGHUP           1
+ 21 #define SIGINT           2
+ 22 #define SIGQUIT          3
+ 23 #define SIGILL           4
+ 24 #define SIGTRAP          5
+ 25 #define SIGABRT          6
+ 26 #define SIGIOT           6
+ 27 #define SIGBUS           7
+ 28 #define SIGFPE           8
+ 29 #define SIGKILL          9
+ 30 #define SIGUSR1         10
+ 31 #define SIGSEGV         11
+ 32 #define SIGUSR2         12
+ 33 #define SIGPIPE         13
+ 34 #define SIGALRM         14
+ 35 #define SIGTERM         15
+ 36 #define SIGSTKFLT       16
+ 37 #define SIGCHLD         17
+ 38 #define SIGCONT         18
+ 39 #define SIGSTOP         19
+ 40 #define SIGTSTP         20
+ 41 #define SIGTTIN         21
+ 42 #define SIGTTOU         22
+ 43 #define SIGURG          23
+ 44 #define SIGXCPU         24
+ 45 #define SIGXFSZ         25
+ 46 #define SIGVTALRM       26
+ 47 #define SIGPROF         27
+ 48 #define SIGWINCH        28
+ 49 #define SIGIO           29
+ 50 #define SIGPOLL         SIGIO
+ 51 /*
+ 52 #define SIGLOST         29
+ 53 */
+ 54 #define SIGPWR          30
+ 55 #define SIGSYS          31
+ 56 #define SIGUNUSED       31
+ 57
+ 58 /* These should not be considered constants from userland.  */
+ 59 #define SIGRTMIN        32
+ 60 #define SIGRTMAX        _NSIG
+</code></pre>
+
+<p>標準シグナルによってプロセスに伝えれらる情報は「シグナル番号」のみ。いつ、どこから何回受信したかと言った情報は伝えられない。 リアルタイムシグナルでは、こういった情報を伝えることができるようになっている。なお、リアルタイムシグナルには、標準シグナルのようなシグナル番号に対応すに名前(SIGHUP など)は定義されていない。</p>
+
+<div class="alert info ">
+  <p><p>@n_soda さんにコメントいただいたので補足</p>
+
+<pre><code>プロセスに伝えれらる情報は「シグナル番号」のみ
+</code></pre>
+
+<p>上記の様に記載していますが、sigaction() に SA_SIGINFO フラグを指定することで、handler 実行時にシグナルを生成した pid, uid, フォルト時のアドレスなどを含む、siginfo_t を受け取ることは可能です。</p>
+</p>
+</div>
+
+<h2 id="シグナルの生成">シグナルの生成</h2>
+
+<p>プロセスからシグルナルを送信する場合は、以下のようなシステムコールや glibc の関数を用いる。</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">システムコール・関数</th>
+<th align="left">用途</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">kill()</td>
+<td align="left">プロセスにシグナルを送信</td>
+</tr>
+
+<tr>
+<td align="left">pthread_kill()</td>
+<td align="left">スレッドにシグナルを送信</td>
+</tr>
+
+<tr>
+<td align="left">raise()</td>
+<td align="left">自身にシグナルを送信</td>
+</tr>
+
+<tr>
+<td align="left">killpg()</td>
+<td align="left">プロセスグループにシグナルを送信</td>
+</tr>
+</tbody>
+</table>
+
+<p>また、ハードウェアや端末契機でもシグナルは送られてくる。</p>
+
+<ul>
+<li>ハードウェア例外
+
+<ul>
+<li><code>SIGFPE</code> : 0 除算</li>
+<li><code>SIGSEGV</code> : メモリアクセス違反</li>
+</ul></li>
+<li>端末へキー入力
+
+<ul>
+<li><code>SIGINT</code> : Ctrl+C が入力された</li>
+<li><code>SIGQUIT</code> : Ctrl+\ が入力された</li>
+</ul></li>
+<li>ソフトウェアイベント
+
+<ul>
+<li><code>SIGCHLD</code> : 子プロセスが終了した</li>
+<li><code>SIGXCPU</code> : CPU の利用上限に達した (ハードリミットではSIGKILL)</li>
+<li><code>SIGIO</code> : fd からデータが読み取れる状態になった</li>
+</ul></li>
+</ul>
+
+<h2 id="シグナルの配送">シグナルの配送</h2>
+
+<p>シグナルが配送されると、プロセスの通常処理に割り込んで、シグナルハンドラが実行される。</p>
+
+<p>シグナル種類ごとにデフォルトの動作が決められており、個別にシグナルハンドラを登録していなければ、そのデフォルトの動作がカーネルにより実行される。デフォルトの動作は以下の５つ。</p>
+
+<ol>
+<li>プロセスを終了する</li>
+<li>コアを出力し、プロセスを終了する</li>
+<li>シグナルを無視する</li>
+<li>処理を一時停止する</li>
+<li>処理を再開する</li>
+</ol>
+
+<p>シグナルハンドラは、以下どちらかの関数を使用してシグナル番号ごとに登録できる。signal より sigaction のほうが、機能や移植性から見ても有用なので、利用を推奨されているらしい。</p>
+
+<ul>
+<li><p>signal()</p>
+
+<pre><code>void ( *signal(int sig, void (*handler)(int)) ) (int);
+</code></pre></li>
+
+<li><p>sigaction()</p>
+
+<pre><code>int sigaction(int sig, const struct sigaction *act, struct sigaction *oldact);
+</code></pre>
+
+<p>引数 act の型である sigaction 構造体は、以下のようになっている。</p>
+
+<pre><code>struct sigaction {
+    void (*sa_handler)(int);
+    sigset_t sa_mask;
+    int sa_flags;
+    void (*sa_restorer)(void);
+};
+</code></pre>
+
+<p>1 つ目のメンバである<code>sa_handler</code>は signal() の引数<code>handler</code>と同様にシグナルハンドラを表す。
+2 つ目のメンバである<code>sa_mask</code>はハンドラ実行中にブロックしたいグナルを指定する。ブロックしたいシグナルが複数ある場合もあるので、複数のシグナルを表すことができるシグナル</p></li>
+</ul>
+
+<h2 id="シグナルセット">シグナルセット</h2>
+
+<p>シグナルセットは、複数のシグナルをまとめて表現するもの。どのシグナルが選択されているかを表すだけなので、Linux では以下のような整数型で実装されており、各ビットの位置がシグナル番号に対応する。</p>
+
+<pre><code>[/usr/include/asm/signal.h]
+typedef unsigned long sigset_t;
+</code></pre>
+
+<p>プロセスがどのシグナルをブロックしているかは /proc/PID/status を見るとわかる(下記は 64bit 環境)。 bash を例にすると、</p>
+
+<pre><code># grep ^SigBlk /proc/$$/status
+SigBlk: 0000000000010000
+</code></pre>
+
+<p>SigBlk の値がブロックしているシグナルを表していて、これは16進表記になっているので、2進表記にすると以下のようになる。</p>
+
+<pre><code># ruby -e 'printf(&quot;%064b\n&quot;,0x0000000000010000)'
+0000000000000000000000000000000000000000000000010000000000000000
+</code></pre>
+
+<p>つまり、17bit 目にビットが立っているので、上に記載した「シグナルの種類」を見ると、シグナル番号 17 つまり、SIGCHLD のみブロックしていることがわかる。</p>
+
+<div class="alert warning ">
+  <p>記事公開時、SigBlk を紹介するところを誤って SigIgn の例を記載していたため、修正しました。</p>
+</div>
+
+<p>ただ、Linux の実装がビットマスク使用しているだけなので、シグナルマスクを操作する場合は、必ず以下の関数を用いる必要がある。</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">関数</th>
+<th align="left">用途</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">sigemptyset</td>
+<td align="left">すべてシグナルが選択されていない状態に初期化する</td>
+</tr>
+
+<tr>
+<td align="left">sigfillset</td>
+<td align="left">すべてシグナルが選択されている状態に初期化する</td>
+</tr>
+
+<tr>
+<td align="left">sigaddset</td>
+<td align="left">シグナルセットに一つのシグナルを追加する</td>
+</tr>
+
+<tr>
+<td align="left">sigdelset</td>
+<td align="left">シグナルセットから一つのシグナルを削除する</td>
+</tr>
+
+<tr>
+<td align="left">sigismember</td>
+<td align="left">シグナルセットに特定のシグナルが含まれているか調べる</td>
+</tr>
+
+<tr>
+<td align="left">sigandset</td>
+<td align="left">シグナルセットに指定した sigset_t とAND した結果を設定する</td>
+</tr>
+
+<tr>
+<td align="left">sigorset</td>
+<td align="left">シグナルセットに指定した sigset_t とOR した結果を設定する</td>
+</tr>
+
+<tr>
+<td align="left">sigisemptyset</td>
+<td align="left">シグナルセットが空かどうかしらべる</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="シグナルの保留">シグナルの保留</h2>
+
+<p>シグナルが「生成」され、該当のプロセスが次に実行されたタイミングで、シグナルは「配送」される。この生成から配送までの間の状態を「保留」という。</p>
+
+<p><img src="signal-life.png" alt="" /></p>
+
+<p>保留の状態は、スケジュール待ちの場合だけでなく、プロセス自身でシグナルをブロックすることでも発生する。</p>
+
+<p>さきほど説明した sigaction() では、シグナルセットを使用してシグナルのブロックを指示することができた。ただ、これは、シグナルハンドラ実行中のみブロックされており、ハンドラが終了すると自動的に解除（アンブロック）される。</p>
+
+<p>そのため、 明示的にブロック・アンブロックしたい場合は、sigprocmask(), pthread_sigmask() を使用する。</p>
+
+<h2 id="シグナルマスク">シグナルマスク</h2>
+
+<p>ブロックしているシグナルは「シグナルマスク」というプロセス（正しくはスレッド）の属性で管理されており、以下のようなタイミングで操作される。</p>
+
+<ul>
+<li>シグナルが配送された際、下記シグナルをシグナルマスクに追加し、シグナルハンドラが完了するとシグナルマスクから自動的に削除する
+
+<ul>
+<li>受診した該当のシグナル（sigaction で変更可能）</li>
+<li>sigaction で指定したブロックしたいグナルセットのシグナル</li>
+</ul></li>
+<li>sigprocmask(), pthread_sigmask() が実行されたタイミング
+
+<ul>
+<li>引数に SIG_BLOCK が指定されると追加、SIG_UNBLOCK が指定されると削除される</li>
+</ul></li>
+</ul>
+
+<h2 id="ブロック中のシグナル">ブロック中のシグナル</h2>
+
+<p>ブロック中のシグナルが生成されると、カーネルはシグナルを保留シグナルに追加し、該当のシグナルがアンブロックされるまで配送しない。また、ブロック中に同じシグナル番号のシグナルが複数回生成されても、アンブロック時には一度しか配送されない。</p>
+
+<p>保留シグナルは、ブロックシグナル（SigBlk）と同様に /proc/PID/status で確認できる。</p>
+
+<pre><code># sleep 10 &amp;
+[1] 21577
+#
+# kill -STOP 21577
+# kill -USR1 21577
+# grep ^ShdPnd /proc/21577/status
+SigPnd: 0000000000000200
+#
+# ruby -e 'printf(&quot;%064b\n&quot;,0x0000000000000200)'
+0000000000000000000000000000000000000000000000000000001000000000
+</code></pre>
+
+<p>sleep コマンドを STOP し、SIGUSR1 を送っている。STOP しているのでシグナル(SIGUSR1)が配送されず、保留状態となっている。</p>
+
+<p>なお、SIGKILL、SIGSTOP をブロックしようとしても無視され、エラーにもならない。</p>
+
+<h2 id="シグナル処理時のカーネルの動作">シグナル処理時のカーネルの動作</h2>
+
+<p>(本当は、ここの内容をメインにしたかったが、概要を書いただけで力尽きたので、次回書く。)</p>
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">タグ</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="/tags/linux/">linux</a>
+
+                  </div>
+                
+              
+            
+            <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="/2017/11/23/change-hugo-from-hexo/" data-tooltip="ブログを hexo から hugo に変更した">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">次</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="/2016/06/29/linux-acl/" data-tooltip="Linux ACL の基礎">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">前</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="http://b.hatena.ne.jp/entry/https://harasou.jp/2017/01/23/linux-signal/">
+              <i class="fa icon-hatebu"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="http://getpocket.com/edit?url=https://harasou.jp/2017/01/23/linux-signal/">
+              <i class="fa icon-pocket"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2017/01/23/linux-signal/">
+              <i class="fa fa-facebook-official"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://harasou.jp/2017/01/23/linux-signal/">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </li>
+        
+      
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+            
+              
+            
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2019 harasou. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+        <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="/2017/11/23/change-hugo-from-hexo/" data-tooltip="ブログを hexo から hugo に変更した">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">次</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="/2016/06/29/linux-acl/" data-tooltip="Linux ACL の基礎">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">前</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="http://b.hatena.ne.jp/entry/https://harasou.jp/2017/01/23/linux-signal/">
+              <i class="fa icon-hatebu"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="http://getpocket.com/edit?url=https://harasou.jp/2017/01/23/linux-signal/">
+              <i class="fa icon-pocket"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2017/01/23/linux-signal/">
+              <i class="fa fa-facebook-official"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://harasou.jp/2017/01/23/linux-signal/">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </li>
+        
+      
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="http://b.hatena.ne.jp/entry/https%3A%2F%2Fharasou.jp%2F2017%2F01%2F23%2Flinux-signal%2F">
+          <i class="fa icon-hatebu"></i><span>Hatebuで共有</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="http://getpocket.com/edit?url=https%3A%2F%2Fharasou.jp%2F2017%2F01%2F23%2Flinux-signal%2F">
+          <i class="fa icon-pocket"></i><span>Pocketで共有</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fharasou.jp%2F2017%2F01%2F23%2Flinux-signal%2F">
+          <i class="fa fa-facebook-official"></i><span>Facebookで共有</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fharasou.jp%2F2017%2F01%2F23%2Flinux-signal%2F">
+          <i class="fa fa-twitter"></i><span>Twitterで共有</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt="プロフィール画像" />
+    
+    <h4 id="about-card-name">harasou</h4>
+    
+      <div id="about-card-bio">めくじらを立てない</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Infra Engineer
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        Fukuoka Japan
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      
+      <div id="cover" style="background-image:url('https://harasou.jp/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js"></script>
+
+
+<script lang="javascript">
+window.onload = updateMinWidth;
+window.onresize = updateMinWidth;
+document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
+function updateMinWidth() {
+  var sidebar = document.getElementById("sidebar");
+  var main = document.getElementById("main");
+  main.style.minWidth = "";
+  var w1 = getComputedStyle(main).getPropertyValue("min-width");
+  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
+  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
+  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
+}
+</script>
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+  
+    
+  
+
+
+
+
+    
+  </body>
+</html>
+

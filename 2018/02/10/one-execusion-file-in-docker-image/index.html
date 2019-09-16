@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.59.0-DEV with theme Tranquilpeak 0.4.7-BETA">
+<meta name="author" content="harasou">
+<meta name="keywords" content="">
+<meta name="description" content="「Go で書かれた実行ファイルを一つだけいれた Dockerイメージを作る」って話が こちらのサイト
+に載っていて、なるほどなぁと思ったので試して見た。">
+
+
+<meta property="og:description" content="「Go で書かれた実行ファイルを一つだけいれた Dockerイメージを作る」って話が こちらのサイト
+に載っていて、なるほどなぁと思ったので試して見た。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="実行ファイル一つだけの Docker イメージを作る">
+<meta name="twitter:title" content="実行ファイル一つだけの Docker イメージを作る">
+<meta property="og:url" content="https://harasou.jp/2018/02/10/one-execusion-file-in-docker-image/">
+<meta property="twitter:url" content="https://harasou.jp/2018/02/10/one-execusion-file-in-docker-image/">
+<meta property="og:site_name" content="harasou.jp">
+<meta property="og:description" content="「Go で書かれた実行ファイルを一つだけいれた Dockerイメージを作る」って話が こちらのサイト
+に載っていて、なるほどなぁと思ったので試して見た。">
+<meta name="twitter:description" content="「Go で書かれた実行ファイルを一つだけいれた Dockerイメージを作る」って話が こちらのサイト
+に載っていて、なるほどなぁと思ったので試して見た。">
+<meta property="og:locale" content="ja">
+
+  
+    <meta property="article:published_time" content="2018-02-10T11:36:50">
+  
+  
+    <meta property="article:modified_time" content="2018-02-10T11:36:50">
+  
+  
+  
+  
+    
+      <meta property="article:tag" content="docker">
+    
+      <meta property="article:tag" content="golang">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+  <meta name="twitter:site" content="@harasou5">
+
+
+  <meta name="twitter:creator" content="@harasou5">
+
+
+
+
+
+
+  <meta property="og:image" content="https://harasou.jp/2018/02/10/one-execusion-file-in-docker-image/vertical.png">
+  <meta property="twitter:image" content="https://harasou.jp/2018/02/10/one-execusion-file-in-docker-image/vertical.png">
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
+
+
+    <title>実行ファイル一つだけの Docker イメージを作る</title>
+
+    <link rel="icon" href="/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://harasou.jp/2018/02/10/one-execusion-file-in-docker-image/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css" />
+    
+    
+      
+        <link rel="stylesheet"  href="https://harasou.jp/css/style.css" swapPaginator="true">
+      
+    
+
+    
+      
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-62541096-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="5">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="/">harasou.jp</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=90" alt="プロフィール画像" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="5">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="/#about">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt="プロフィール画像" />
+        </a>
+        <h4 class="sidebar-profile-name">harasou</h4>
+        
+          <h5 class="sidebar-profile-bio">めくじらを立てない</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">ホーム</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">タグ</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">アーカイブ</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">プロフィール</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/harasou" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="5"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title" itemprop="headline">
+      実行ファイル一つだけの Docker イメージを作る
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-02-10T11:36:50&#43;09:00">
+        
+  
+  
+  
+  
+    2018/2/10
+  
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown" itemprop="articleBody">
+            <div class="main-content-wrap">
+              <p>「Go で書かれた実行ファイルを一つだけいれた Dockerイメージを作る」って話が <a href="http://blog.amedama.jp/entry/2018/02/04/034707">こちらのサイト</a>
+に載っていて、なるほどなぁと思ったので試して見た。</p>
+
+<blockquote>
+<p><a href="http://blog.amedama.jp/entry/2018/02/04/034707">まっさらな状態から Docker イメージを作る</a></p>
+
+<p>つまり、究極的にはプロセスの動作に必要なファイル一式がシングルバイナリにまとめられて
+いれば、そのファイルだけあれば良いことになる。</p>
+</blockquote>
+
+<p>スタティックリンクされたバイナリであれば、ルートファイルシステムって、いらんのか&hellip;。</p>
+
+<h2 id="dcckerイメージの作り方">Dcckerイメージの作り方</h2>
+
+<p><img src="horizontal.png" alt="" /></p>
+
+<p>Dockerfile は、ベースとして利用するイメージを <code>FROM</code> で指定するが、<code>FROM scratch</code> と
+指定すると何もない状態をベースにできる。あとは、実行ファイルをひとつだけ <code>ADD</code> して
+あげれば「実行ファイル一つだけの Docker イメージ」ができあがり。</p>
+
+<p>Dockerfile</p>
+
+<pre><code>FROM scratch
+ADD http-fileserver /
+
+CMD [&quot;/http-fileserver&quot;]
+</code></pre>
+
+<p><code>http-fileserver</code> が、今回用意した「Go で書かれた実行ファイル」で、public ディレクトリ配下を
+HTTP で公開するだけのシンプルなやつ。</p>
+
+<p>http-fileserver.go</p>
+
+<pre><code>package main
+
+import (
+	&quot;log&quot;
+	&quot;net/http&quot;
+)
+
+func main() {
+	log.Fatal(http.ListenAndServe(&quot;:8080&quot;, http.FileServer(http.Dir(&quot;public&quot;))))
+}
+</code></pre>
+
+<h3 id="build-run">Build &amp; Run</h3>
+
+<p>まずは Go のプログラムをビルド。Docker は Linux なので、Linux 用にビルドする必要がある。
+Go はクロスコンパイルが簡単すぎる。</p>
+
+<pre><code>GOOS=linux go build http-fileserver.go
+</code></pre>
+
+<p>次に、Docker イメージの作成。</p>
+
+<pre><code>docker build -t harasou/http-fileserver:latest .
+</code></pre>
+
+<p>そして実行。</p>
+
+<pre><code>docker run -it -p 8080:8080 -v $PWD:/public -t harasou/http-fileserver
+</code></pre>
+
+<p>カレントディレクトリのファイルが、ブラウザ <a href="http://localhost:8080/">http://localhost:8080/</a> から参照でき、確かに
+ちゃんと動いている :-)</p>
+
+<p><img src="browser.png" alt="" /></p>
+
+<h2 id="本当にバイナリ一つしかないのか">本当にバイナリ一つしかないのか？</h2>
+
+<p>最初、http-fileserver.go の <code>http.Dir(&quot;public&quot;)</code> を <code>http.Dir(&quot;.&quot;)</code> のように書いていたら、
+以下のように見えていた。</p>
+
+<p><img src="browser2.png" alt="" /></p>
+
+<ul>
+<li><code>http-fileserver</code> Dockerfile で ADD したファイル</li>
+<li><code>public/</code> docker run 時に指定したボリューム</li>
+</ul>
+
+<p>指定したもの以外にも、いくつかファイルが見える。docker コマンドで、実行中のコンテナ内の
+ファイルを確認してみると、</p>
+
+<pre><code>$ docker ps
+CONTAINER ID        IMAGE                     COMMAND              CREATED             STATUS              PORTS                    NAMES
+2de9fb95f020        harasou/http-fileserver   &quot;/http-fileserver&quot;   12 seconds ago      Up 15 seconds       0.0.0.0:8080-&gt;8080/tcp   focused_hodgkin
+</code></pre>
+
+<pre><code>$ docker export 2de9fb95f020 | tar tv
+-rwxr-xr-x  0 0      0           0  2  9 23:48 .dockerenv
+drwxr-xr-x  0 0      0           0  2  9 23:48 dev/
+-rwxr-xr-x  0 0      0           0  2  9 23:48 dev/console
+drwxr-xr-x  0 0      0           0  2  9 23:48 dev/pts/
+drwxr-xr-x  0 0      0           0  2  9 23:48 dev/shm/
+drwxr-xr-x  0 0      0           0  2  9 23:48 etc/
+-rwxr-xr-x  0 0      0           0  2  9 23:48 etc/hostname
+-rwxr-xr-x  0 0      0           0  2  9 23:48 etc/hosts
+lrwxrwxrwx  0 0      0           0  2  9 23:48 etc/mtab -&gt; /proc/mounts
+-rwxr-xr-x  0 0      0           0  2  9 23:48 etc/resolv.conf
+-rwxr-xr-x  0 0      0     6188001  2  9 21:28 http-fileserver
+drwxr-xr-x  0 0      0           0  2  9 23:48 proc/
+drwxr-xr-x  0 0      0           0  2  9 23:48 public/
+drwxr-xr-x  0 0      0           0  2  9 23:48 sys/
+</code></pre>
+
+<p>確かにコンテナ内には、http-fileserver 以外のファイルもある。では、イメージの中身は？</p>
+
+<pre><code>$ docker image ls
+REPOSITORY                TAG                 IMAGE ID            CREATED             SIZE
+harasou/http-fileserver   latest              f9c1a31a943c        About an hour ago   6.19MB
+</code></pre>
+
+<pre><code>$ docker save f9c1a31a943c | tar tv
+drwxr-xr-x  0 0      0           0  2  9 22:41 5947e13bfcf28a2aaed85e364f76a031510cc9a8365d545ec9365995dfb2edb4/
+-rw-r--r--  0 0      0           3  2  9 22:41 5947e13bfcf28a2aaed85e364f76a031510cc9a8365d545ec9365995dfb2edb4/VERSION
+-rw-r--r--  0 0      0        1202  2  9 22:41 5947e13bfcf28a2aaed85e364f76a031510cc9a8365d545ec9365995dfb2edb4/json
+-rw-r--r--  0 0      0     6189568  2  9 22:41 5947e13bfcf28a2aaed85e364f76a031510cc9a8365d545ec9365995dfb2edb4/layer.tar
+-rw-r--r--  0 0      0        1539  2  9 22:41 f9c1a31a943c130a319b67a7704272f01d19153db1181127c231009898616742.json
+-rw-r--r--  0 0      0         189  1  1  1970 manifest.json
+$
+</code></pre>
+
+<p>layer.tar は一つしかないので、階層的には一つみたい。</p>
+
+<pre><code>$ docker save f9c1a31a943c | tar xv
+x 5947e13bfcf28a2aaed85e364f76a031510cc9a8365d545ec9365995dfb2edb4/
+x 5947e13bfcf28a2aaed85e364f76a031510cc9a8365d545ec9365995dfb2edb4/VERSION
+x 5947e13bfcf28a2aaed85e364f76a031510cc9a8365d545ec9365995dfb2edb4/json
+x 5947e13bfcf28a2aaed85e364f76a031510cc9a8365d545ec9365995dfb2edb4/layer.tar
+x f9c1a31a943c130a319b67a7704272f01d19153db1181127c231009898616742.json
+x manifest.json
+</code></pre>
+
+<pre><code>$ tar tvf 5947e13bfcf28a2aaed85e364f76a031510cc9a8365d545ec9365995dfb2edb4/layer.tar
+-rwxr-xr-x  0 0      0     6188001  2  9 21:28 http-fileserver
+</code></pre>
+
+<p>中身をみると、確かに http-fileserver しかないので、やはり、イメージ自体には、
+実行ファイル一つしかないようだ :-)</p>
+
+<!--links-->
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">タグ</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="/tags/docker/">docker</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/golang/">golang</a>
+
+                  </div>
+                
+              
+            
+            <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="/2018/08/12/japan-daylight-saving-time/" data-tooltip="Linuxでのサマータイム - JDTの来襲">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">次</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="/2018/01/28/gaego-static-hosting/" data-tooltip="GAE/Go で静的サイトを公開する">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">前</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="http://b.hatena.ne.jp/entry/https://harasou.jp/2018/02/10/one-execusion-file-in-docker-image/">
+              <i class="fa icon-hatebu"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="http://getpocket.com/edit?url=https://harasou.jp/2018/02/10/one-execusion-file-in-docker-image/">
+              <i class="fa icon-pocket"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2018/02/10/one-execusion-file-in-docker-image/">
+              <i class="fa fa-facebook-official"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://harasou.jp/2018/02/10/one-execusion-file-in-docker-image/">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </li>
+        
+      
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+            
+              
+            
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2019 harasou. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+        <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="/2018/08/12/japan-daylight-saving-time/" data-tooltip="Linuxでのサマータイム - JDTの来襲">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">次</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="/2018/01/28/gaego-static-hosting/" data-tooltip="GAE/Go で静的サイトを公開する">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">前</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="http://b.hatena.ne.jp/entry/https://harasou.jp/2018/02/10/one-execusion-file-in-docker-image/">
+              <i class="fa icon-hatebu"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="http://getpocket.com/edit?url=https://harasou.jp/2018/02/10/one-execusion-file-in-docker-image/">
+              <i class="fa icon-pocket"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2018/02/10/one-execusion-file-in-docker-image/">
+              <i class="fa fa-facebook-official"></i>
+            </a>
+          </li>
+        
+          <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://harasou.jp/2018/02/10/one-execusion-file-in-docker-image/">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </li>
+        
+      
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="http://b.hatena.ne.jp/entry/https%3A%2F%2Fharasou.jp%2F2018%2F02%2F10%2Fone-execusion-file-in-docker-image%2F">
+          <i class="fa icon-hatebu"></i><span>Hatebuで共有</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="http://getpocket.com/edit?url=https%3A%2F%2Fharasou.jp%2F2018%2F02%2F10%2Fone-execusion-file-in-docker-image%2F">
+          <i class="fa icon-pocket"></i><span>Pocketで共有</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fharasou.jp%2F2018%2F02%2F10%2Fone-execusion-file-in-docker-image%2F">
+          <i class="fa fa-facebook-official"></i><span>Facebookで共有</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fharasou.jp%2F2018%2F02%2F10%2Fone-execusion-file-in-docker-image%2F">
+          <i class="fa fa-twitter"></i><span>Twitterで共有</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt="プロフィール画像" />
+    
+    <h4 id="about-card-name">harasou</h4>
+    
+      <div id="about-card-bio">めくじらを立てない</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Infra Engineer
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        Fukuoka Japan
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      
+      <div id="cover" style="background-image:url('https://harasou.jp/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js"></script>
+
+
+<script lang="javascript">
+window.onload = updateMinWidth;
+window.onresize = updateMinWidth;
+document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
+function updateMinWidth() {
+  var sidebar = document.getElementById("sidebar");
+  var main = document.getElementById("main");
+  main.style.minWidth = "";
+  var w1 = getComputedStyle(main).getPropertyValue("min-width");
+  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
+  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
+  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
+}
+</script>
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+  
+    
+  
+
+
+
+
+    
+  </body>
+</html>
+
