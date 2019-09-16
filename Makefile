@@ -15,7 +15,7 @@ server:
 
 public: clean
 	$(HUGO) --baseURL http://127.0.0.1:8080/
-	docker run -it --rm -p 8080:8080 -v $(CURDIR)/public:/public harasou/http-fileserver
+	go run main.go
 
 clean:
 	@-rm -rf public/
