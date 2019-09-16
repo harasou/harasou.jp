@@ -3,7 +3,6 @@ languageCode = "ja"
 defaultContentLanguage = "ja"
 title = "harasou.jp"
 theme = "tranquilpeak"
-disqusShortname = "harasougithubio"
 googleAnalytics = "UA-62541096-1"
 pygmentsCodeFences = true
 
