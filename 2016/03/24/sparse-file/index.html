@@ -1,355 +1,199 @@
-<!DOCTYPE html>
-<html lang="ja">
-  <head>
-    
-    <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.59.0-DEV with theme Tranquilpeak 0.4.7-BETA">
-<meta name="author" content="harasou">
-<meta name="keywords" content="">
-<meta name="description" content="最近かなり流行っている「Linux プログラミングインタフェース」を読んでたら、lseek(2) の解説で Sparse File (スパースファイル) の話が出てきたので、実装が気になって調べてみた。">
-
-
+<!doctype html><html lang=ja>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=generator content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name=author content="harasou">
+<meta name=keywords content>
+<meta name=description content="最近かなり流行っている「Linux プログラミングインタフェース」を読んでたら、lseek(2) の解説で Sparse File (スパースファイル) の話が出てきたので、実装が気になって調べてみた。">
 <meta property="og:description" content="最近かなり流行っている「Linux プログラミングインタフェース」を読んでたら、lseek(2) の解説で Sparse File (スパースファイル) の話が出てきたので、実装が気になって調べてみた。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Sparse File (スパースファイル) の仕組み">
-<meta name="twitter:title" content="Sparse File (スパースファイル) の仕組み">
+<meta name=twitter:title content="Sparse File (スパースファイル) の仕組み">
 <meta property="og:url" content="https://harasou.jp/2016/03/24/sparse-file/">
 <meta property="twitter:url" content="https://harasou.jp/2016/03/24/sparse-file/">
 <meta property="og:site_name" content="harasou.jp">
 <meta property="og:description" content="最近かなり流行っている「Linux プログラミングインタフェース」を読んでたら、lseek(2) の解説で Sparse File (スパースファイル) の話が出てきたので、実装が気になって調べてみた。">
-<meta name="twitter:description" content="最近かなり流行っている「Linux プログラミングインタフェース」を読んでたら、lseek(2) の解説で Sparse File (スパースファイル) の話が出てきたので、実装が気になって調べてみた。">
+<meta name=twitter:description content="最近かなり流行っている「Linux プログラミングインタフェース」を読んでたら、lseek(2) の解説で Sparse File (スパースファイル) の話が出てきたので、実装が気になって調べてみた。">
 <meta property="og:locale" content="ja">
-
-  
-    <meta property="article:published_time" content="2016-03-24T01:33:20">
-  
-  
-    <meta property="article:modified_time" content="2016-03-24T01:33:20">
-  
-  
-  
-  
-    
-      <meta property="article:tag" content="kernel">
-    
-      <meta property="article:tag" content="filesystem">
-    
-  
-
-
-<meta name="twitter:card" content="summary">
-
-  <meta name="twitter:site" content="@harasou5">
-
-
-  <meta name="twitter:creator" content="@harasou5">
-
-
-
-
-
-
-  <meta property="og:image" content="https://harasou.jp/2016/03/24/sparse-file/linux-programming-interface.png">
-  <meta property="twitter:image" content="https://harasou.jp/2016/03/24/sparse-file/linux-programming-interface.png">
-
-
-
-
-
-  <meta property="og:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
-  <meta property="twitter:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
-
-
-    <title>Sparse File (スパースファイル) の仕組み</title>
-
-    <link rel="icon" href="/favicon.png">
-    
-
-    
-
-    <link rel="canonical" href="https://harasou.jp/2016/03/24/sparse-file/">
-
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
-    
-    
-    <link rel="stylesheet" href="/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css" />
-    
-    
-      
-        <link rel="stylesheet"  href="https://harasou.jp/css/style.css" swapPaginator="true">
-      
-    
-
-    
-      
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-	ga('create', 'UA-62541096-1', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-
-    
-    
-  </head>
-
-  <body>
-    <div id="blog">
-      <header id="header" data-behavior="5">
-  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
-  <div class="header-title">
-    <a class="header-title-link" href="/">harasou.jp</a>
-  </div>
-  
-    
-      <a class="header-right-picture "
-         href="/#about">
-    
-    
-    
-      
-        <img class="header-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=90" alt="プロフィール画像" />
-      
-    
-    </a>
-  
-</header>
-
-      <nav id="sidebar" data-behavior="5">
-  <div class="sidebar-container">
-    
-      <div class="sidebar-profile">
-        <a href="/#about">
-          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt="プロフィール画像" />
-        </a>
-        <h4 class="sidebar-profile-name">harasou</h4>
-        
-          <h5 class="sidebar-profile-bio">めくじらを立てない</h5>
-        
-      </div>
-    
-    <ul class="sidebar-buttons">
-      
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="/">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
-      
-      <span class="sidebar-button-desc">ホーム</span>
-    </a>
-  </li>
-
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="/tags">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
-      
-      <span class="sidebar-button-desc">タグ</span>
-    </a>
-  </li>
-
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="/archives">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
-      
-      <span class="sidebar-button-desc">アーカイブ</span>
-    </a>
-  </li>
-
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="/#about">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
-      
-      <span class="sidebar-button-desc">プロフィール</span>
-    </a>
-  </li>
-
-
-    </ul>
-    <ul class="sidebar-buttons">
-      
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="https://github.com/harasou" target="_blank" rel="noopener">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
-      
-      <span class="sidebar-button-desc">GitHub</span>
-    </a>
-  </li>
-
-
-    </ul>
-    <ul class="sidebar-buttons">
-      
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="/index.xml">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
-      
-      <span class="sidebar-button-desc">RSS</span>
-    </a>
-  </li>
-
-
-    </ul>
-  </div>
-</nav>
-
-      
-
-      <div id="main" data-behavior="5"
-        class="
-               hasCoverMetaIn
-               ">
-        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
-          
-          
-            <div class="post-header main-content-wrap text-left">
-  
-    <h1 class="post-title" itemprop="headline">
-      Sparse File (スパースファイル) の仕組み
-    </h1>
-  
-  
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-03-24T01:33:20&#43;09:00">
-        
-  
-  
-  
-  
-    2016/3/24
-  
-
-      </time>
-    
-    
-  </div>
-
+<meta property="article:published_time" content="2016-03-24T01:33:20">
+<meta property="article:modified_time" content="2016-03-24T01:33:20">
+<meta property="article:tag" content="kernel">
+<meta property="article:tag" content="filesystem">
+<meta name=twitter:card content="summary">
+<meta name=twitter:site content="@harasou5">
+<meta name=twitter:creator content="@harasou5">
+<meta property="og:image" content="https://harasou.jp/2016/03/24/sparse-file/linux-programming-interface.png">
+<meta property="twitter:image" content="https://harasou.jp/2016/03/24/sparse-file/linux-programming-interface.png">
+<meta property="og:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
+<meta property="twitter:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
+<title>Sparse File (スパースファイル) の仕組み</title>
+<link rel=icon href=/favicon.png>
+<link rel=canonical href=https://harasou.jp/2016/03/24/sparse-file/>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin=anonymous>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin=anonymous>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin=anonymous>
+<link rel=stylesheet href=/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css>
+<link rel=stylesheet href=https://harasou.jp/css/style.css swappaginator=true>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-62541096-1','auto'),ga('send','pageview'))</script>
+</head>
+<body>
+<div id=blog>
+<header id=header data-behavior=5>
+<i id=btn-open-sidebar class="fa fa-lg fa-bars"></i>
+<div class=header-title>
+<a class=header-title-link href=/>harasou.jp</a>
 </div>
-          
-          <div class="post-content markdown" itemprop="articleBody">
-            <div class="main-content-wrap">
-              <p>最近かなり流行っている「Linux プログラミングインタフェース」を読んでたら、lseek(2) の解説で Sparse File (スパースファイル) の話が出てきたので、実装が気になって調べてみた。</p>
-
-<p><img src="linux-programming-interface.png" alt="" /></p>
-
+<a class=header-right-picture href=/#about>
+<img class=header-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=90" alt=プロフィール画像>
+</a>
+</header>
+<nav id=sidebar data-behavior=5>
+<div class=sidebar-container>
+<div class=sidebar-profile>
+<a href=/#about>
+<img class=sidebar-profile-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt=プロフィール画像>
+</a>
+<h4 class=sidebar-profile-name>harasou</h4>
+<h5 class=sidebar-profile-bio>めくじらを立てない</h5>
+</div>
+<ul class=sidebar-buttons>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/>
+<i class="sidebar-button-icon fa fa-lg fa-home"></i>
+<span class=sidebar-button-desc>ホーム</span>
+</a>
+</li>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/tags>
+<i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+<span class=sidebar-button-desc>タグ</span>
+</a>
+</li>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/archives>
+<i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+<span class=sidebar-button-desc>アーカイブ</span>
+</a>
+</li>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/#about>
+<i class="sidebar-button-icon fa fa-lg fa-question"></i>
+<span class=sidebar-button-desc>プロフィール</span>
+</a>
+</li>
+</ul>
+<ul class=sidebar-buttons>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=https://github.com/harasou target=_blank rel=noopener>
+<i class="sidebar-button-icon fa fa-lg fa-github"></i>
+<span class=sidebar-button-desc>GitHub</span>
+</a>
+</li>
+</ul>
+<ul class=sidebar-buttons>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/index.xml>
+<i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+<span class=sidebar-button-desc>RSS</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+<div id=main data-behavior=5 class=hasCoverMetaIn>
+<article class=post itemscope itemtype=http://schema.org/BlogPosting>
+<div class="post-header main-content-wrap text-left">
+<h1 class=post-title itemprop=headline>
+Sparse File (スパースファイル) の仕組み
+</h1>
+<div class="postShorten-meta post-meta">
+<time itemprop=datePublished datetime=2016-03-24T01:33:20+09:00>
+2016/3/24
+</time>
+</div>
+</div>
+<div class="post-content markdown" itemprop=articleBody>
+<div class=main-content-wrap>
+<p>最近かなり流行っている「Linux プログラミングインタフェース」を読んでたら、lseek(2) の解説で Sparse File (スパースファイル) の話が出てきたので、実装が気になって調べてみた。</p>
+<p><img src=linux-programming-interface.png alt></p>
 <blockquote>
-<p>ファイル末尾を越えた位置へシークするとどうなるでしょうか? そしてその位置で I/O を実行すると? &hellip; (略) 意外 に思われるかもしれませんが、書き込みは可能なのです。</p>
+<p>ファイル末尾を越えた位置へシークするとどうなるでしょうか? そしてその位置で I/O を実行すると? &mldr; (略) 意外 に思われるかもしれませんが、書き込みは可能なのです。</p>
 </blockquote>
-
-<p>refs: <a href="https://www.oreilly.co.jp/books/9784873115856/">https://www.oreilly.co.jp/books/9784873115856/</a></p>
-
-<h1 id="sparse-file-とは">Sparse File とは</h1>
-
+<p>refs: <a href=https://www.oreilly.co.jp/books/9784873115856/>https://www.oreilly.co.jp/books/9784873115856/</a></p>
+<h1 id=sparse-file-とは>Sparse File とは</h1>
 <p>簡単に言うと、内部に NULL のかたまり(ファイルホール)を含むファイルのこと。こんなやつ。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="color:#75715e">#  ls -shl sparse_file</span>
-<span style="color:#ae81ff">4</span>.0K -rw-r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">1</span>.1M  3月 <span style="color:#ae81ff">24</span> <span style="color:#ae81ff">01</span>:30 <span style="color:#ae81ff">2016</span> sparse_file</code></pre></div>
-<p>ls で s オプションをつけると実際に使用しているブロックサイズが表示される。ファイルサイズ見ると 1M以上あるが、実際は 4K しか使用していない。</p>
-
-<pre><code># od -tx1 sparse-file
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=color:#75715e>#  ls -shl sparse_file</span>
+4.0K -rw-r--r-- <span style=color:#ae81ff>1</span> root root 1.1M  3月 <span style=color:#ae81ff>24</span> 01:30 <span style=color:#ae81ff>2016</span> sparse_file
+</code></pre></div><p>ls で s オプションをつけると実際に使用しているブロックサイズが表示される。ファイルサイズ見ると 1M以上あるが、実際は 4K しか使用していない。</p>
+<pre tabindex=0><code># od -tx1 sparse-file
 0000000 31 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 &lt;-
 0000020 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 &lt;- この辺が NULL のかたまり
 *
 4000000 31
-</code></pre>
-
-<p>フォイルの中身はこんな感じ。
+</code></pre><p>フォイルの中身はこんな感じ。
 od の出力にある <code>*</code> は、アドレス 4000000 まで <code>00(NULL)</code> が続いていることを表している。
 上の例だとファイルの先頭と末尾に１バイトの文字「1 (0x31)」があり、その間の 1Mぐらいが NULL で埋まっている。</p>
-
-<h1 id="sparse-file-の作り方">Sparse File の作り方</h1>
-
+<h1 id=sparse-file-の作り方>Sparse File の作り方</h1>
 <p>dd 作るのが簡単。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="color:#75715e"># dd if=/dev/zero of=sparse-file bs=1M seek=1024 count=0</span>
-<span style="color:#ae81ff">0</span>+0 records in
-<span style="color:#ae81ff">0</span>+0 records out
-<span style="color:#ae81ff">0</span> bytes <span style="color:#f92672">(</span><span style="color:#ae81ff">0</span> B<span style="color:#f92672">)</span> copied, <span style="color:#ae81ff">6</span>.858e-06 s, <span style="color:#ae81ff">0</span>.0 kB/s
-#
-<span style="color:#75715e"># ls -lhs sparse-file</span>
-<span style="color:#ae81ff">0</span> -rw-r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">1</span>.0G  3月 <span style="color:#ae81ff">24</span> <span style="color:#ae81ff">01</span>:59 <span style="color:#ae81ff">2016</span> sparse-file</code></pre></div>
-<p>上記の dd コマンドは <code>bs(1M)</code> * <code>seek(1024)</code>分先に進んで、<code>of(sparse-file)</code>に <code>if(/dev/zero)</code> を <code>count(0)</code>分書き込む。ただ今回は count=0 なので、seek で進んだだけで、何も書き込んでいない（なので、実際 if はなんでも良い）</p>
-
-<h1 id="sparse-file-はどう実装されているのか">Sparse File はどう実装されているのか？</h1>
-
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=color:#75715e># dd if=/dev/zero of=sparse-file bs=1M seek=1024 count=0</span>
+0+0 records in
+0+0 records out
+<span style=color:#ae81ff>0</span> bytes <span style=color:#f92672>(</span><span style=color:#ae81ff>0</span> B<span style=color:#f92672>)</span> copied, 6.858e-06 s, 0.0 kB/s
+<span style=color:#75715e>#</span>
+<span style=color:#75715e># ls -lhs sparse-file</span>
+<span style=color:#ae81ff>0</span> -rw-r--r-- <span style=color:#ae81ff>1</span> root root 1.0G  3月 <span style=color:#ae81ff>24</span> 01:59 <span style=color:#ae81ff>2016</span> sparse-file
+</code></pre></div><p>上記の dd コマンドは <code>bs(1M)</code> * <code>seek(1024)</code>分先に進んで、<code>of(sparse-file)</code>に <code>if(/dev/zero)</code> を <code>count(0)</code>分書き込む。ただ今回は count=0 なので、seek で進んだだけで、何も書き込んでいない（なので、実際 if はなんでも良い）</p>
+<h1 id=sparse-file-はどう実装されているのか>Sparse File はどう実装されているのか？</h1>
 <p>ここからが知りたかったこと。</p>
-
 <p>inode を見ればわかると思うので debugfs を使用して確認してみる。inode やブロックの管理はファイルシステムによって異なるので、ext2, ext3, ext4 の３種類確認してみた。</p>
-
-<h2 id="準備">準備</h2>
-
+<h2 id=準備>準備</h2>
 <p>ファイルシステムごとにパーティション切るのも面倒なので、dd で作成したファイルをフォーマットし、loopback で mount した。以下準備作業。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="color:#75715e"># mount 用の image ファイルの作成</span>
-dd <span style="color:#66d9ef">if</span><span style="color:#f92672">=</span>/dev/zero of<span style="color:#f92672">=</span>ext2.img bs<span style="color:#f92672">=</span>1M count<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span>
-dd <span style="color:#66d9ef">if</span><span style="color:#f92672">=</span>/dev/zero of<span style="color:#f92672">=</span>ext3.img bs<span style="color:#f92672">=</span>1M count<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span>
-dd <span style="color:#66d9ef">if</span><span style="color:#f92672">=</span>/dev/zero of<span style="color:#f92672">=</span>ext4.img bs<span style="color:#f92672">=</span>1M count<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=color:#75715e># mount 用の image ファイルの作成</span>
+dd <span style=color:#66d9ef>if</span><span style=color:#f92672>=</span>/dev/zero of<span style=color:#f92672>=</span>ext2.img bs<span style=color:#f92672>=</span>1M count<span style=color:#f92672>=</span><span style=color:#ae81ff>10</span>
+dd <span style=color:#66d9ef>if</span><span style=color:#f92672>=</span>/dev/zero of<span style=color:#f92672>=</span>ext3.img bs<span style=color:#f92672>=</span>1M count<span style=color:#f92672>=</span><span style=color:#ae81ff>10</span>
+dd <span style=color:#66d9ef>if</span><span style=color:#f92672>=</span>/dev/zero of<span style=color:#f92672>=</span>ext4.img bs<span style=color:#f92672>=</span>1M count<span style=color:#f92672>=</span><span style=color:#ae81ff>10</span>
 
-<span style="color:#75715e"># 各ファイルシステムでフォーマット</span>
+<span style=color:#75715e># 各ファイルシステムでフォーマット</span>
 mkfs -t ext2 -F ext2.img
 mkfs -t ext3 -F ext3.img
 mkfs -t ext4 -F ext4.img
 
-<span style="color:#75715e"># マウント</span>
-mkdir ext<span style="color:#f92672">{</span><span style="color:#ae81ff">2</span>,3,4<span style="color:#f92672">}</span>
+<span style=color:#75715e># マウント</span>
+mkdir ext<span style=color:#f92672>{</span>2,3,4<span style=color:#f92672>}</span>
 mount -o loop ext2.img ext2
 mount -o loop ext3.img ext3
 mount -o loop ext4.img ext4
 
-<span style="color:#75715e"># sparse-file の作成</span>
-<span style="color:#75715e"># echo で先頭1バイト分のデータを作成し、dd でそのデータを残したまま(conv=notrunc) 1Mバイト seek.</span>
-<span style="color:#75715e"># seek 後、ファイルの末尾にファイル「1byte」の内容を書き込んでいる</span>
-echo -n <span style="color:#ae81ff">1</span> &gt; 1byte
-echo -n <span style="color:#ae81ff">1</span> &gt; ext2/sparse-file
-echo -n <span style="color:#ae81ff">1</span> &gt; ext3/sparse-file
-echo -n <span style="color:#ae81ff">1</span> &gt; ext4/sparse-file
-dd <span style="color:#66d9ef">if</span><span style="color:#f92672">=</span>1byte of<span style="color:#f92672">=</span>ext2/sparse-file bs<span style="color:#f92672">=</span>1M count<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> seek<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> conv<span style="color:#f92672">=</span>notrunc
-dd <span style="color:#66d9ef">if</span><span style="color:#f92672">=</span>1byte of<span style="color:#f92672">=</span>ext3/sparse-file bs<span style="color:#f92672">=</span>1M count<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> seek<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> conv<span style="color:#f92672">=</span>notrunc
-dd <span style="color:#66d9ef">if</span><span style="color:#f92672">=</span>1byte of<span style="color:#f92672">=</span>ext4/sparse-file bs<span style="color:#f92672">=</span>1M count<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> seek<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> conv<span style="color:#f92672">=</span>notrunc</code></pre></div>
-<p>ここで作成した sparse-file は、さきほど od で確認したものと同様のもの。</p>
-
-<h2 id="結果">結果</h2>
-
+<span style=color:#75715e># sparse-file の作成</span>
+<span style=color:#75715e># echo で先頭1バイト分のデータを作成し、dd でそのデータを残したまま(conv=notrunc) 1Mバイト seek.</span>
+<span style=color:#75715e># seek 後、ファイルの末尾にファイル「1byte」の内容を書き込んでいる</span>
+echo -n <span style=color:#ae81ff>1</span> &gt; 1byte
+echo -n <span style=color:#ae81ff>1</span> &gt; ext2/sparse-file
+echo -n <span style=color:#ae81ff>1</span> &gt; ext3/sparse-file
+echo -n <span style=color:#ae81ff>1</span> &gt; ext4/sparse-file
+dd <span style=color:#66d9ef>if</span><span style=color:#f92672>=</span>1byte of<span style=color:#f92672>=</span>ext2/sparse-file bs<span style=color:#f92672>=</span>1M count<span style=color:#f92672>=</span><span style=color:#ae81ff>1</span> seek<span style=color:#f92672>=</span><span style=color:#ae81ff>1</span> conv<span style=color:#f92672>=</span>notrunc
+dd <span style=color:#66d9ef>if</span><span style=color:#f92672>=</span>1byte of<span style=color:#f92672>=</span>ext3/sparse-file bs<span style=color:#f92672>=</span>1M count<span style=color:#f92672>=</span><span style=color:#ae81ff>1</span> seek<span style=color:#f92672>=</span><span style=color:#ae81ff>1</span> conv<span style=color:#f92672>=</span>notrunc
+dd <span style=color:#66d9ef>if</span><span style=color:#f92672>=</span>1byte of<span style=color:#f92672>=</span>ext4/sparse-file bs<span style=color:#f92672>=</span>1M count<span style=color:#f92672>=</span><span style=color:#ae81ff>1</span> seek<span style=color:#f92672>=</span><span style=color:#ae81ff>1</span> conv<span style=color:#f92672>=</span>notrunc
+</code></pre></div><p>ここで作成した sparse-file は、さきほど od で確認したものと同様のもの。</p>
+<h2 id=結果>結果</h2>
 <p>debugfs で確認してみると単純な仕組みだった。inode は、ちゃんとファイルサイズの情報を持っていて、そのファイルの何バイト目がどのブロックに対応しているかの情報もある。なので、ブロックに紐付いていないファイルの位置がファイルホールになる。</p>
-
 <p>下にある ext2 の debugfus の結果を図解するとこんな感じ。
-<img src="inode.png" alt="" /></p>
-
+<img src=inode.png alt></p>
 <ul>
 <li>白い枠の左にある数字が、ファイルに対応する<code>論理ブロックの番号</code>。</li>
 <li>inode で直接管理しているブロックは 12個 (ブロックサイズが 1024 byte だと 12,288 byte のサイズまで扱える)。</li>
 <li>13ブロック(12,289 byte)以降は、間接ブロックが利用される(ext2,ext3)</li>
 <li><code>論理ブロック番号</code>に対応する(ファイルシステムの)ブロック番号がないところがファイルホールとなる。
-
 <ul>
 <li>この例だと 1-1023 の論理ブロック番号</li>
-</ul></li>
 </ul>
-
-<h2 id="debugfs-で-inode-の情報を見る">debugfs で inode の情報を見る</h2>
-
+</li>
+</ul>
+<h2 id=debugfs-で-inode-の情報を見る>debugfs で inode の情報を見る</h2>
 <p>ext2</p>
-
-<pre><code># debugfs ext2.img
+<pre tabindex=0><code># debugfs ext2.img
 debugfs 1.41.12 (17-May-2010)
 debugfs:  stat sparse-file
 Inode: 12   Type: regular    Mode:  0644   Flags: 0x0
@@ -364,11 +208,8 @@ mtime: 0x56f2c487 -- Thu Mar 24 01:29:59 2016
 BLOCKS:
 (0):2561, (DIND):2562, (IND):2563, (1024):2564
 TOTAL: 4
-</code></pre>
-
-<p>ext3</p>
-
-<pre><code># debugfs ext3.img
+</code></pre><p>ext3</p>
+<pre tabindex=0><code># debugfs ext3.img
 debugfs 1.41.12 (17-May-2010)
 debugfs:  stat sparse-file
 Inode: 12   Type: regular    Mode:  0644   Flags: 0x0
@@ -383,11 +224,8 @@ mtime: 0x56f2c48e -- Thu Mar 24 01:30:06 2016
 BLOCKS:
 (0):2562, (DIND):2563, (IND):2564, (1024):2565
 TOTAL: 4
-</code></pre>
-
-<p>ext4</p>
-
-<pre><code># debugfs ext4.img
+</code></pre><p>ext4</p>
+<pre tabindex=0><code># debugfs ext4.img
 debugfs 1.41.12 (17-May-2010)
 debugfs:  stat sparse-file
 Inode: 12   Type: regular    Mode:  0644   Flags: 0x80000
@@ -405,320 +243,198 @@ debugfs:  dump_extents sparse-file
 Level Entries       Logical      Physical Length Flags
  0/ 0   1/  2     0 -     0  8706 -  8706      1
  0/ 0   2/  2  1024 -  1024  8234 -  8234      1
-</code></pre>
-
-<ul>
+</code></pre><ul>
 <li>ext2, ext3 のブロックの参照方法は <code>間接ブロックマッピング</code> だが、ext4 では <code>エクステント</code></li>
 <li>ext2, ext3 の BLOCKS の出力にある <code>IND</code> は、たぶん INDirect（間接参照）の略。<code>DIND</code> は Double INDirect (2段間接参照）か？</li>
 <li>ファイルのデータに関連するブロックは、<code>(0)</code> と <code>(1024)</code> しかないので、<code>（1-1023）</code>がファイルホールになる。</li>
 </ul>
-
-<h1 id="tips">Tips</h1>
-
+<h1 id=tips>Tips</h1>
 <ol>
-<li><p>ファイルシステムのサイズ(485M)より、大きなファイル(1G)が作れる</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="color:#75715e"># df -h /boot</span>
+<li>
+<p>ファイルシステムのサイズ(485M)より、大きなファイル(1G)が作れる</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=color:#75715e># df -h /boot</span>
 Filesystem            Size  Used Avail Use% マウント位置
-/dev/sda1             485M   31M  430M   <span style="color:#ae81ff">7</span>% /boot
-#
-<span style="color:#75715e"># ll -h /boot/sparse-file</span>
--rw-r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">1</span>.0G  3月 <span style="color:#ae81ff">24</span> <span style="color:#ae81ff">01</span>:41 <span style="color:#ae81ff">2016</span> /boot/sparse-file</code></pre></div></li>
-
-<li><p>各コマンド(du, cp, tar, rsync)の Sparse File の扱い</p>
-
-<p><a href="https://wiki.archlinuxjp.org/index.php/スパースファイル">こちら (Aarch Wiki)</a> にまとまっている</p></li>
+/dev/sda1             485M   31M  430M   7% /boot
+<span style=color:#75715e>#</span>
+<span style=color:#75715e># ll -h /boot/sparse-file</span>
+-rw-r--r-- <span style=color:#ae81ff>1</span> root root 1.0G  3月 <span style=color:#ae81ff>24</span> 01:41 <span style=color:#ae81ff>2016</span> /boot/sparse-file
+</code></pre></div></li>
+<li>
+<p>各コマンド(du, cp, tar, rsync)の Sparse File の扱い</p>
+<p><a href=https://wiki.archlinuxjp.org/index.php/%E3%82%B9%E3%83%91%E3%83%BC%E3%82%B9%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB>こちら (Aarch Wiki)</a> にまとまっている</p>
+</li>
 </ol>
-              
-            </div>
-          </div>
-          <div id="post-footer" class="post-footer main-content-wrap">
-            
-              
-                
-                
-                  <div class="post-footer-tags">
-                    <span class="text-color-light text-small">タグ</span><br/>
-                    
-  <a class="tag tag--primary tag--small" href="/tags/kernel/">kernel</a>
-
-  <a class="tag tag--primary tag--small" href="/tags/filesystem/">filesystem</a>
-
-                  </div>
-                
-              
-            
-            <div class="post-actions-wrap">
-  
-      <nav >
-        <ul class="post-actions post-action-nav">
-          
-            <li class="post-action">
-              
-                <a class="post-action-btn btn btn--default tooltip--top" href="/2016/06/29/linux-acl/" data-tooltip="Linux ACL の基礎">
-              
-                  <i class="fa fa-angle-left"></i>
-                  <span class="hide-xs hide-sm text-small icon-ml">次</span>
-                </a>
-            </li>
-            <li class="post-action">
-              
-                <a class="post-action-btn btn btn--default tooltip--top" href="/2016/02/21/dns-packet-over-512/" data-tooltip="512バイトを超える DNSパケット">
-              
-                  <span class="hide-xs hide-sm text-small icon-mr">前</span>
-                  <i class="fa fa-angle-right"></i>
-                </a>
-            </li>
-          
-        </ul>
-      </nav>
-    <ul class="post-actions post-action-share" >
-      
-        <li class="post-action hide-lg hide-md hide-sm">
-          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
-            <i class="fa fa-share-alt"></i>
-          </a>
-        </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="http://b.hatena.ne.jp/entry/https://harasou.jp/2016/03/24/sparse-file/">
-              <i class="fa icon-hatebu"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="http://getpocket.com/edit?url=https://harasou.jp/2016/03/24/sparse-file/">
-              <i class="fa icon-pocket"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2016/03/24/sparse-file/">
-              <i class="fa fa-facebook-official"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://harasou.jp/2016/03/24/sparse-file/">
-              <i class="fa fa-twitter"></i>
-            </a>
-          </li>
-        
-      
-      
-      <li class="post-action">
-        
-          <a class="post-action-btn btn btn--default" href="#">
-        
-          <i class="fa fa-list"></i>
-        </a>
-      </li>
-    </ul>
-  
 </div>
-
-            
-              
-            
-          </div>
-        </article>
-        <footer id="footer" class="main-content-wrap">
-  <span class="copyrights">
-    &copy; 2019 harasou. All Rights Reserved
-  </span>
+</div>
+<div id=post-footer class="post-footer main-content-wrap">
+<div class=post-footer-tags>
+<span class="text-color-light text-small">タグ</span><br>
+<a class="tag tag--primary tag--small" href=/tags/kernel/>kernel</a>
+<a class="tag tag--primary tag--small" href=/tags/filesystem/>filesystem</a>
+</div>
+<div class=post-actions-wrap>
+<nav>
+<ul class="post-actions post-action-nav">
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=/2016/06/29/linux-acl/ data-tooltip="Linux ACL の基礎">
+<i class="fa fa-angle-left"></i>
+<span class="hide-xs hide-sm text-small icon-ml">次</span>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=/2016/02/21/dns-packet-over-512/ data-tooltip="512バイトを超える DNSパケット">
+<span class="hide-xs hide-sm text-small icon-mr">前</span>
+<i class="fa fa-angle-right"></i>
+</a>
+</li>
+</ul>
+</nav>
+<ul class="post-actions post-action-share">
+<li class="post-action hide-lg hide-md hide-sm">
+<a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions>
+<i class="fa fa-share-alt"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.jp/2016/03/24/sparse-file/>
+<i class="fa icon-hatebu"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.jp/2016/03/24/sparse-file/">
+<i class="fa icon-pocket"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2016/03/24/sparse-file/">
+<i class="fa fa-facebook-official"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.jp/2016/03/24/sparse-file/">
+<i class="fa fa-twitter"></i>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default" href=#>
+<i class="fa fa-list"></i>
+</a>
+</li>
+</ul>
+</div>
+</div>
+</article>
+<footer id=footer class=main-content-wrap>
+<span class=copyrights>
+&copy; 2021 harasou. All Rights Reserved
+</span>
 </footer>
-
-      </div>
-      <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
-        <div class="post-actions-wrap">
-  
-      <nav >
-        <ul class="post-actions post-action-nav">
-          
-            <li class="post-action">
-              
-                <a class="post-action-btn btn btn--default tooltip--top" href="/2016/06/29/linux-acl/" data-tooltip="Linux ACL の基礎">
-              
-                  <i class="fa fa-angle-left"></i>
-                  <span class="hide-xs hide-sm text-small icon-ml">次</span>
-                </a>
-            </li>
-            <li class="post-action">
-              
-                <a class="post-action-btn btn btn--default tooltip--top" href="/2016/02/21/dns-packet-over-512/" data-tooltip="512バイトを超える DNSパケット">
-              
-                  <span class="hide-xs hide-sm text-small icon-mr">前</span>
-                  <i class="fa fa-angle-right"></i>
-                </a>
-            </li>
-          
-        </ul>
-      </nav>
-    <ul class="post-actions post-action-share" >
-      
-        <li class="post-action hide-lg hide-md hide-sm">
-          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
-            <i class="fa fa-share-alt"></i>
-          </a>
-        </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="http://b.hatena.ne.jp/entry/https://harasou.jp/2016/03/24/sparse-file/">
-              <i class="fa icon-hatebu"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="http://getpocket.com/edit?url=https://harasou.jp/2016/03/24/sparse-file/">
-              <i class="fa icon-pocket"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2016/03/24/sparse-file/">
-              <i class="fa fa-facebook-official"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://harasou.jp/2016/03/24/sparse-file/">
-              <i class="fa fa-twitter"></i>
-            </a>
-          </li>
-        
-      
-      
-      <li class="post-action">
-        
-          <a class="post-action-btn btn btn--default" href="#">
-        
-          <i class="fa fa-list"></i>
-        </a>
-      </li>
-    </ul>
-  
 </div>
-
-      </div>
-      <div id="share-options-bar" class="share-options-bar" data-behavior="5">
-  <i id="btn-close-shareoptions" class="fa fa-close"></i>
-  <ul class="share-options">
-    
-      <li class="share-option">
-        <a class="share-option-btn" target="new" href="http://b.hatena.ne.jp/entry/https%3A%2F%2Fharasou.jp%2F2016%2F03%2F24%2Fsparse-file%2F">
-          <i class="fa icon-hatebu"></i><span>Hatebuで共有</span>
-        </a>
-      </li>
-    
-      <li class="share-option">
-        <a class="share-option-btn" target="new" href="http://getpocket.com/edit?url=https%3A%2F%2Fharasou.jp%2F2016%2F03%2F24%2Fsparse-file%2F">
-          <i class="fa icon-pocket"></i><span>Pocketで共有</span>
-        </a>
-      </li>
-    
-      <li class="share-option">
-        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fharasou.jp%2F2016%2F03%2F24%2Fsparse-file%2F">
-          <i class="fa fa-facebook-official"></i><span>Facebookで共有</span>
-        </a>
-      </li>
-    
-      <li class="share-option">
-        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fharasou.jp%2F2016%2F03%2F24%2Fsparse-file%2F">
-          <i class="fa fa-twitter"></i><span>Twitterで共有</span>
-        </a>
-      </li>
-    
-  </ul>
+<div id=bottom-bar class=post-bottom-bar data-behavior=5>
+<div class=post-actions-wrap>
+<nav>
+<ul class="post-actions post-action-nav">
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=/2016/06/29/linux-acl/ data-tooltip="Linux ACL の基礎">
+<i class="fa fa-angle-left"></i>
+<span class="hide-xs hide-sm text-small icon-ml">次</span>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=/2016/02/21/dns-packet-over-512/ data-tooltip="512バイトを超える DNSパケット">
+<span class="hide-xs hide-sm text-small icon-mr">前</span>
+<i class="fa fa-angle-right"></i>
+</a>
+</li>
+</ul>
+</nav>
+<ul class="post-actions post-action-share">
+<li class="post-action hide-lg hide-md hide-sm">
+<a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions>
+<i class="fa fa-share-alt"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.jp/2016/03/24/sparse-file/>
+<i class="fa icon-hatebu"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.jp/2016/03/24/sparse-file/">
+<i class="fa icon-pocket"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2016/03/24/sparse-file/">
+<i class="fa fa-facebook-official"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.jp/2016/03/24/sparse-file/">
+<i class="fa fa-twitter"></i>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default" href=#>
+<i class="fa fa-list"></i>
+</a>
+</li>
+</ul>
 </div>
-<div id="share-options-mask" class="share-options-mask"></div>
-    </div>
-    
-    <div id="about">
-  <div id="about-card">
-    <div id="about-btn-close">
-      <i class="fa fa-remove"></i>
-    </div>
-    
-      <img id="about-card-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt="プロフィール画像" />
-    
-    <h4 id="about-card-name">harasou</h4>
-    
-      <div id="about-card-bio">めくじらを立てない</div>
-    
-    
-      <div id="about-card-job">
-        <i class="fa fa-briefcase"></i>
-        <br/>
-        Infra Engineer
-      </div>
-    
-    
-      <div id="about-card-location">
-        <i class="fa fa-map-marker"></i>
-        <br/>
-        Fukuoka Japan
-      </div>
-    
-  </div>
 </div>
-
-    
-
-    
-  
-    
-      
-      <div id="cover" style="background-image:url('https://harasou.jp/images/cover.jpg');"></div>
-    
-  
-
-
-    
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
-
-
-<script src="/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js"></script>
-
-
-<script lang="javascript">
-window.onload = updateMinWidth;
-window.onresize = updateMinWidth;
-document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
-function updateMinWidth() {
-  var sidebar = document.getElementById("sidebar");
-  var main = document.getElementById("main");
-  main.style.minWidth = "";
-  var w1 = getComputedStyle(main).getPropertyValue("min-width");
-  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
-  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
-  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
-}
-</script>
-
-<script>
-$(document).ready(function() {
-  hljs.configure({ classPrefix: '', useBR: false });
-  $('pre.code-highlight > code, pre > code').each(function(i, block) {
-    if (!$(this).hasClass('codeblock')) {
-      $(this).addClass('codeblock');
-    }
-    hljs.highlightBlock(block);
-  });
-});
-</script>
-
-
-  
-    
-  
-
-
-
-
-    
-  </body>
+<div id=share-options-bar class=share-options-bar data-behavior=5>
+<i id=btn-close-shareoptions class="fa fa-close"></i>
+<ul class=share-options>
+<li class=share-option>
+<a class=share-option-btn target=new href=http://b.hatena.ne.jp/entry/https%3A%2F%2Fharasou.jp%2F2016%2F03%2F24%2Fsparse-file%2F>
+<i class="fa icon-hatebu"></i><span>Hatebuで共有</span>
+</a>
+</li>
+<li class=share-option>
+<a class=share-option-btn target=new href="http://getpocket.com/edit?url=https%3A%2F%2Fharasou.jp%2F2016%2F03%2F24%2Fsparse-file%2F">
+<i class="fa icon-pocket"></i><span>Pocketで共有</span>
+</a>
+</li>
+<li class=share-option>
+<a class=share-option-btn target=new href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fharasou.jp%2F2016%2F03%2F24%2Fsparse-file%2F">
+<i class="fa fa-facebook-official"></i><span>Facebookで共有</span>
+</a>
+</li>
+<li class=share-option>
+<a class=share-option-btn target=new href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fharasou.jp%2F2016%2F03%2F24%2Fsparse-file%2F">
+<i class="fa fa-twitter"></i><span>Twitterで共有</span>
+</a>
+</li>
+</ul>
+</div>
+<div id=share-options-mask class=share-options-mask></div>
+</div>
+<div id=about>
+<div id=about-card>
+<div id=about-btn-close>
+<i class="fa fa-remove"></i>
+</div>
+<img id=about-card-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt=プロフィール画像>
+<h4 id=about-card-name>harasou</h4>
+<div id=about-card-bio>めくじらを立てない</div>
+<div id=about-card-job>
+<i class="fa fa-briefcase"></i>
+<br>
+Infra Engineer
+</div>
+<div id=about-card-location>
+<i class="fa fa-map-marker"></i>
+<br>
+Fukuoka Japan
+</div>
+</div>
+</div>
+<div id=cover style=background-image:url(https://harasou.jp/images/cover.jpg)></div>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin=anonymous></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin=anonymous></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin=anonymous></script>
+<script src=/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js></script>
+<script lang=javascript>window.onload=updateMinWidth,window.onresize=updateMinWidth,document.getElementById("sidebar").addEventListener("transitionend",updateMinWidth);function updateMinWidth(){var b=document.getElementById("sidebar"),a=document.getElementById("main"),c,d,e;a.style.minWidth="",c=getComputedStyle(a).getPropertyValue("min-width"),d=getComputedStyle(b).getPropertyValue("width"),e=getComputedStyle(b).getPropertyValue("left"),a.style.minWidth=`calc(${c} - ${d} - ${e})`}</script>
+<script>$(document).ready(function(){hljs.configure({classPrefix:'',useBR:!1}),$('pre.code-highlight > code, pre > code').each(function(b,a){$(this).hasClass('codeblock')||$(this).addClass('codeblock'),hljs.highlightBlock(a)})})</script>
+</body>
 </html>
-

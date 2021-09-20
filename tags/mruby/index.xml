@@ -1,190 +1,62 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>mruby on harasou.jp</title>
-    <link>https://harasou.jp/tags/mruby/</link>
-    <description>Recent content in mruby on harasou.jp</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>ja</language>
-    <lastBuildDate>Sun, 20 Dec 2015 13:41:27 +0900</lastBuildDate>
-    
-	<atom:link href="https://harasou.jp/tags/mruby/index.xml" rel="self" type="application/rss+xml" />
-    
-    
-    <item>
-      <title>markdown(GFM) を変換するコマンドを mruby-cli で作ってみた</title>
-      <link>https://harasou.jp/2015/12/20/gfmarkdown-release/</link>
-      <pubDate>Sun, 20 Dec 2015 13:41:27 +0900</pubDate>
-      
-      <guid>https://harasou.jp/2015/12/20/gfmarkdown-release/</guid>
-      <description>&lt;p&gt;この記事は、&lt;a href=&#34;http://qiita.com/advent-calendar/2015/mruby&#34;&gt;mruby advent calendar 2015&lt;/a&gt; 20日目の記事です。みなさん難しい記事が多いですが、私にそういうのは無理なので軽めの内容になっています。&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>h2o &#43; mruby セットアップメモ</title>
-      <link>https://harasou.jp/2015/08/05/h2o-mruby/</link>
-      <pubDate>Wed, 05 Aug 2015 04:49:54 +0900</pubDate>
-      
-      <guid>https://harasou.jp/2015/08/05/h2o-mruby/</guid>
-      <description>&lt;p&gt;最近、h2o で mruby がサポートされたので、まずはコンパイルしてみた。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;h2o.png&#34; alt=&#34;&#34; /&gt;
-&lt;a href=&#34;https://github.com/h2o/h2o&#34;&gt;https://github.com/h2o/h2o&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;h2o は、@kazuho さんが作成されている HTTP/2 ＆ HTTP/1.x 対応の高速な WEBサーバです。&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>5分でつくる mrbgems</title>
-      <link>https://harasou.jp/2015/07/26/minutes-mrbgems/</link>
-      <pubDate>Sun, 26 Jul 2015 21:32:19 +0900</pubDate>
-      
-      <guid>https://harasou.jp/2015/07/26/minutes-mrbgems/</guid>
-      <description>&lt;p&gt;先日の関西Ruby会議の帰りの飛行機の中、着陸５分前ぐらいの出来事。&lt;/p&gt;
-
-&lt;p&gt;harasou: 「松本さん、mrbgems の作り方教えてくださいよ」
-matusmotory:「じゃあ、まづ mrblib ってディレクトリ作って&amp;hellip;」&lt;/p&gt;
-
-&lt;p&gt;おもむろに二人並んで PC を取り出し、mrbgems を作り始めた（着陸直前だったので、PC出して良かったのかよくわからないが&amp;hellip;）
-というわけで、その時のことを簡単にご紹介。&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>関西Ruby会議06 に登壇させてもらった</title>
-      <link>https://harasou.jp/2015/07/15/kansai-ruby-kaigi/</link>
-      <pubDate>Wed, 15 Jul 2015 01:45:57 +0900</pubDate>
-      
-      <guid>https://harasou.jp/2015/07/15/kansai-ruby-kaigi/</guid>
-      <description>&lt;p&gt;2015/07/11(土)に行われた「&lt;a href=&#34;http://regional.rubykaigi.org/kansai06/&#34;&gt;関西Ruby会議06&lt;/a&gt;」に登壇させてもらい、mruby の利用事例について紹介してきた。
-インフラしか知らないエンジニアが、matz さんを前に mruby の説明なんて、かなり場違いで恐縮な状況でした。&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://regional.rubykaigi.org/kansai06/&#34;&gt;&lt;img src=&#34;knsrb.png&#34; alt=&#34;&#34; /&gt;&lt;/a&gt;&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>第2回ペパボテックカンファレンスで mruby について発表</title>
-      <link>https://harasou.jp/2015/07/06/pepabo-tech-conference/</link>
-      <pubDate>Mon, 06 Jul 2015 01:44:39 +0900</pubDate>
-      
-      <guid>https://harasou.jp/2015/07/06/pepabo-tech-conference/</guid>
-      <description>&lt;p&gt;ブログ書くまでがペパボテックカンファレンス！というプレシャーをうけたので、一昨日(&lt;sup&gt;7&lt;/sup&gt;&amp;frasl;&lt;sub&gt;4&lt;/sub&gt;)、福岡天神で開催された「第２回ペパボテックカンファレンス」について記録。&lt;/p&gt;
-
-&lt;p&gt;５時間超におよぶカンファレンスに参加してくださったみなさま、本当にお疲れ様でした。&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;connpass : &lt;a href=&#34;http://pepabo.connpass.com/event/16457/&#34;&gt;http://pepabo.connpass.com/event/16457/&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;youtube : &lt;a href=&#34;https://www.youtube.com/watch?v=SUuaugJ4p7o&#34;&gt;https://www.youtube.com/watch?v=SUuaugJ4p7o&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;twitter : &lt;a href=&#34;http://togetter.com/li/842661&#34;&gt;http://togetter.com/li/842661&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;slides : &lt;a href=&#34;http://kimromi.hatenablog.jp/entry/2015/07/04/211334&#34;&gt;http://kimromi.hatenablog.jp/entry/2015/07/04/211334&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;@takesi_yosimura さんが、twitter をまとめてくださっていました。ありがとうございます！また、@kimroi さんは発表スライドをまとめてくれていました。ありがとうございます！&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>MySQL のトリガで mruby を実行する</title>
-      <link>https://harasou.jp/2015/06/07/mysql-trigger/</link>
-      <pubDate>Sun, 07 Jun 2015 02:06:30 +0900</pubDate>
-      
-      <guid>https://harasou.jp/2015/06/07/mysql-trigger/</guid>
-      <description>&lt;p&gt;先日会社で「mysql のテーブルと、プロセス上の共有メモリを連携させたい」って話が出たとき、トリガで外部プログラムが実行できればいけるのでは？と思ったので、調べてみた。&lt;/p&gt;
-
-&lt;h2 id=&#34;mysql-で外部コマンドを実行するには&#34;&gt;MySQL で外部コマンドを実行するには&lt;/h2&gt;
-
-&lt;p&gt;mysql で外部コマンドを実行するには &lt;code&gt;system&lt;/code&gt; が使える。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;mysql&amp;gt; system uname -a
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>mruby on harasou.jp</title><link>https://harasou.jp/tags/mruby/</link><description>Recent content in mruby on harasou.jp</description><generator>Hugo -- gohugo.io</generator><language>ja</language><lastBuildDate>Sun, 20 Dec 2015 13:41:27 +0900</lastBuildDate><atom:link href="https://harasou.jp/tags/mruby/index.xml" rel="self" type="application/rss+xml"/><item><title>markdown(GFM) を変換するコマンドを mruby-cli で作ってみた</title><link>https://harasou.jp/2015/12/20/gfmarkdown-release/</link><pubDate>Sun, 20 Dec 2015 13:41:27 +0900</pubDate><guid>https://harasou.jp/2015/12/20/gfmarkdown-release/</guid><description>&lt;p>この記事は、&lt;a href="http://qiita.com/advent-calendar/2015/mruby">mruby advent calendar 2015&lt;/a> 20日目の記事です。みなさん難しい記事が多いですが、私にそういうのは無理なので軽めの内容になっています。&lt;/p></description></item><item><title>h2o + mruby セットアップメモ</title><link>https://harasou.jp/2015/08/05/h2o-mruby/</link><pubDate>Wed, 05 Aug 2015 04:49:54 +0900</pubDate><guid>https://harasou.jp/2015/08/05/h2o-mruby/</guid><description>&lt;p>最近、h2o で mruby がサポートされたので、まずはコンパイルしてみた。&lt;/p>
+&lt;p>&lt;img src="h2o.png" alt="">
+&lt;a href="https://github.com/h2o/h2o">https://github.com/h2o/h2o&lt;/a>&lt;/p>
+&lt;p>h2o は、@kazuho さんが作成されている HTTP/2 ＆ HTTP/1.x 対応の高速な WEBサーバです。&lt;/p></description></item><item><title>5分でつくる mrbgems</title><link>https://harasou.jp/2015/07/26/minutes-mrbgems/</link><pubDate>Sun, 26 Jul 2015 21:32:19 +0900</pubDate><guid>https://harasou.jp/2015/07/26/minutes-mrbgems/</guid><description>&lt;p>先日の関西Ruby会議の帰りの飛行機の中、着陸５分前ぐらいの出来事。&lt;/p>
+&lt;p>harasou: 「松本さん、mrbgems の作り方教えてくださいよ」
+matusmotory:「じゃあ、まづ mrblib ってディレクトリ作って&amp;hellip;」&lt;/p>
+&lt;p>おもむろに二人並んで PC を取り出し、mrbgems を作り始めた（着陸直前だったので、PC出して良かったのかよくわからないが&amp;hellip;）
+というわけで、その時のことを簡単にご紹介。&lt;/p></description></item><item><title>関西Ruby会議06 に登壇させてもらった</title><link>https://harasou.jp/2015/07/15/kansai-ruby-kaigi/</link><pubDate>Wed, 15 Jul 2015 01:45:57 +0900</pubDate><guid>https://harasou.jp/2015/07/15/kansai-ruby-kaigi/</guid><description>&lt;p>2015/07/11(土)に行われた「&lt;a href="http://regional.rubykaigi.org/kansai06/">関西Ruby会議06&lt;/a>」に登壇させてもらい、mruby の利用事例について紹介してきた。
+インフラしか知らないエンジニアが、matz さんを前に mruby の説明なんて、かなり場違いで恐縮な状況でした。&lt;/p>
+&lt;p>&lt;a href="http://regional.rubykaigi.org/kansai06/">&lt;img src="knsrb.png" alt="">&lt;/a>&lt;/p></description></item><item><title>第2回ペパボテックカンファレンスで mruby について発表</title><link>https://harasou.jp/2015/07/06/pepabo-tech-conference/</link><pubDate>Mon, 06 Jul 2015 01:44:39 +0900</pubDate><guid>https://harasou.jp/2015/07/06/pepabo-tech-conference/</guid><description>&lt;p>ブログ書くまでがペパボテックカンファレンス！というプレシャーをうけたので、一昨日(7/4)、福岡天神で開催された「第２回ペパボテックカンファレンス」について記録。&lt;/p>
+&lt;p>５時間超におよぶカンファレンスに参加してくださったみなさま、本当にお疲れ様でした。&lt;/p>
+&lt;ul>
+&lt;li>connpass : &lt;a href="http://pepabo.connpass.com/event/16457/">http://pepabo.connpass.com/event/16457/&lt;/a>&lt;/li>
+&lt;li>youtube : &lt;a href="https://www.youtube.com/watch?v=SUuaugJ4p7o">https://www.youtube.com/watch?v=SUuaugJ4p7o&lt;/a>&lt;/li>
+&lt;li>twitter : &lt;a href="http://togetter.com/li/842661">http://togetter.com/li/842661&lt;/a>&lt;/li>
+&lt;li>slides : &lt;a href="http://kimromi.hatenablog.jp/entry/2015/07/04/211334">http://kimromi.hatenablog.jp/entry/2015/07/04/211334&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;p>@takesi_yosimura さんが、twitter をまとめてくださっていました。ありがとうございます！また、@kimroi さんは発表スライドをまとめてくれていました。ありがとうございます！&lt;/p></description></item><item><title>MySQL のトリガで mruby を実行する</title><link>https://harasou.jp/2015/06/07/MySQL-trigger/</link><pubDate>Sun, 07 Jun 2015 02:06:30 +0900</pubDate><guid>https://harasou.jp/2015/06/07/MySQL-trigger/</guid><description>&lt;p>先日会社で「mysql のテーブルと、プロセス上の共有メモリを連携させたい」って話が出たとき、トリガで外部プログラムが実行できればいけるのでは？と思ったので、調べてみた。&lt;/p>
+&lt;h2 id="mysql-で外部コマンドを実行するには">MySQL で外部コマンドを実行するには&lt;/h2>
+&lt;p>mysql で外部コマンドを実行するには &lt;code>system&lt;/code> が使える。&lt;/p>
+&lt;pre tabindex="0">&lt;code>mysql&amp;gt; system uname -a
 Linux cent6 2.6.32-504.16.2.el6.x86_64 #1 SMP Wed Apr 22 06:48:29 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;ただ、これはターミナル上からとかでないと使えない。&lt;/p&gt;
-
-&lt;p&gt;調べてみると、mysql には UDF(User Defined Function) という仕組みがあって、自作関数を作成することができるらしい。これは、C や C++ で書いて共有ライブラリ(.so)を作成し、mysql の plugindir に放り込めば使えるようになる。&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://aoking.hatenablog.jp/entry/20120824/1345778096&#34;&gt;MySQL で UDF を定義しよう&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://d.hatena.ne.jp/download_takeshi/20071124/1195915196&#34;&gt;はじめてのUDF&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://zentoo.hatenablog.com/entry/20110925/1316961032&#34;&gt;やったーJavaScriptの動くMySQLできたよー&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</description>
-    </item>
-    
-    <item>
-      <title>mruby-cgroup に memory サブシテムを追加してみた</title>
-      <link>https://harasou.jp/2015/05/17/mruby-cgroup/</link>
-      <pubDate>Sun, 17 May 2015 18:38:33 +0900</pubDate>
-      
-      <guid>https://harasou.jp/2015/05/17/mruby-cgroup/</guid>
-      <description>&lt;p&gt;mruby-cgroup は、mruby から cgroup を利用するためのモジュールで、いわゆる libcgroup のバインディング。現在、mruby-cgroup &lt;a href=&#34;https://github.com/matsumoto-r/mruby-cgroup/blob/9cad17343cf60449c2cc1b7475daefb863086a13/src/mrb_cgroup.c#L45-L50&#34;&gt;9cad17343&lt;/a&gt; で対応しているサブシテムは以下のとおり。&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;cpu&lt;/li&gt;
-&lt;li&gt;cpu_set&lt;/li&gt;
-&lt;li&gt;cpu_acct&lt;/li&gt;
-&lt;li&gt;blkio&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;他に、cgroup のサブシステムには以下のようなものがある(CentOS 6.4)&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;# cat /proc/cgroups
-#subsys_name    hierarchy   num_cgroups enabled
-cpuset  10  1   1
-ns  0   1   1
-cpu 11  1   1
-cpuacct 12  1   1
-memory  13  1   1
-devices 14  1   1
-freezer 15  1   1
-net_cls 16  1   1
-blkio   17  1   1
-perf_event  0   1   1
-net_prio    0   1   1
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;この中から、簡単に使えそうな memory サブシステムを追加してみた。&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>mruby-cgroup を boot2docker で build する</title>
-      <link>https://harasou.jp/2015/05/06/mruby-cgroups-build-on-boot2docker/</link>
-      <pubDate>Wed, 06 May 2015 02:47:32 +0900</pubDate>
-      
-      <guid>https://harasou.jp/2015/05/06/mruby-cgroups-build-on-boot2docker/</guid>
-      <description>&lt;h2 id=&#34;mruby-cgroup-とは&#34;&gt;mruby-cgroup とは&lt;/h2&gt;
-
-&lt;p&gt;mruby-cgroup は、@matsumotory が開発している mruby から cgroup を利用するためのライブラリ。&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://github.com/matsumoto-r/mruby-cgroup&#34;&gt;https://github.com/matsumoto-r/mruby-cgroup&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;cgroup は linux カーネルの機能で、タスク（プロセス）のリソース（CPU, メモリ, IO, etc）を制御するための仕組み。 これを利用すると「特定のプロセスが CPU100% 使うような処理を行っても 50% しか利用させない」といった制御ができるようになる。&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>mruby についてのメモ</title>
-      <link>https://harasou.jp/2015/05/03/mruby-memo/</link>
-      <pubDate>Sun, 03 May 2015 04:16:53 +0900</pubDate>
-      
-      <guid>https://harasou.jp/2015/05/03/mruby-memo/</guid>
-      <description> mruby の動作 mruby の実行基盤であるRiteVMは、Rubyスクリプトを逐次解釈して実行するのではなくコンパイル結果のバイナリコード（Rite中間表現）を直接実行する。
+&lt;/code>&lt;/pre>&lt;p>ただ、これはターミナル上からとかでないと使えない。&lt;/p>
+&lt;p>調べてみると、mysql には UDF(User Defined Function) という仕組みがあって、自作関数を作成することができるらしい。これは、C や C++ で書いて共有ライブラリ(.so)を作成し、mysql の plugindir に放り込めば使えるようになる。&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="http://aoking.hatenablog.jp/entry/20120824/1345778096">MySQL で UDF を定義しよう&lt;/a>&lt;/li>
+&lt;li>&lt;a href="http://d.hatena.ne.jp/download_takeshi/20071124/1195915196">はじめてのUDF&lt;/a>&lt;/li>
+&lt;li>&lt;a href="http://zentoo.hatenablog.com/entry/20110925/1316961032">やったーJavaScriptの動くMySQLできたよー&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>mruby-cgroup に memory サブシテムを追加してみた</title><link>https://harasou.jp/2015/05/17/mruby-cgroup/</link><pubDate>Sun, 17 May 2015 18:38:33 +0900</pubDate><guid>https://harasou.jp/2015/05/17/mruby-cgroup/</guid><description>&lt;p>mruby-cgroup は、mruby から cgroup を利用するためのモジュールで、いわゆる libcgroup のバインディング。現在、mruby-cgroup &lt;a href="https://github.com/matsumoto-r/mruby-cgroup/blob/9cad17343cf60449c2cc1b7475daefb863086a13/src/mrb_cgroup.c#L45-L50">9cad17343&lt;/a> で対応しているサブシテムは以下のとおり。&lt;/p>
+&lt;ul>
+&lt;li>cpu&lt;/li>
+&lt;li>cpu_set&lt;/li>
+&lt;li>cpu_acct&lt;/li>
+&lt;li>blkio&lt;/li>
+&lt;/ul>
+&lt;p>他に、cgroup のサブシステムには以下のようなものがある(CentOS 6.4)&lt;/p>
+&lt;pre tabindex="0">&lt;code># cat /proc/cgroups
+#subsys_name hierarchy num_cgroups enabled
+cpuset 10 1 1
+ns 0 1 1
+cpu 11 1 1
+cpuacct 12 1 1
+memory 13 1 1
+devices 14 1 1
+freezer 15 1 1
+net_cls 16 1 1
+blkio 17 1 1
+perf_event 0 1 1
+net_prio 0 1 1
+&lt;/code>&lt;/pre>&lt;p>この中から、簡単に使えそうな memory サブシステムを追加してみた。&lt;/p></description></item><item><title>mruby-cgroup を boot2docker で build する</title><link>https://harasou.jp/2015/05/06/mruby-cgroups-build-on-boot2docker/</link><pubDate>Wed, 06 May 2015 02:47:32 +0900</pubDate><guid>https://harasou.jp/2015/05/06/mruby-cgroups-build-on-boot2docker/</guid><description>&lt;h2 id="mruby-cgroup-とは">mruby-cgroup とは&lt;/h2>
+&lt;p>mruby-cgroup は、@matsumotory が開発している mruby から cgroup を利用するためのライブラリ。&lt;/p>
+&lt;p>&lt;a href="https://github.com/matsumoto-r/mruby-cgroup">https://github.com/matsumoto-r/mruby-cgroup&lt;/a>&lt;/p>
+&lt;p>cgroup は linux カーネルの機能で、タスク（プロセス）のリソース（CPU, メモリ, IO, etc）を制御するための仕組み。 これを利用すると「特定のプロセスが CPU100% 使うような処理を行っても 50% しか利用させない」といった制御ができるようになる。&lt;/p></description></item><item><title>mruby についてのメモ</title><link>https://harasou.jp/2015/05/03/mruby-memo/</link><pubDate>Sun, 03 May 2015 04:16:53 +0900</pubDate><guid>https://harasou.jp/2015/05/03/mruby-memo/</guid><description>mruby の動作 mruby の実行基盤であるRiteVMは、Rubyスクリプトを逐次解釈して実行するのではなくコンパイル結果のバイナリコード（Rite中間表現）を直接実行する。
 Rite中間表現をバイナリ出力したものがmrbファイル(Riteバイナリファイル)。
 mrbgem とは mruby にライブラリを追加するための仕組み。mruby は require などで動的にライブラリを読み込めないので、mruby ビルド時に組み込む必要がある。 追加する際は、build_config.rb に追記してビルドする。
-なお、mrbgem の実装には、以下３パターンがある。 - C拡張 - Ruby拡張 - C &amp;amp; Ruby 拡張
-作り方については、この辺りが参考になりそう。 - mrubyの拡張モジュールであるmrbgemのテンプレートを自動で生成するmrbgem作った - mrbgemsの作り方メモ(勉強中)
-ireq とは まだ全然わかってないが、この辺り。
- https://github.com/mruby/mruby/issues/944#issuecomment-14556703  ライブラリ構成 以下の４つが定義されているが、現在提供されているのはミニマルのみ？
- ミニマル: 実行に必要な最低限の機能 スタンダード: JIS X 3017 規格相当 フル: MRI(CRuby) のフル機能相当 ドメイン別: 製品ドメイン別の拡張ライブラリ  参考リンク  オフィシャルページ ソース Github 軽量 Ruby のご紹介と 軽量 Ruby フォーラムのご案内 IIJ 軽量Rubyへの取り組み mruby Advent Calendar 2013  mruby のビルド方法 mrubyのバイトコードフォーマット解説   </description>
-    </item>
-    
-    <item>
-      <title>mruby をさわってみた</title>
-      <link>https://harasou.jp/2015/05/02/mruby-faststep/</link>
-      <pubDate>Sat, 02 May 2015 23:23:18 +0900</pubDate>
-      
-      <guid>https://harasou.jp/2015/05/02/mruby-faststep/</guid>
-      <description>&lt;h2 id=&#34;mruby-とは&#34;&gt;mruby とは&lt;/h2&gt;
-
-&lt;p&gt;組込み向けに軽量化されたRuby。mruby 単体で実行するというよりは、組み込み機器や Cなどで書いたアプリのなかに、まるごと&lt;code&gt;mrubyアプリケーション+実行環境&lt;/code&gt;を組み込んで利用する感じ。
-&lt;img src=&#34;mruby.gif&#34; alt=&#34;mruby&#34; /&gt;&lt;/p&gt;</description>
-    </item>
-    
-  </channel>
-</rss>
+なお、mrbgem の実装には、以下３パターンがある。
+C拡張 Ruby拡張 C &amp;amp; Ruby 拡張 作り方については、この辺りが参考になりそう。
+mrubyの拡張モジュールであるmrbgemのテンプレートを自動で生成するmrbgem作った mrbgemsの作り方メモ(勉強中) ireq とは まだ全然わかってないが、この辺り。
+https://github.com/mruby/mruby/issues/944#issuecomment-14556703 ライブラリ構成 以下の４つが定義されているが、現在提供されているのはミニマルのみ？
+ミニマル: 実行に必要な最低限の機能 スタンダード: JIS X 3017 規格相当 フル: MRI(CRuby) のフル機能相当 ドメイン別: 製品ドメイン別の拡張ライブラリ 参考リンク オフィシャルページ ソース Github 軽量 Ruby のご紹介と 軽量 Ruby フォーラムのご案内 IIJ 軽量Rubyへの取り組み mruby Advent Calendar 2013 mruby のビルド方法 mrubyのバイトコードフォーマット解説</description></item><item><title>mruby をさわってみた</title><link>https://harasou.jp/2015/05/02/mruby-faststep/</link><pubDate>Sat, 02 May 2015 23:23:18 +0900</pubDate><guid>https://harasou.jp/2015/05/02/mruby-faststep/</guid><description>&lt;h2 id="mruby-とは">mruby とは&lt;/h2>
+&lt;p>組込み向けに軽量化されたRuby。mruby 単体で実行するというよりは、組み込み機器や Cなどで書いたアプリのなかに、まるごと&lt;code>mrubyアプリケーション+実行環境&lt;/code>を組み込んで利用する感じ。
+&lt;img src="mruby.gif" alt="mruby">&lt;/p></description></item></channel></rss>

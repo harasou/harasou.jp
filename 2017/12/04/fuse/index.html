@@ -1,339 +1,176 @@
-<!DOCTYPE html>
-<html lang="ja">
-  <head>
-    
-    <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.59.0-DEV with theme Tranquilpeak 0.4.7-BETA">
-<meta name="author" content="harasou">
-<meta name="keywords" content="">
-<meta name="description" content="GlusterFS でも利用されている FUSE を使って、Hello World を試して見た。
+<!doctype html><html lang=ja>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=generator content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name=author content="harasou">
+<meta name=keywords content>
+<meta name=description content="GlusterFS でも利用されている FUSE を使って、Hello World を試して見た。
 今回は libfuse を使って、仮想ファイルシステム上のファイルを cat すると Hello World !
 が出力されるまで。">
-
-
 <meta property="og:description" content="GlusterFS でも利用されている FUSE を使って、Hello World を試して見た。
 今回は libfuse を使って、仮想ファイルシステム上のファイルを cat すると Hello World !
 が出力されるまで。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="libfuse で Hello World !">
-<meta name="twitter:title" content="libfuse で Hello World !">
+<meta name=twitter:title content="libfuse で Hello World !">
 <meta property="og:url" content="https://harasou.jp/2017/12/04/fuse/">
 <meta property="twitter:url" content="https://harasou.jp/2017/12/04/fuse/">
 <meta property="og:site_name" content="harasou.jp">
 <meta property="og:description" content="GlusterFS でも利用されている FUSE を使って、Hello World を試して見た。
 今回は libfuse を使って、仮想ファイルシステム上のファイルを cat すると Hello World !
 が出力されるまで。">
-<meta name="twitter:description" content="GlusterFS でも利用されている FUSE を使って、Hello World を試して見た。
+<meta name=twitter:description content="GlusterFS でも利用されている FUSE を使って、Hello World を試して見た。
 今回は libfuse を使って、仮想ファイルシステム上のファイルを cat すると Hello World !
 が出力されるまで。">
 <meta property="og:locale" content="ja">
-
-  
-    <meta property="article:published_time" content="2017-12-05T21:11:25">
-  
-  
-    <meta property="article:modified_time" content="2017-12-05T21:11:25">
-  
-  
-  
-  
-    
-      <meta property="article:tag" content="linux">
-    
-      <meta property="article:tag" content="kernel">
-    
-      <meta property="article:tag" content="fuse">
-    
-  
-
-
-<meta name="twitter:card" content="summary">
-
-  <meta name="twitter:site" content="@harasou5">
-
-
-  <meta name="twitter:creator" content="@harasou5">
-
-
-
-
-
-
-  <meta property="og:image" content="https://harasou.jp/2017/12/04/fuse/tokkuri.png">
-  <meta property="twitter:image" content="https://harasou.jp/2017/12/04/fuse/tokkuri.png">
-
-
-
-
-
-  <meta property="og:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
-  <meta property="twitter:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
-
-
-    <title>libfuse で Hello World !</title>
-
-    <link rel="icon" href="/favicon.png">
-    
-
-    
-
-    <link rel="canonical" href="https://harasou.jp/2017/12/04/fuse/">
-
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
-    
-    
-    <link rel="stylesheet" href="/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css" />
-    
-    
-      
-        <link rel="stylesheet"  href="https://harasou.jp/css/style.css" swapPaginator="true">
-      
-    
-
-    
-      
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-	ga('create', 'UA-62541096-1', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-
-    
-    
-  </head>
-
-  <body>
-    <div id="blog">
-      <header id="header" data-behavior="5">
-  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
-  <div class="header-title">
-    <a class="header-title-link" href="/">harasou.jp</a>
-  </div>
-  
-    
-      <a class="header-right-picture "
-         href="/#about">
-    
-    
-    
-      
-        <img class="header-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=90" alt="プロフィール画像" />
-      
-    
-    </a>
-  
-</header>
-
-      <nav id="sidebar" data-behavior="5">
-  <div class="sidebar-container">
-    
-      <div class="sidebar-profile">
-        <a href="/#about">
-          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt="プロフィール画像" />
-        </a>
-        <h4 class="sidebar-profile-name">harasou</h4>
-        
-          <h5 class="sidebar-profile-bio">めくじらを立てない</h5>
-        
-      </div>
-    
-    <ul class="sidebar-buttons">
-      
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="/">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
-      
-      <span class="sidebar-button-desc">ホーム</span>
-    </a>
-  </li>
-
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="/tags">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
-      
-      <span class="sidebar-button-desc">タグ</span>
-    </a>
-  </li>
-
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="/archives">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
-      
-      <span class="sidebar-button-desc">アーカイブ</span>
-    </a>
-  </li>
-
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="/#about">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
-      
-      <span class="sidebar-button-desc">プロフィール</span>
-    </a>
-  </li>
-
-
-    </ul>
-    <ul class="sidebar-buttons">
-      
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="https://github.com/harasou" target="_blank" rel="noopener">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
-      
-      <span class="sidebar-button-desc">GitHub</span>
-    </a>
-  </li>
-
-
-    </ul>
-    <ul class="sidebar-buttons">
-      
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="/index.xml">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
-      
-      <span class="sidebar-button-desc">RSS</span>
-    </a>
-  </li>
-
-
-    </ul>
-  </div>
-</nav>
-
-      
-
-      <div id="main" data-behavior="5"
-        class="
-               hasCoverMetaIn
-               ">
-        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
-          
-          
-            <div class="post-header main-content-wrap text-left">
-  
-    <h1 class="post-title" itemprop="headline">
-      libfuse で Hello World !
-    </h1>
-  
-  
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-12-05T21:11:25&#43;09:00">
-        
-  
-  
-  
-  
-    2017/12/5
-  
-
-      </time>
-    
-    
-  </div>
-
+<meta property="article:published_time" content="2017-12-05T21:11:25">
+<meta property="article:modified_time" content="2017-12-05T21:11:25">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="kernel">
+<meta property="article:tag" content="fuse">
+<meta name=twitter:card content="summary">
+<meta name=twitter:site content="@harasou5">
+<meta name=twitter:creator content="@harasou5">
+<meta property="og:image" content="https://harasou.jp/2017/12/04/fuse/tokkuri.png">
+<meta property="twitter:image" content="https://harasou.jp/2017/12/04/fuse/tokkuri.png">
+<meta property="og:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
+<meta property="twitter:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
+<title>libfuse で Hello World !</title>
+<link rel=icon href=/favicon.png>
+<link rel=canonical href=https://harasou.jp/2017/12/04/fuse/>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin=anonymous>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin=anonymous>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin=anonymous>
+<link rel=stylesheet href=/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css>
+<link rel=stylesheet href=https://harasou.jp/css/style.css swappaginator=true>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-62541096-1','auto'),ga('send','pageview'))</script>
+</head>
+<body>
+<div id=blog>
+<header id=header data-behavior=5>
+<i id=btn-open-sidebar class="fa fa-lg fa-bars"></i>
+<div class=header-title>
+<a class=header-title-link href=/>harasou.jp</a>
 </div>
-          
-          <div class="post-content markdown" itemprop="articleBody">
-            <div class="main-content-wrap">
-              <p>GlusterFS でも利用されている FUSE を使って、Hello World を試して見た。
+<a class=header-right-picture href=/#about>
+<img class=header-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=90" alt=プロフィール画像>
+</a>
+</header>
+<nav id=sidebar data-behavior=5>
+<div class=sidebar-container>
+<div class=sidebar-profile>
+<a href=/#about>
+<img class=sidebar-profile-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt=プロフィール画像>
+</a>
+<h4 class=sidebar-profile-name>harasou</h4>
+<h5 class=sidebar-profile-bio>めくじらを立てない</h5>
+</div>
+<ul class=sidebar-buttons>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/>
+<i class="sidebar-button-icon fa fa-lg fa-home"></i>
+<span class=sidebar-button-desc>ホーム</span>
+</a>
+</li>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/tags>
+<i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+<span class=sidebar-button-desc>タグ</span>
+</a>
+</li>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/archives>
+<i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+<span class=sidebar-button-desc>アーカイブ</span>
+</a>
+</li>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/#about>
+<i class="sidebar-button-icon fa fa-lg fa-question"></i>
+<span class=sidebar-button-desc>プロフィール</span>
+</a>
+</li>
+</ul>
+<ul class=sidebar-buttons>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=https://github.com/harasou target=_blank rel=noopener>
+<i class="sidebar-button-icon fa fa-lg fa-github"></i>
+<span class=sidebar-button-desc>GitHub</span>
+</a>
+</li>
+</ul>
+<ul class=sidebar-buttons>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/index.xml>
+<i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+<span class=sidebar-button-desc>RSS</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+<div id=main data-behavior=5 class=hasCoverMetaIn>
+<article class=post itemscope itemtype=http://schema.org/BlogPosting>
+<div class="post-header main-content-wrap text-left">
+<h1 class=post-title itemprop=headline>
+libfuse で Hello World !
+</h1>
+<div class="postShorten-meta post-meta">
+<time itemprop=datePublished datetime=2017-12-05T21:11:25+09:00>
+2017/12/5
+</time>
+</div>
+</div>
+<div class="post-content markdown" itemprop=articleBody>
+<div class=main-content-wrap>
+<p>GlusterFS でも利用されている FUSE を使って、Hello World を試して見た。
 今回は libfuse を使って、仮想ファイルシステム上のファイルを cat すると Hello World !
 が出力されるまで。</p>
-
-<pre><code>$ cat fuse/hello
+<pre tabindex=0><code>$ cat fuse/hello
 Hello World!
-</code></pre>
-
-<h2 id="fuse-filesystem-in-userspace">FUSE (Filesystem in Userspace)</h2>
-
+</code></pre><h2 id=fuse-filesystem-in-userspace>FUSE (Filesystem in Userspace)</h2>
 <p>FUSE は、linux 2.6.14 で追加されたカーネルの機能で、ファイルシステムをユーザ空間の
 プログラムで実装できる仕組み提供する。これにより、カーネルコードを修正することなく、
 ユーザ空間で独自のファイルシステムを作成できるようになる。</p>
-
-<p><img src="fuse.png" alt="" /></p>
-
+<p><img src=fuse.png alt></p>
 <p>Wikipedia によると、Linux だけでなく、*BSD や MAC とかでも実装があるらしい。</p>
-
-<h2 id="環境">環境</h2>
-
+<h2 id=環境>環境</h2>
 <p>確認はいつものごとく Vagrant で。</p>
-
-<pre><code>Vagrant.configure(&quot;2&quot;) do |config|
+<pre tabindex=0><code>Vagrant.configure(&quot;2&quot;) do |config|
   config.vm.box = &quot;centos/7&quot;
   config.vm.provision &quot;shell&quot;,
           inline: &quot;yum install -y fuse fuse-devel gcc&quot;
 end
-</code></pre>
-
-<ul>
+</code></pre><ul>
 <li>CentOS 7</li>
 <li>kernel 3.10.0-693.5.2.el7.x86_64</li>
 <li>fuse 2.9.2</li>
 </ul>
-
-<h2 id="libfuse-の使い方">libfuse の使い方</h2>
-
-<p>とりあえず動かして見る。Hello World するための<a href="https://gist.githubusercontent.com/harasou/20ad5dd6a0894d65c04a9ade0c835155/raw/553def55931ddd8ce28011a1e496a25148a6e2b8/hello.c">ソース全文</a>。</p>
-
+<h2 id=libfuse-の使い方>libfuse の使い方</h2>
+<p>とりあえず動かして見る。Hello World するための<a href=https://gist.githubusercontent.com/harasou/20ad5dd6a0894d65c04a9ade0c835155/raw/553def55931ddd8ce28011a1e496a25148a6e2b8/hello.c>ソース全文</a>。</p>
 <p>これを hello.c として保存し、ビルドする。ビルドされた <code>hello</code> にマウントポイントを
 渡して実行すると、helloFS？にアクセスできる。マウントは一般ユーザでも可能。</p>
-
-<pre><code>curl -Lo hello.c https://goo.gl/igCjey
+<pre tabindex=0><code>curl -Lo hello.c https://goo.gl/igCjey
 gcc -Wall hello.c `pkg-config fuse --cflags --libs` -o hello
 mkdir fusedir
 ./hello fusedir/
-</code></pre>
-
-<p>Hello World !</p>
-
-<pre><code>[vagrant@localhost ~]$ ls fusedir/
+</code></pre><p>Hello World !</p>
+<pre tabindex=0><code>[vagrant@localhost ~]$ ls fusedir/
 hello
 [vagrant@localhost ~]$ cat fusedir/hello
 Hello World!
-</code></pre>
-
-<p>ちなみに、実行した hello は init にぶら下がった状態になった。</p>
-
-<pre><code>[vagrant@localhost ~]$ ps -lfC hello
+</code></pre><p>ちなみに、実行した hello は init にぶら下がった状態になった。</p>
+<pre tabindex=0><code>[vagrant@localhost ~]$ ps -lfC hello
 F S UID        PID  PPID  C PRI  NI ADDR SZ WCHAN  STIME TTY          TIME CMD
 1 S vagrant   3531     1  0  80   0 - 39640 futex_ 15:41 ?        00:00:00 ./hello fusedir/
-</code></pre>
-
-<p>マウントの状態はこんな感じ。</p>
-
-<pre><code>[vagrant@localhost ~]$ mount -t fuse.hello
+</code></pre><p>マウントの状態はこんな感じ。</p>
+<pre tabindex=0><code>[vagrant@localhost ~]$ mount -t fuse.hello
 /home/vagrant/hello on /home/vagrant/fusedir type fuse.hello (rw,nosuid,nodev,relatime,user_id=1000,group_id=1000)
-</code></pre>
-
-<h2 id="hello-c-の中身">hello.c の中身</h2>
-
+</code></pre><h2 id=helloc-の中身>hello.c の中身</h2>
 <p>ソースの頭の方を見ると、だいたい使い方がわかる。</p>
-
-<pre><code>#include &lt;fuse.h&gt;
+<pre tabindex=0><code>#include &lt;fuse.h&gt;
 ...
 
 static int hello_getattr(const char *path, struct stat *stbuf);
@@ -353,19 +190,14 @@ int main(int argc, char *argv[])
 	return fuse_main(argc, argv, &amp;hello_oper, NULL);
 }
 ...
-</code></pre>
-
-<p>プログラムの<code>main()</code>で実行しているのが<code>fuse_main()</code>。
+</code></pre><p>プログラムの<code>main()</code>で実行しているのが<code>fuse_main()</code>。
 この引数には、コマンド実行時の引数に加え<code>fuse_operations構造体</code>が渡されている。
 この構造体に、ファイル操作に絡むシステムコールに対応する hook関数を登録する。</p>
-
-<h3 id="fuse-operations構造体">fuse_operations構造体</h3>
-
+<h3 id=fuse_operations構造体>fuse_operations構造体</h3>
 <p>どういったシステムコールが登録できるかは<code>/usr/include/fuse/fuse.h</code>にある
-<code>fuse_operations構造体</code>の<a href="https://gist.github.com/harasou/20ad5dd6a0894d65c04a9ade0c835155#file-fuse-h-L88-L591">定義</a>をみればよい。
+<code>fuse_operations構造体</code>の<a href=https://gist.github.com/harasou/20ad5dd6a0894d65c04a9ade0c835155#file-fuse-h-L88-L591>定義</a>をみればよい。
 定義をざっくり grep すると、こんな感じのシステムコールの hook が登録できる。</p>
-
-<pre><code>[vagrant@localhost ~]$ awk '/^struct fuse_operations/,/^}/' /usr/include/fuse/fuse.h | grep &quot;^  *int&quot;
+<pre tabindex=0><code>[vagrant@localhost ~]$ awk '/^struct fuse_operations/,/^}/' /usr/include/fuse/fuse.h | grep &quot;^  *int&quot;
 	int (*getattr) (const char *, struct stat *);
 	int (*readlink) (const char *, char *, size_t);
 	int (*getdir) (const char *, fuse_dirh_t, fuse_dirfil_t);
@@ -408,13 +240,9 @@ int main(int argc, char *argv[])
 	int (*read_buf) (const char *, struct fuse_bufvec **bufp,
 	int (*flock) (const char *, struct fuse_file_info *, int op);
 	int (*fallocate) (const char *, int, off_t, off_t,
-</code></pre>
-
-<h2 id="補足">補足</h2>
-
+</code></pre><h2 id=補足>補足</h2>
 <p>プログラム側で定義していない属性値や関数は、以下のようになった。</p>
-
-<pre><code>[vagrant@localhost ~]$ stat fusedir/hello
+<pre tabindex=0><code>[vagrant@localhost ~]$ stat fusedir/hello
   File: ‘fusedir/hello’
   Size: 13        	Blocks: 0          IO Block: 4096   regular file
 Device: 27h/39d	Inode: 2           Links: 1
@@ -424,315 +252,187 @@ Access: 1970-01-01 00:00:00.000000000 +0000
 Modify: 1970-01-01 00:00:00.000000000 +0000
 Change: 1970-01-01 00:00:00.000000000 +0000
  Birth: -
-</code></pre>
-
-<p>ファイルの属性は、サイズ、権限、リンク数しか定義していない。このため、日時やオーナは
+</code></pre><p>ファイルの属性は、サイズ、権限、リンク数しか定義していない。このため、日時やオーナは
 初期値になっている模様。</p>
-
-<pre><code>[vagrant@localhost ~]$ sudo rm fusedir/hello
+<pre tabindex=0><code>[vagrant@localhost ~]$ sudo rm fusedir/hello
 rm: cannot remove ‘fusedir/hello’: Permission denied
 [vagrant@localhost ~]$
 [vagrant@localhost ~]$ sudo chown vagrant: fusedir/hello
 chown: cannot access ‘fusedir/hello’: Permission denied
 [vagrant@localhost ~]$
-</code></pre>
-
-<p>hook を登録していないシステムコールは EACCES になった。</p>
-
-<!--links-->
-              
-            </div>
-          </div>
-          <div id="post-footer" class="post-footer main-content-wrap">
-            
-              
-                
-                
-                  <div class="post-footer-tags">
-                    <span class="text-color-light text-small">タグ</span><br/>
-                    
-  <a class="tag tag--primary tag--small" href="/tags/linux/">linux</a>
-
-  <a class="tag tag--primary tag--small" href="/tags/kernel/">kernel</a>
-
-  <a class="tag tag--primary tag--small" href="/tags/fuse/">fuse</a>
-
-                  </div>
-                
-              
-            
-            <div class="post-actions-wrap">
-  
-      <nav >
-        <ul class="post-actions post-action-nav">
-          
-            <li class="post-action">
-              
-                <a class="post-action-btn btn btn--default tooltip--top" href="/2018/01/27/lego-and-clouddns/" data-tooltip="lego と Cloud DNS で Let&#39;s Encrypt の自動更新">
-              
-                  <i class="fa fa-angle-left"></i>
-                  <span class="hide-xs hide-sm text-small icon-ml">次</span>
-                </a>
-            </li>
-            <li class="post-action">
-              
-                <a class="post-action-btn btn btn--default tooltip--top" href="/2017/11/23/change-hugo-from-hexo/" data-tooltip="ブログを hexo から hugo に変更した">
-              
-                  <span class="hide-xs hide-sm text-small icon-mr">前</span>
-                  <i class="fa fa-angle-right"></i>
-                </a>
-            </li>
-          
-        </ul>
-      </nav>
-    <ul class="post-actions post-action-share" >
-      
-        <li class="post-action hide-lg hide-md hide-sm">
-          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
-            <i class="fa fa-share-alt"></i>
-          </a>
-        </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="http://b.hatena.ne.jp/entry/https://harasou.jp/2017/12/04/fuse/">
-              <i class="fa icon-hatebu"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="http://getpocket.com/edit?url=https://harasou.jp/2017/12/04/fuse/">
-              <i class="fa icon-pocket"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2017/12/04/fuse/">
-              <i class="fa fa-facebook-official"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://harasou.jp/2017/12/04/fuse/">
-              <i class="fa fa-twitter"></i>
-            </a>
-          </li>
-        
-      
-      
-      <li class="post-action">
-        
-          <a class="post-action-btn btn btn--default" href="#">
-        
-          <i class="fa fa-list"></i>
-        </a>
-      </li>
-    </ul>
-  
+</code></pre><p>hook を登録していないシステムコールは EACCES になった。</p>
 </div>
-
-            
-              
-            
-          </div>
-        </article>
-        <footer id="footer" class="main-content-wrap">
-  <span class="copyrights">
-    &copy; 2019 harasou. All Rights Reserved
-  </span>
+</div>
+<div id=post-footer class="post-footer main-content-wrap">
+<div class=post-footer-tags>
+<span class="text-color-light text-small">タグ</span><br>
+<a class="tag tag--primary tag--small" href=/tags/linux/>linux</a>
+<a class="tag tag--primary tag--small" href=/tags/kernel/>kernel</a>
+<a class="tag tag--primary tag--small" href=/tags/fuse/>fuse</a>
+</div>
+<div class=post-actions-wrap>
+<nav>
+<ul class="post-actions post-action-nav">
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=/2018/01/27/lego-and-clouddns/ data-tooltip="lego と Cloud DNS で Let's Encrypt の自動更新">
+<i class="fa fa-angle-left"></i>
+<span class="hide-xs hide-sm text-small icon-ml">次</span>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=/2017/11/23/change-hugo-from-hexo/ data-tooltip="ブログを hexo から hugo に変更した">
+<span class="hide-xs hide-sm text-small icon-mr">前</span>
+<i class="fa fa-angle-right"></i>
+</a>
+</li>
+</ul>
+</nav>
+<ul class="post-actions post-action-share">
+<li class="post-action hide-lg hide-md hide-sm">
+<a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions>
+<i class="fa fa-share-alt"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.jp/2017/12/04/fuse/>
+<i class="fa icon-hatebu"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.jp/2017/12/04/fuse/">
+<i class="fa icon-pocket"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2017/12/04/fuse/">
+<i class="fa fa-facebook-official"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.jp/2017/12/04/fuse/">
+<i class="fa fa-twitter"></i>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default" href=#>
+<i class="fa fa-list"></i>
+</a>
+</li>
+</ul>
+</div>
+</div>
+</article>
+<footer id=footer class=main-content-wrap>
+<span class=copyrights>
+&copy; 2021 harasou. All Rights Reserved
+</span>
 </footer>
-
-      </div>
-      <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
-        <div class="post-actions-wrap">
-  
-      <nav >
-        <ul class="post-actions post-action-nav">
-          
-            <li class="post-action">
-              
-                <a class="post-action-btn btn btn--default tooltip--top" href="/2018/01/27/lego-and-clouddns/" data-tooltip="lego と Cloud DNS で Let&#39;s Encrypt の自動更新">
-              
-                  <i class="fa fa-angle-left"></i>
-                  <span class="hide-xs hide-sm text-small icon-ml">次</span>
-                </a>
-            </li>
-            <li class="post-action">
-              
-                <a class="post-action-btn btn btn--default tooltip--top" href="/2017/11/23/change-hugo-from-hexo/" data-tooltip="ブログを hexo から hugo に変更した">
-              
-                  <span class="hide-xs hide-sm text-small icon-mr">前</span>
-                  <i class="fa fa-angle-right"></i>
-                </a>
-            </li>
-          
-        </ul>
-      </nav>
-    <ul class="post-actions post-action-share" >
-      
-        <li class="post-action hide-lg hide-md hide-sm">
-          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
-            <i class="fa fa-share-alt"></i>
-          </a>
-        </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="http://b.hatena.ne.jp/entry/https://harasou.jp/2017/12/04/fuse/">
-              <i class="fa icon-hatebu"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="http://getpocket.com/edit?url=https://harasou.jp/2017/12/04/fuse/">
-              <i class="fa icon-pocket"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2017/12/04/fuse/">
-              <i class="fa fa-facebook-official"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://harasou.jp/2017/12/04/fuse/">
-              <i class="fa fa-twitter"></i>
-            </a>
-          </li>
-        
-      
-      
-      <li class="post-action">
-        
-          <a class="post-action-btn btn btn--default" href="#">
-        
-          <i class="fa fa-list"></i>
-        </a>
-      </li>
-    </ul>
-  
 </div>
-
-      </div>
-      <div id="share-options-bar" class="share-options-bar" data-behavior="5">
-  <i id="btn-close-shareoptions" class="fa fa-close"></i>
-  <ul class="share-options">
-    
-      <li class="share-option">
-        <a class="share-option-btn" target="new" href="http://b.hatena.ne.jp/entry/https%3A%2F%2Fharasou.jp%2F2017%2F12%2F04%2Ffuse%2F">
-          <i class="fa icon-hatebu"></i><span>Hatebuで共有</span>
-        </a>
-      </li>
-    
-      <li class="share-option">
-        <a class="share-option-btn" target="new" href="http://getpocket.com/edit?url=https%3A%2F%2Fharasou.jp%2F2017%2F12%2F04%2Ffuse%2F">
-          <i class="fa icon-pocket"></i><span>Pocketで共有</span>
-        </a>
-      </li>
-    
-      <li class="share-option">
-        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fharasou.jp%2F2017%2F12%2F04%2Ffuse%2F">
-          <i class="fa fa-facebook-official"></i><span>Facebookで共有</span>
-        </a>
-      </li>
-    
-      <li class="share-option">
-        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fharasou.jp%2F2017%2F12%2F04%2Ffuse%2F">
-          <i class="fa fa-twitter"></i><span>Twitterで共有</span>
-        </a>
-      </li>
-    
-  </ul>
+<div id=bottom-bar class=post-bottom-bar data-behavior=5>
+<div class=post-actions-wrap>
+<nav>
+<ul class="post-actions post-action-nav">
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=/2018/01/27/lego-and-clouddns/ data-tooltip="lego と Cloud DNS で Let's Encrypt の自動更新">
+<i class="fa fa-angle-left"></i>
+<span class="hide-xs hide-sm text-small icon-ml">次</span>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=/2017/11/23/change-hugo-from-hexo/ data-tooltip="ブログを hexo から hugo に変更した">
+<span class="hide-xs hide-sm text-small icon-mr">前</span>
+<i class="fa fa-angle-right"></i>
+</a>
+</li>
+</ul>
+</nav>
+<ul class="post-actions post-action-share">
+<li class="post-action hide-lg hide-md hide-sm">
+<a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions>
+<i class="fa fa-share-alt"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.jp/2017/12/04/fuse/>
+<i class="fa icon-hatebu"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.jp/2017/12/04/fuse/">
+<i class="fa icon-pocket"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2017/12/04/fuse/">
+<i class="fa fa-facebook-official"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.jp/2017/12/04/fuse/">
+<i class="fa fa-twitter"></i>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default" href=#>
+<i class="fa fa-list"></i>
+</a>
+</li>
+</ul>
 </div>
-<div id="share-options-mask" class="share-options-mask"></div>
-    </div>
-    
-    <div id="about">
-  <div id="about-card">
-    <div id="about-btn-close">
-      <i class="fa fa-remove"></i>
-    </div>
-    
-      <img id="about-card-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt="プロフィール画像" />
-    
-    <h4 id="about-card-name">harasou</h4>
-    
-      <div id="about-card-bio">めくじらを立てない</div>
-    
-    
-      <div id="about-card-job">
-        <i class="fa fa-briefcase"></i>
-        <br/>
-        Infra Engineer
-      </div>
-    
-    
-      <div id="about-card-location">
-        <i class="fa fa-map-marker"></i>
-        <br/>
-        Fukuoka Japan
-      </div>
-    
-  </div>
 </div>
-
-    
-
-    
-  
-    
-      
-      <div id="cover" style="background-image:url('https://harasou.jp/images/cover.jpg');"></div>
-    
-  
-
-
-    
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
-
-
-<script src="/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js"></script>
-
-
-<script lang="javascript">
-window.onload = updateMinWidth;
-window.onresize = updateMinWidth;
-document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
-function updateMinWidth() {
-  var sidebar = document.getElementById("sidebar");
-  var main = document.getElementById("main");
-  main.style.minWidth = "";
-  var w1 = getComputedStyle(main).getPropertyValue("min-width");
-  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
-  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
-  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
-}
-</script>
-
-<script>
-$(document).ready(function() {
-  hljs.configure({ classPrefix: '', useBR: false });
-  $('pre.code-highlight > code, pre > code').each(function(i, block) {
-    if (!$(this).hasClass('codeblock')) {
-      $(this).addClass('codeblock');
-    }
-    hljs.highlightBlock(block);
-  });
-});
-</script>
-
-
-  
-    
-  
-
-
-
-
-    
-  </body>
+<div id=share-options-bar class=share-options-bar data-behavior=5>
+<i id=btn-close-shareoptions class="fa fa-close"></i>
+<ul class=share-options>
+<li class=share-option>
+<a class=share-option-btn target=new href=http://b.hatena.ne.jp/entry/https%3A%2F%2Fharasou.jp%2F2017%2F12%2F04%2Ffuse%2F>
+<i class="fa icon-hatebu"></i><span>Hatebuで共有</span>
+</a>
+</li>
+<li class=share-option>
+<a class=share-option-btn target=new href="http://getpocket.com/edit?url=https%3A%2F%2Fharasou.jp%2F2017%2F12%2F04%2Ffuse%2F">
+<i class="fa icon-pocket"></i><span>Pocketで共有</span>
+</a>
+</li>
+<li class=share-option>
+<a class=share-option-btn target=new href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fharasou.jp%2F2017%2F12%2F04%2Ffuse%2F">
+<i class="fa fa-facebook-official"></i><span>Facebookで共有</span>
+</a>
+</li>
+<li class=share-option>
+<a class=share-option-btn target=new href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fharasou.jp%2F2017%2F12%2F04%2Ffuse%2F">
+<i class="fa fa-twitter"></i><span>Twitterで共有</span>
+</a>
+</li>
+</ul>
+</div>
+<div id=share-options-mask class=share-options-mask></div>
+</div>
+<div id=about>
+<div id=about-card>
+<div id=about-btn-close>
+<i class="fa fa-remove"></i>
+</div>
+<img id=about-card-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt=プロフィール画像>
+<h4 id=about-card-name>harasou</h4>
+<div id=about-card-bio>めくじらを立てない</div>
+<div id=about-card-job>
+<i class="fa fa-briefcase"></i>
+<br>
+Infra Engineer
+</div>
+<div id=about-card-location>
+<i class="fa fa-map-marker"></i>
+<br>
+Fukuoka Japan
+</div>
+</div>
+</div>
+<div id=cover style=background-image:url(https://harasou.jp/images/cover.jpg)></div>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin=anonymous></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin=anonymous></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin=anonymous></script>
+<script src=/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js></script>
+<script lang=javascript>window.onload=updateMinWidth,window.onresize=updateMinWidth,document.getElementById("sidebar").addEventListener("transitionend",updateMinWidth);function updateMinWidth(){var b=document.getElementById("sidebar"),a=document.getElementById("main"),c,d,e;a.style.minWidth="",c=getComputedStyle(a).getPropertyValue("min-width"),d=getComputedStyle(b).getPropertyValue("width"),e=getComputedStyle(b).getPropertyValue("left"),a.style.minWidth=`calc(${c} - ${d} - ${e})`}</script>
+<script>$(document).ready(function(){hljs.configure({classPrefix:'',useBR:!1}),$('pre.code-highlight > code, pre > code').each(function(b,a){$(this).hasClass('codeblock')||$(this).addClass('codeblock'),hljs.highlightBlock(a)})})</script>
+</body>
 </html>
-

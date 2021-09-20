@@ -1,63 +1,9 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>hexo on harasou.jp</title>
-    <link>https://harasou.jp/tags/hexo/</link>
-    <description>Recent content in hexo on harasou.jp</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>ja</language>
-    <lastBuildDate>Sun, 28 Jun 2015 12:48:38 +0900</lastBuildDate>
-    
-	<atom:link href="https://harasou.jp/tags/hexo/index.xml" rel="self" type="application/rss+xml" />
-    
-    
-    <item>
-      <title>hexo の 404 File not found さようなら</title>
-      <link>https://harasou.jp/2015/06/28/hexo-goodby-404/</link>
-      <pubDate>Sun, 28 Jun 2015 12:48:38 +0900</pubDate>
-      
-      <guid>https://harasou.jp/2015/06/28/hexo-goodby-404/</guid>
-      <description>&lt;p&gt;Mac 上で hexo の記事を書いていると、記事へのリンクが 404 File not found になることがあった。
-&lt;a href=&#34;https://harasou.jp/2015/05/10/hexo-404-file-not-found/&#34;&gt;以前の記事&lt;/a&gt;では、sed でダサい対応をしていたのだが、@kazu69 が hexo-plugin を作成してくれました。&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://www.npmjs.com/package/hexo-filter-permalink-normalization&#34;&gt;npm: hexo-filter-permalink-normalization&lt;/a&gt;
-&lt;a href=&#34;https://www.npmjs.com/package/hexo-filter-permalink-normalization&#34;&gt;&lt;img src=&#34;npm.png&#34; alt=&#34;&#34; /&gt;&lt;/a&gt;&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>hexo で 404 File not found</title>
-      <link>https://harasou.jp/2015/05/10/hexo-404-file-not-found/</link>
-      <pubDate>Sun, 10 May 2015 01:38:53 +0900</pubDate>
-      
-      <guid>https://harasou.jp/2015/05/10/hexo-404-file-not-found/</guid>
-      <description>&lt;p&gt;blog のトップページなどから&lt;code&gt;日本語タイトル&lt;/code&gt;のリンクをたどると 404 になることがあった。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;404.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>hexo に DISQUS を追加</title>
-      <link>https://harasou.jp/2015/05/05/hexo-disqus/</link>
-      <pubDate>Tue, 05 May 2015 17:22:31 +0900</pubDate>
-      
-      <guid>https://harasou.jp/2015/05/05/hexo-disqus/</guid>
-      <description>DISQUS はコメント機能を提供するサービスで、hexo では簡単に導入できる。
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>hexo on harasou.jp</title><link>https://harasou.jp/tags/hexo/</link><description>Recent content in hexo on harasou.jp</description><generator>Hugo -- gohugo.io</generator><language>ja</language><lastBuildDate>Sun, 28 Jun 2015 12:48:38 +0900</lastBuildDate><atom:link href="https://harasou.jp/tags/hexo/index.xml" rel="self" type="application/rss+xml"/><item><title>hexo の 404 File not found さようなら</title><link>https://harasou.jp/2015/06/28/hexo-goodby-404/</link><pubDate>Sun, 28 Jun 2015 12:48:38 +0900</pubDate><guid>https://harasou.jp/2015/06/28/hexo-goodby-404/</guid><description>&lt;p>Mac 上で hexo の記事を書いていると、記事へのリンクが 404 File not found になることがあった。
+&lt;a href="https://harasou.jp/2015/05/10/hexo-404-file-not-found/">以前の記事&lt;/a>では、sed でダサい対応をしていたのだが、@kazu69 が hexo-plugin を作成してくれました。&lt;/p>
+&lt;p>&lt;a href="https://www.npmjs.com/package/hexo-filter-permalink-normalization">npm: hexo-filter-permalink-normalization&lt;/a>
+&lt;a href="https://www.npmjs.com/package/hexo-filter-permalink-normalization">&lt;img src="npm.png" alt="">&lt;/a>&lt;/p></description></item><item><title>hexo で 404 File not found</title><link>https://harasou.jp/2015/05/10/hexo-404-file-not-found/</link><pubDate>Sun, 10 May 2015 01:38:53 +0900</pubDate><guid>https://harasou.jp/2015/05/10/hexo-404-file-not-found/</guid><description>&lt;p>blog のトップページなどから&lt;code>日本語タイトル&lt;/code>のリンクをたどると 404 になることがあった。&lt;/p>
+&lt;p>&lt;img src="404.png" alt="">&lt;/p></description></item><item><title>hexo に DISQUS を追加</title><link>https://harasou.jp/2015/05/05/hexo-disqus/</link><pubDate>Tue, 05 May 2015 17:22:31 +0900</pubDate><guid>https://harasou.jp/2015/05/05/hexo-disqus/</guid><description>DISQUS はコメント機能を提供するサービスで、hexo では簡単に導入できる。
 DISQUS の管理ページにある Shortname を設定するだけ。ただ、自分が使っているテーマ light ではうまく表示されなかったので、テーマの設定にある comment_provider に facebook 以外の文字列を設定して対処。
-hexo config disqus_shortname harasougithubio hexo --config themes/light/_config.yml config comment_provider disqus</description>
-    </item>
-    
-    <item>
-      <title>hexo セットアップメモ</title>
-      <link>https://harasou.jp/2015/04/28/hexo-setup/</link>
-      <pubDate>Tue, 28 Apr 2015 00:52:14 +0900</pubDate>
-      
-      <guid>https://harasou.jp/2015/04/28/hexo-setup/</guid>
-      <description>&lt;h2 id=&#34;hexo-とは&#34;&gt;hexo とは&lt;/h2&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://hexo.io&#34;&gt;hexo&lt;/a&gt; は、node.js で作成された静的サイトジェネレータ。blog の作成に特化していてコマンド一発で gh-pages などに blog を deploy できる。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;hexo_io.png&#34; alt=&#34;https://hexo.io/&#34; /&gt;&lt;/p&gt;</description>
-    </item>
-    
-  </channel>
-</rss>
+hexo config disqus_shortname harasougithubio hexo --config themes/light/_config.yml config comment_provider disqus</description></item><item><title>hexo セットアップメモ</title><link>https://harasou.jp/2015/04/28/hexo-setup/</link><pubDate>Tue, 28 Apr 2015 00:52:14 +0900</pubDate><guid>https://harasou.jp/2015/04/28/hexo-setup/</guid><description>&lt;h2 id="hexo-とは">hexo とは&lt;/h2>
+&lt;p>&lt;a href="https://hexo.io">hexo&lt;/a> は、node.js で作成された静的サイトジェネレータ。blog の作成に特化していてコマンド一発で gh-pages などに blog を deploy できる。&lt;/p>
+&lt;p>&lt;img src="hexo_io.png" alt="https://hexo.io/">&lt;/p></description></item></channel></rss>

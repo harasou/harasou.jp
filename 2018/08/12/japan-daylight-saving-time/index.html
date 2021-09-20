@@ -1,290 +1,142 @@
-<!DOCTYPE html>
-<html lang="ja">
-  <head>
-    
-    <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.59.0-DEV with theme Tranquilpeak 0.4.7-BETA">
-<meta name="author" content="harasou">
-<meta name="keywords" content="">
-<meta name="description" content="最近、サマータイム導入の話で盛り上がっているので、Linux ではどうなっているのか調べてみた。">
-
-
+<!doctype html><html lang=ja>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=generator content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name=author content="harasou">
+<meta name=keywords content>
+<meta name=description content="最近、サマータイム導入の話で盛り上がっているので、Linux ではどうなっているのか調べてみた。">
 <meta property="og:description" content="最近、サマータイム導入の話で盛り上がっているので、Linux ではどうなっているのか調べてみた。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Linuxでのサマータイム - JDTの来襲">
-<meta name="twitter:title" content="Linuxでのサマータイム - JDTの来襲">
+<meta name=twitter:title content="Linuxでのサマータイム - JDTの来襲">
 <meta property="og:url" content="https://harasou.jp/2018/08/12/japan-daylight-saving-time/">
 <meta property="twitter:url" content="https://harasou.jp/2018/08/12/japan-daylight-saving-time/">
 <meta property="og:site_name" content="harasou.jp">
 <meta property="og:description" content="最近、サマータイム導入の話で盛り上がっているので、Linux ではどうなっているのか調べてみた。">
-<meta name="twitter:description" content="最近、サマータイム導入の話で盛り上がっているので、Linux ではどうなっているのか調べてみた。">
+<meta name=twitter:description content="最近、サマータイム導入の話で盛り上がっているので、Linux ではどうなっているのか調べてみた。">
 <meta property="og:locale" content="ja">
-
-  
-    <meta property="article:published_time" content="2018-08-12T13:48:25">
-  
-  
-    <meta property="article:modified_time" content="2018-08-12T13:48:25">
-  
-  
-  
-  
-    
-      <meta property="article:tag" content="linux">
-    
-  
-
-
-<meta name="twitter:card" content="summary">
-
-  <meta name="twitter:site" content="@harasou5">
-
-
-  <meta name="twitter:creator" content="@harasou5">
-
-
-
-
-
-
-  <meta property="og:image" content="https://harasou.jp/2018/08/12/japan-daylight-saving-time/blackclock.png">
-  <meta property="twitter:image" content="https://harasou.jp/2018/08/12/japan-daylight-saving-time/blackclock.png">
-
-
-
-
-
-  <meta property="og:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
-  <meta property="twitter:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
-
-
-    <title>Linuxでのサマータイム - JDTの来襲</title>
-
-    <link rel="icon" href="/favicon.png">
-    
-
-    
-
-    <link rel="canonical" href="https://harasou.jp/2018/08/12/japan-daylight-saving-time/">
-
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
-    
-    
-    <link rel="stylesheet" href="/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css" />
-    
-    
-      
-        <link rel="stylesheet"  href="https://harasou.jp/css/style.css" swapPaginator="true">
-      
-    
-
-    
-      
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-	ga('create', 'UA-62541096-1', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-
-    
-    
-  </head>
-
-  <body>
-    <div id="blog">
-      <header id="header" data-behavior="5">
-  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
-  <div class="header-title">
-    <a class="header-title-link" href="/">harasou.jp</a>
-  </div>
-  
-    
-      <a class="header-right-picture "
-         href="/#about">
-    
-    
-    
-      
-        <img class="header-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=90" alt="プロフィール画像" />
-      
-    
-    </a>
-  
-</header>
-
-      <nav id="sidebar" data-behavior="5">
-  <div class="sidebar-container">
-    
-      <div class="sidebar-profile">
-        <a href="/#about">
-          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt="プロフィール画像" />
-        </a>
-        <h4 class="sidebar-profile-name">harasou</h4>
-        
-          <h5 class="sidebar-profile-bio">めくじらを立てない</h5>
-        
-      </div>
-    
-    <ul class="sidebar-buttons">
-      
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="/">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
-      
-      <span class="sidebar-button-desc">ホーム</span>
-    </a>
-  </li>
-
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="/tags">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
-      
-      <span class="sidebar-button-desc">タグ</span>
-    </a>
-  </li>
-
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="/archives">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
-      
-      <span class="sidebar-button-desc">アーカイブ</span>
-    </a>
-  </li>
-
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="/#about">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
-      
-      <span class="sidebar-button-desc">プロフィール</span>
-    </a>
-  </li>
-
-
-    </ul>
-    <ul class="sidebar-buttons">
-      
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="https://github.com/harasou" target="_blank" rel="noopener">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
-      
-      <span class="sidebar-button-desc">GitHub</span>
-    </a>
-  </li>
-
-
-    </ul>
-    <ul class="sidebar-buttons">
-      
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="/index.xml">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
-      
-      <span class="sidebar-button-desc">RSS</span>
-    </a>
-  </li>
-
-
-    </ul>
-  </div>
-</nav>
-
-      
-
-      <div id="main" data-behavior="5"
-        class="
-               hasCoverMetaIn
-               ">
-        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
-          
-          
-            <div class="post-header main-content-wrap text-left">
-  
-    <h1 class="post-title" itemprop="headline">
-      Linuxでのサマータイム - JDTの来襲
-    </h1>
-  
-  
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-08-12T13:48:25&#43;09:00">
-        
-  
-  
-  
-  
-    2018/8/12
-  
-
-      </time>
-    
-    
-  </div>
-
+<meta property="article:published_time" content="2018-08-12T13:48:25">
+<meta property="article:modified_time" content="2018-08-12T13:48:25">
+<meta property="article:tag" content="linux">
+<meta name=twitter:card content="summary">
+<meta name=twitter:site content="@harasou5">
+<meta name=twitter:creator content="@harasou5">
+<meta property="og:image" content="https://harasou.jp/2018/08/12/japan-daylight-saving-time/blackclock.png">
+<meta property="twitter:image" content="https://harasou.jp/2018/08/12/japan-daylight-saving-time/blackclock.png">
+<meta property="og:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
+<meta property="twitter:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
+<title>Linuxでのサマータイム - JDTの来襲</title>
+<link rel=icon href=/favicon.png>
+<link rel=canonical href=https://harasou.jp/2018/08/12/japan-daylight-saving-time/>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin=anonymous>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin=anonymous>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin=anonymous>
+<link rel=stylesheet href=/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css>
+<link rel=stylesheet href=https://harasou.jp/css/style.css swappaginator=true>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-62541096-1','auto'),ga('send','pageview'))</script>
+</head>
+<body>
+<div id=blog>
+<header id=header data-behavior=5>
+<i id=btn-open-sidebar class="fa fa-lg fa-bars"></i>
+<div class=header-title>
+<a class=header-title-link href=/>harasou.jp</a>
 </div>
-          
-          <div class="post-content markdown" itemprop="articleBody">
-            <div class="main-content-wrap">
-              <p>最近、サマータイム導入の話で盛り上がっているので、Linux ではどうなっているのか調べてみた。</p>
-
-<h2 id="jdt-japan-daylight-saving-time-って知ってる">JDT（Japan Daylight Saving Time）って知ってる？</h2>
-
+<a class=header-right-picture href=/#about>
+<img class=header-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=90" alt=プロフィール画像>
+</a>
+</header>
+<nav id=sidebar data-behavior=5>
+<div class=sidebar-container>
+<div class=sidebar-profile>
+<a href=/#about>
+<img class=sidebar-profile-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt=プロフィール画像>
+</a>
+<h4 class=sidebar-profile-name>harasou</h4>
+<h5 class=sidebar-profile-bio>めくじらを立てない</h5>
+</div>
+<ul class=sidebar-buttons>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/>
+<i class="sidebar-button-icon fa fa-lg fa-home"></i>
+<span class=sidebar-button-desc>ホーム</span>
+</a>
+</li>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/tags>
+<i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+<span class=sidebar-button-desc>タグ</span>
+</a>
+</li>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/archives>
+<i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+<span class=sidebar-button-desc>アーカイブ</span>
+</a>
+</li>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/#about>
+<i class="sidebar-button-icon fa fa-lg fa-question"></i>
+<span class=sidebar-button-desc>プロフィール</span>
+</a>
+</li>
+</ul>
+<ul class=sidebar-buttons>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=https://github.com/harasou target=_blank rel=noopener>
+<i class="sidebar-button-icon fa fa-lg fa-github"></i>
+<span class=sidebar-button-desc>GitHub</span>
+</a>
+</li>
+</ul>
+<ul class=sidebar-buttons>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/index.xml>
+<i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+<span class=sidebar-button-desc>RSS</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+<div id=main data-behavior=5 class=hasCoverMetaIn>
+<article class=post itemscope itemtype=http://schema.org/BlogPosting>
+<div class="post-header main-content-wrap text-left">
+<h1 class=post-title itemprop=headline>
+Linuxでのサマータイム - JDTの来襲
+</h1>
+<div class="postShorten-meta post-meta">
+<time itemprop=datePublished datetime=2018-08-12T13:48:25+09:00>
+2018/8/12
+</time>
+</div>
+</div>
+<div class="post-content markdown" itemprop=articleBody>
+<div class=main-content-wrap>
+<p>最近、サマータイム導入の話で盛り上がっているので、Linux ではどうなっているのか調べてみた。</p>
+<h2 id=jdtjapan-daylight-saving-timeって知ってる>JDT（Japan Daylight Saving Time）って知ってる？</h2>
 <p>70年前の今日、日本は<code>JST</code> ではなく<code>JDT</code>だった。</p>
-
-<pre><code>$ date --date=&quot;70 years ago&quot;
+<pre tabindex=0><code>$ date --date=&quot;70 years ago&quot;
 Thu Aug 12 06:10:32 JDT 1948
-</code></pre>
-
-<p><code>JDT</code> というのは、Japan Daylight Saving Time のことで、つまり、日本の夏時間。</p>
-
+</code></pre><p><code>JDT</code> というのは、Japan Daylight Saving Time のことで、つまり、日本の夏時間。</p>
 <p>日本でも 1948年から1951年の4年間、サマータイムが導入されていたので、
 サマータイム中の日本の表示時刻は、普段よく目にする <code>JST</code> ではなく<code>JDT</code> になっている。</p>
-
 <p>（実際は Epoch以前の話なので、当時、使われたことはないと思う:-）</p>
-
-<h2 id="カーネルの時間">カーネルの時間</h2>
-
+<h2 id=カーネルの時間>カーネルの時間</h2>
 <p>カーネルは、何月何日と言った情報は持っていない。</p>
-
-<p>管理しているのは Epoch（UTC 1970/1/1 0:00）からの経過時間（timekeeper-&gt;xtime_sec,
+<p>管理しているのは Epoch（UTC 1970/1/1 0:00）からの経過時間（timekeeper->xtime_sec,
 xtime_nsec）だけ。
-VFS の inode構造体のメンバ（inode-&gt;i_atime, i_mtime, i_ctime）なんかも同様。</p>
-
+VFS の inode構造体のメンバ（inode->i_atime, i_mtime, i_ctime）なんかも同様。</p>
 <p>このため、うるう秒の対応とは違い、サーマタイムが終わるときに、カーネル内の時間が
 戻ったりすることはない。</p>
-
-<h2 id="サマータイムで時刻が進む-戻る">サマータイムで時刻が進む？戻る？</h2>
-
+<h2 id=サマータイムで時刻が進む戻る>サマータイムで時刻が進む？戻る？</h2>
 <p>ではサマータイムで時刻が、進むだの、戻るだのと言ってるのは何かというと、
 カーネルが管理している値を、「可読可能は文字列」にしたときに時刻が進んだり
 戻ったりするように見えるから（この辺りは glibc の仕事）。</p>
-
 <p>試しにサマータイムに切り替わる直前のシステムを再現してみると、以下のような出力になる。</p>
-
-<pre><code>$ sudo ln -sf /usr/share/zoneinfo/US/Pacific /etc/localtime
+<pre tabindex=0><code>$ sudo ln -sf /usr/share/zoneinfo/US/Pacific /etc/localtime
 $ sudo date -s &quot;Sun Mar 11 01:59:00 2018&quot;
 $ while :; do date &quot;+[%s] %c %Z&quot;; sleep 1; done
   :
@@ -294,47 +146,31 @@ $ while :; do date &quot;+[%s] %c %Z&quot;; sleep 1; done
 [1520762400] Sun Mar 11 03:00:00 2018 PDT &lt;- PST から PDT(夏時間)に変わった
 [1520762401] Sun Mar 11 03:00:01 2018 PDT
 [1520762402] Sun Mar 11 03:00:02 2018 PDT
-</code></pre>
-
-<p>経過時間 <code>%s</code> は変わりなく 1秒づつ増え続けているが、ローカル時間<code>%c</code>は、夏時間に
+</code></pre><p>経過時間 <code>%s</code> は変わりなく 1秒づつ増え続けているが、ローカル時間<code>%c</code>は、夏時間に
 変わったタイミングで 1時間進んでいる。
 ただ、タイムゾーン<code>%Z</code> もちゃんと変更されているので、単純に時刻が進んだわけではない。</p>
-
 <p>というわけで、時刻というのは、ローカル時間 + タイムゾーン という認識が重要。</p>
-
-<h2 id="どんな影響がでる">どんな影響がでる？</h2>
-
+<h2 id=どんな影響がでる>どんな影響がでる？</h2>
 <p>2020年に日本でサマータイムが導入されると、どんな影響がでるか。</p>
-
 <p>世界中で使われているような OS であれば、TZ（タイムゾーン）や DST（夏時間）の考慮が
 されていると思うので、OSとしては問題ないと思う。ミドルウェアも多分大丈夫そう。</p>
-
 <p>ただ、ミドルウェアの使い方やそれを利用するアプリが考慮できていないことは、
 かなりある気がする。</p>
-
-<h3 id="例えば-mysql-の場合">例えば mysql の場合</h3>
-
+<h3 id=例えば-mysql-の場合>例えば mysql の場合</h3>
 <p>mysql について軽く確認してみると、日付を保持する型として<code>TIMESTAMP</code>型や<code>DATETIME</code>型が
 ある。<code>TIEMSTAMP</code>型は経過時間の情報なので問題なさそうだが、<code>DATETIME</code>型はタイムゾーンを
 意識していないので、使っているアプリがあれば問題が出そう。</p>
-
 <p>また、新しいタイムゾーンを反映するには、
-<a href="https://dev.mysql.com/doc/refman/5.6/ja/time-zone-support.html">mysql_tzinfo_to_sql  を実行後、再起動を推奨</a> しているので、ここでも
-メンテが必要そうだ&hellip;</p>
-
+<a href=https://dev.mysql.com/doc/refman/5.6/ja/time-zone-support.html>mysql_tzinfo_to_sql を実行後、再起動を推奨</a> しているので、ここでも
+メンテが必要そうだ&mldr;</p>
 <p>他にも、クラウド上の mysql を使ってると、アプリは JST だけど、mysql は UTC とかになっていて、
 mysql の時刻系関数を使うと想定外の値になる、とかもあるかも。</p>
-
-<h2 id="サマータイムやタイムゾーンの定義">サマータイムやタイムゾーンの定義</h2>
-
+<h2 id=サマータイムやタイムゾーンの定義>サマータイムやタイムゾーンの定義</h2>
 <p>対応する必要も出てくるかもしれないので、OSの設定も確認しておく。</p>
-
 <p>Linux では、/usr/share/zoninfo 配下に、TZ（タイムゾーン）や DST（Daylight Saving Time
 夏時間）を定義するファイルが置かれていてる。</p>
-
 <p>これらのファイルは、バイナリだが zdump を使うと中身を確認できる。</p>
-
-<pre><code>$ file /usr/share/zoneinfo/Asia/Tokyo
+<pre tabindex=0><code>$ file /usr/share/zoneinfo/Asia/Tokyo
 /usr/share/zoneinfo/Asia/Tokyo: timezone data, version 2, 3 gmt time flags, 3 std time flags, no leap seconds, 8 transition times, 3 abbreviation chars
 $
 $ zdump -v /usr/share/zoneinfo/Asia/Tokyo | grep -w 1948
@@ -342,316 +178,187 @@ $ zdump -v /usr/share/zoneinfo/Asia/Tokyo | grep -w 1948
 /usr/share/zoneinfo/Asia/Tokyo  Sat May  1 15:00:00 1948 UTC = Sun May  2 01:00:00 1948 JDT isdst=1 gmtoff=36000
 /usr/share/zoneinfo/Asia/Tokyo  Sat Sep 11 13:59:59 1948 UTC = Sat Sep 11 23:59:59 1948 JDT isdst=1 gmtoff=36000
 /usr/share/zoneinfo/Asia/Tokyo  Sat Sep 11 14:00:00 1948 UTC = Sat Sep 11 23:00:00 1948 JST isdst=0 gmtoff=32400
-</code></pre>
-
-<p>これを見ると、冒頭の date コマンドで確認した内容が定義されていることがわかる。
+</code></pre><p>これを見ると、冒頭の date コマンドで確認した内容が定義されていることがわかる。
 つまり、2020年にもしサマータイムが導入されると、このファイルを更新する必要がある。</p>
-
 <p>このバイナリファイルは zic（zone information compiler）というコマンドで、tzdata という
 テキストファイルから生成可能。</p>
-
-<pre><code>$ file /usr/share/zoneinfo/tzdata.zi
+<pre tabindex=0><code>$ file /usr/share/zoneinfo/tzdata.zi
 /usr/share/zoneinfo/tzdata.zi: ASCII text
 $
 $ zic -d zoneinfo /usr/share/zoneinfo/tzdata.zi #zoneinfo配下に作成される
-</code></pre>
-
-<p>こんな感じ。</p>
-
-<h2 id="最後に">最後に</h2>
-
+</code></pre><p>こんな感じ。</p>
+<h2 id=最後に>最後に</h2>
 <p>日本で、新たな夏時間の導入なんて、ほんとやめてほしい。</p>
-
-<!--links-->
-              
-            </div>
-          </div>
-          <div id="post-footer" class="post-footer main-content-wrap">
-            
-              
-                
-                
-                  <div class="post-footer-tags">
-                    <span class="text-color-light text-small">タグ</span><br/>
-                    
-  <a class="tag tag--primary tag--small" href="/tags/linux/">linux</a>
-
-                  </div>
-                
-              
-            
-            <div class="post-actions-wrap">
-  
-      <nav >
-        <ul class="post-actions post-action-nav">
-          
-            <li class="post-action">
-              
-                <a class="post-action-btn btn btn--default tooltip--top" href="/2018/12/24/make-centos-core-image/" data-tooltip="古い CentOS の Docker イメージを作成する">
-              
-                  <i class="fa fa-angle-left"></i>
-                  <span class="hide-xs hide-sm text-small icon-ml">次</span>
-                </a>
-            </li>
-            <li class="post-action">
-              
-                <a class="post-action-btn btn btn--default tooltip--top" href="/2018/02/10/one-execusion-file-in-docker-image/" data-tooltip="実行ファイル一つだけの Docker イメージを作る">
-              
-                  <span class="hide-xs hide-sm text-small icon-mr">前</span>
-                  <i class="fa fa-angle-right"></i>
-                </a>
-            </li>
-          
-        </ul>
-      </nav>
-    <ul class="post-actions post-action-share" >
-      
-        <li class="post-action hide-lg hide-md hide-sm">
-          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
-            <i class="fa fa-share-alt"></i>
-          </a>
-        </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="http://b.hatena.ne.jp/entry/https://harasou.jp/2018/08/12/japan-daylight-saving-time/">
-              <i class="fa icon-hatebu"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="http://getpocket.com/edit?url=https://harasou.jp/2018/08/12/japan-daylight-saving-time/">
-              <i class="fa icon-pocket"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2018/08/12/japan-daylight-saving-time/">
-              <i class="fa fa-facebook-official"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://harasou.jp/2018/08/12/japan-daylight-saving-time/">
-              <i class="fa fa-twitter"></i>
-            </a>
-          </li>
-        
-      
-      
-      <li class="post-action">
-        
-          <a class="post-action-btn btn btn--default" href="#">
-        
-          <i class="fa fa-list"></i>
-        </a>
-      </li>
-    </ul>
-  
 </div>
-
-            
-              
-            
-          </div>
-        </article>
-        <footer id="footer" class="main-content-wrap">
-  <span class="copyrights">
-    &copy; 2019 harasou. All Rights Reserved
-  </span>
+</div>
+<div id=post-footer class="post-footer main-content-wrap">
+<div class=post-footer-tags>
+<span class="text-color-light text-small">タグ</span><br>
+<a class="tag tag--primary tag--small" href=/tags/linux/>linux</a>
+</div>
+<div class=post-actions-wrap>
+<nav>
+<ul class="post-actions post-action-nav">
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=/2018/12/24/make-centos-core-image/ data-tooltip="古い CentOS の Docker イメージを作成する">
+<i class="fa fa-angle-left"></i>
+<span class="hide-xs hide-sm text-small icon-ml">次</span>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=/2018/02/10/one-execusion-file-in-docker-image/ data-tooltip="実行ファイル一つだけの Docker イメージを作る">
+<span class="hide-xs hide-sm text-small icon-mr">前</span>
+<i class="fa fa-angle-right"></i>
+</a>
+</li>
+</ul>
+</nav>
+<ul class="post-actions post-action-share">
+<li class="post-action hide-lg hide-md hide-sm">
+<a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions>
+<i class="fa fa-share-alt"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.jp/2018/08/12/japan-daylight-saving-time/>
+<i class="fa icon-hatebu"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.jp/2018/08/12/japan-daylight-saving-time/">
+<i class="fa icon-pocket"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2018/08/12/japan-daylight-saving-time/">
+<i class="fa fa-facebook-official"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.jp/2018/08/12/japan-daylight-saving-time/">
+<i class="fa fa-twitter"></i>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default" href=#>
+<i class="fa fa-list"></i>
+</a>
+</li>
+</ul>
+</div>
+</div>
+</article>
+<footer id=footer class=main-content-wrap>
+<span class=copyrights>
+&copy; 2021 harasou. All Rights Reserved
+</span>
 </footer>
-
-      </div>
-      <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
-        <div class="post-actions-wrap">
-  
-      <nav >
-        <ul class="post-actions post-action-nav">
-          
-            <li class="post-action">
-              
-                <a class="post-action-btn btn btn--default tooltip--top" href="/2018/12/24/make-centos-core-image/" data-tooltip="古い CentOS の Docker イメージを作成する">
-              
-                  <i class="fa fa-angle-left"></i>
-                  <span class="hide-xs hide-sm text-small icon-ml">次</span>
-                </a>
-            </li>
-            <li class="post-action">
-              
-                <a class="post-action-btn btn btn--default tooltip--top" href="/2018/02/10/one-execusion-file-in-docker-image/" data-tooltip="実行ファイル一つだけの Docker イメージを作る">
-              
-                  <span class="hide-xs hide-sm text-small icon-mr">前</span>
-                  <i class="fa fa-angle-right"></i>
-                </a>
-            </li>
-          
-        </ul>
-      </nav>
-    <ul class="post-actions post-action-share" >
-      
-        <li class="post-action hide-lg hide-md hide-sm">
-          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
-            <i class="fa fa-share-alt"></i>
-          </a>
-        </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="http://b.hatena.ne.jp/entry/https://harasou.jp/2018/08/12/japan-daylight-saving-time/">
-              <i class="fa icon-hatebu"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="http://getpocket.com/edit?url=https://harasou.jp/2018/08/12/japan-daylight-saving-time/">
-              <i class="fa icon-pocket"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2018/08/12/japan-daylight-saving-time/">
-              <i class="fa fa-facebook-official"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://harasou.jp/2018/08/12/japan-daylight-saving-time/">
-              <i class="fa fa-twitter"></i>
-            </a>
-          </li>
-        
-      
-      
-      <li class="post-action">
-        
-          <a class="post-action-btn btn btn--default" href="#">
-        
-          <i class="fa fa-list"></i>
-        </a>
-      </li>
-    </ul>
-  
 </div>
-
-      </div>
-      <div id="share-options-bar" class="share-options-bar" data-behavior="5">
-  <i id="btn-close-shareoptions" class="fa fa-close"></i>
-  <ul class="share-options">
-    
-      <li class="share-option">
-        <a class="share-option-btn" target="new" href="http://b.hatena.ne.jp/entry/https%3A%2F%2Fharasou.jp%2F2018%2F08%2F12%2Fjapan-daylight-saving-time%2F">
-          <i class="fa icon-hatebu"></i><span>Hatebuで共有</span>
-        </a>
-      </li>
-    
-      <li class="share-option">
-        <a class="share-option-btn" target="new" href="http://getpocket.com/edit?url=https%3A%2F%2Fharasou.jp%2F2018%2F08%2F12%2Fjapan-daylight-saving-time%2F">
-          <i class="fa icon-pocket"></i><span>Pocketで共有</span>
-        </a>
-      </li>
-    
-      <li class="share-option">
-        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fharasou.jp%2F2018%2F08%2F12%2Fjapan-daylight-saving-time%2F">
-          <i class="fa fa-facebook-official"></i><span>Facebookで共有</span>
-        </a>
-      </li>
-    
-      <li class="share-option">
-        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fharasou.jp%2F2018%2F08%2F12%2Fjapan-daylight-saving-time%2F">
-          <i class="fa fa-twitter"></i><span>Twitterで共有</span>
-        </a>
-      </li>
-    
-  </ul>
+<div id=bottom-bar class=post-bottom-bar data-behavior=5>
+<div class=post-actions-wrap>
+<nav>
+<ul class="post-actions post-action-nav">
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=/2018/12/24/make-centos-core-image/ data-tooltip="古い CentOS の Docker イメージを作成する">
+<i class="fa fa-angle-left"></i>
+<span class="hide-xs hide-sm text-small icon-ml">次</span>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=/2018/02/10/one-execusion-file-in-docker-image/ data-tooltip="実行ファイル一つだけの Docker イメージを作る">
+<span class="hide-xs hide-sm text-small icon-mr">前</span>
+<i class="fa fa-angle-right"></i>
+</a>
+</li>
+</ul>
+</nav>
+<ul class="post-actions post-action-share">
+<li class="post-action hide-lg hide-md hide-sm">
+<a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions>
+<i class="fa fa-share-alt"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.jp/2018/08/12/japan-daylight-saving-time/>
+<i class="fa icon-hatebu"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.jp/2018/08/12/japan-daylight-saving-time/">
+<i class="fa icon-pocket"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2018/08/12/japan-daylight-saving-time/">
+<i class="fa fa-facebook-official"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.jp/2018/08/12/japan-daylight-saving-time/">
+<i class="fa fa-twitter"></i>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default" href=#>
+<i class="fa fa-list"></i>
+</a>
+</li>
+</ul>
 </div>
-<div id="share-options-mask" class="share-options-mask"></div>
-    </div>
-    
-    <div id="about">
-  <div id="about-card">
-    <div id="about-btn-close">
-      <i class="fa fa-remove"></i>
-    </div>
-    
-      <img id="about-card-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt="プロフィール画像" />
-    
-    <h4 id="about-card-name">harasou</h4>
-    
-      <div id="about-card-bio">めくじらを立てない</div>
-    
-    
-      <div id="about-card-job">
-        <i class="fa fa-briefcase"></i>
-        <br/>
-        Infra Engineer
-      </div>
-    
-    
-      <div id="about-card-location">
-        <i class="fa fa-map-marker"></i>
-        <br/>
-        Fukuoka Japan
-      </div>
-    
-  </div>
 </div>
-
-    
-
-    
-  
-    
-      
-      <div id="cover" style="background-image:url('https://harasou.jp/images/cover.jpg');"></div>
-    
-  
-
-
-    
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
-
-
-<script src="/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js"></script>
-
-
-<script lang="javascript">
-window.onload = updateMinWidth;
-window.onresize = updateMinWidth;
-document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
-function updateMinWidth() {
-  var sidebar = document.getElementById("sidebar");
-  var main = document.getElementById("main");
-  main.style.minWidth = "";
-  var w1 = getComputedStyle(main).getPropertyValue("min-width");
-  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
-  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
-  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
-}
-</script>
-
-<script>
-$(document).ready(function() {
-  hljs.configure({ classPrefix: '', useBR: false });
-  $('pre.code-highlight > code, pre > code').each(function(i, block) {
-    if (!$(this).hasClass('codeblock')) {
-      $(this).addClass('codeblock');
-    }
-    hljs.highlightBlock(block);
-  });
-});
-</script>
-
-
-  
-    
-  
-
-
-
-
-    
-  </body>
+<div id=share-options-bar class=share-options-bar data-behavior=5>
+<i id=btn-close-shareoptions class="fa fa-close"></i>
+<ul class=share-options>
+<li class=share-option>
+<a class=share-option-btn target=new href=http://b.hatena.ne.jp/entry/https%3A%2F%2Fharasou.jp%2F2018%2F08%2F12%2Fjapan-daylight-saving-time%2F>
+<i class="fa icon-hatebu"></i><span>Hatebuで共有</span>
+</a>
+</li>
+<li class=share-option>
+<a class=share-option-btn target=new href="http://getpocket.com/edit?url=https%3A%2F%2Fharasou.jp%2F2018%2F08%2F12%2Fjapan-daylight-saving-time%2F">
+<i class="fa icon-pocket"></i><span>Pocketで共有</span>
+</a>
+</li>
+<li class=share-option>
+<a class=share-option-btn target=new href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fharasou.jp%2F2018%2F08%2F12%2Fjapan-daylight-saving-time%2F">
+<i class="fa fa-facebook-official"></i><span>Facebookで共有</span>
+</a>
+</li>
+<li class=share-option>
+<a class=share-option-btn target=new href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fharasou.jp%2F2018%2F08%2F12%2Fjapan-daylight-saving-time%2F">
+<i class="fa fa-twitter"></i><span>Twitterで共有</span>
+</a>
+</li>
+</ul>
+</div>
+<div id=share-options-mask class=share-options-mask></div>
+</div>
+<div id=about>
+<div id=about-card>
+<div id=about-btn-close>
+<i class="fa fa-remove"></i>
+</div>
+<img id=about-card-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt=プロフィール画像>
+<h4 id=about-card-name>harasou</h4>
+<div id=about-card-bio>めくじらを立てない</div>
+<div id=about-card-job>
+<i class="fa fa-briefcase"></i>
+<br>
+Infra Engineer
+</div>
+<div id=about-card-location>
+<i class="fa fa-map-marker"></i>
+<br>
+Fukuoka Japan
+</div>
+</div>
+</div>
+<div id=cover style=background-image:url(https://harasou.jp/images/cover.jpg)></div>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin=anonymous></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin=anonymous></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin=anonymous></script>
+<script src=/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js></script>
+<script lang=javascript>window.onload=updateMinWidth,window.onresize=updateMinWidth,document.getElementById("sidebar").addEventListener("transitionend",updateMinWidth);function updateMinWidth(){var b=document.getElementById("sidebar"),a=document.getElementById("main"),c,d,e;a.style.minWidth="",c=getComputedStyle(a).getPropertyValue("min-width"),d=getComputedStyle(b).getPropertyValue("width"),e=getComputedStyle(b).getPropertyValue("left"),a.style.minWidth=`calc(${c} - ${d} - ${e})`}</script>
+<script>$(document).ready(function(){hljs.configure({classPrefix:'',useBR:!1}),$('pre.code-highlight > code, pre > code').each(function(b,a){$(this).hasClass('codeblock')||$(this).addClass('codeblock'),hljs.highlightBlock(a)})})</script>
+</body>
 </html>
-

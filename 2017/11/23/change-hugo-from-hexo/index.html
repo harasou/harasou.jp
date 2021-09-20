@@ -1,275 +1,131 @@
-<!DOCTYPE html>
-<html lang="ja">
-  <head>
-    
-    <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.59.0-DEV with theme Tranquilpeak 0.4.7-BETA">
-<meta name="author" content="harasou">
-<meta name="keywords" content="">
-<meta name="description" content="
-
+<!doctype html><html lang=ja>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=generator content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name=author content="harasou">
+<meta name=keywords content>
+<meta name=description content="
 hugo は golang製の静的サイトジェネレータ。以前は hexo を利用していたが、hexo で利用していたテーマ tranquilpeak の hugo版 が存在していたので、こちらに乗り換えた。">
-
-
 <meta property="og:description" content="
-
 hugo は golang製の静的サイトジェネレータ。以前は hexo を利用していたが、hexo で利用していたテーマ tranquilpeak の hugo版 が存在していたので、こちらに乗り換えた。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ブログを hexo から hugo に変更した">
-<meta name="twitter:title" content="ブログを hexo から hugo に変更した">
+<meta name=twitter:title content="ブログを hexo から hugo に変更した">
 <meta property="og:url" content="https://harasou.jp/2017/11/23/change-hugo-from-hexo/">
 <meta property="twitter:url" content="https://harasou.jp/2017/11/23/change-hugo-from-hexo/">
 <meta property="og:site_name" content="harasou.jp">
 <meta property="og:description" content="
-
 hugo は golang製の静的サイトジェネレータ。以前は hexo を利用していたが、hexo で利用していたテーマ tranquilpeak の hugo版 が存在していたので、こちらに乗り換えた。">
-<meta name="twitter:description" content="
-
+<meta name=twitter:description content="
 hugo は golang製の静的サイトジェネレータ。以前は hexo を利用していたが、hexo で利用していたテーマ tranquilpeak の hugo版 が存在していたので、こちらに乗り換えた。">
 <meta property="og:locale" content="ja">
-
-  
-    <meta property="article:published_time" content="2017-11-23T13:40:00">
-  
-  
-    <meta property="article:modified_time" content="2017-11-23T13:40:00">
-  
-  
-  
-  
-    
-      <meta property="article:tag" content="hugo">
-    
-  
-
-
-<meta name="twitter:card" content="summary">
-
-  <meta name="twitter:site" content="@harasou5">
-
-
-  <meta name="twitter:creator" content="@harasou5">
-
-
-
-
-
-
-  <meta property="og:image" content="https://harasou.jp/2017/11/23/change-hugo-from-hexo/hugo-logo-h.png">
-  <meta property="twitter:image" content="https://harasou.jp/2017/11/23/change-hugo-from-hexo/hugo-logo-h.png">
-
-
-
-
-
-  <meta property="og:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
-  <meta property="twitter:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
-
-
-    <title>ブログを hexo から hugo に変更した</title>
-
-    <link rel="icon" href="/favicon.png">
-    
-
-    
-
-    <link rel="canonical" href="https://harasou.jp/2017/11/23/change-hugo-from-hexo/">
-
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
-    
-    
-    <link rel="stylesheet" href="/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css" />
-    
-    
-      
-        <link rel="stylesheet"  href="https://harasou.jp/css/style.css" swapPaginator="true">
-      
-    
-
-    
-      
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-	ga('create', 'UA-62541096-1', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-
-    
-    
-  </head>
-
-  <body>
-    <div id="blog">
-      <header id="header" data-behavior="5">
-  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
-  <div class="header-title">
-    <a class="header-title-link" href="/">harasou.jp</a>
-  </div>
-  
-    
-      <a class="header-right-picture "
-         href="/#about">
-    
-    
-    
-      
-        <img class="header-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=90" alt="プロフィール画像" />
-      
-    
-    </a>
-  
-</header>
-
-      <nav id="sidebar" data-behavior="5">
-  <div class="sidebar-container">
-    
-      <div class="sidebar-profile">
-        <a href="/#about">
-          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt="プロフィール画像" />
-        </a>
-        <h4 class="sidebar-profile-name">harasou</h4>
-        
-          <h5 class="sidebar-profile-bio">めくじらを立てない</h5>
-        
-      </div>
-    
-    <ul class="sidebar-buttons">
-      
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="/">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
-      
-      <span class="sidebar-button-desc">ホーム</span>
-    </a>
-  </li>
-
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="/tags">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
-      
-      <span class="sidebar-button-desc">タグ</span>
-    </a>
-  </li>
-
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="/archives">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
-      
-      <span class="sidebar-button-desc">アーカイブ</span>
-    </a>
-  </li>
-
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="/#about">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
-      
-      <span class="sidebar-button-desc">プロフィール</span>
-    </a>
-  </li>
-
-
-    </ul>
-    <ul class="sidebar-buttons">
-      
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="https://github.com/harasou" target="_blank" rel="noopener">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
-      
-      <span class="sidebar-button-desc">GitHub</span>
-    </a>
-  </li>
-
-
-    </ul>
-    <ul class="sidebar-buttons">
-      
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="/index.xml">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
-      
-      <span class="sidebar-button-desc">RSS</span>
-    </a>
-  </li>
-
-
-    </ul>
-  </div>
-</nav>
-
-      
-
-      <div id="main" data-behavior="5"
-        class="
-               hasCoverMetaIn
-               ">
-        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
-          
-          
-            <div class="post-header main-content-wrap text-left">
-  
-    <h1 class="post-title" itemprop="headline">
-      ブログを hexo から hugo に変更した
-    </h1>
-  
-  
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-11-23T13:40:00&#43;09:00">
-        
-  
-  
-  
-  
-    2017/11/23
-  
-
-      </time>
-    
-    
-  </div>
-
+<meta property="article:published_time" content="2017-11-23T13:40:00">
+<meta property="article:modified_time" content="2017-11-23T13:40:00">
+<meta property="article:tag" content="hugo">
+<meta name=twitter:card content="summary">
+<meta name=twitter:site content="@harasou5">
+<meta name=twitter:creator content="@harasou5">
+<meta property="og:image" content="https://harasou.jp/2017/11/23/change-hugo-from-hexo/hugo-logo-h.png">
+<meta property="twitter:image" content="https://harasou.jp/2017/11/23/change-hugo-from-hexo/hugo-logo-h.png">
+<meta property="og:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
+<meta property="twitter:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
+<title>ブログを hexo から hugo に変更した</title>
+<link rel=icon href=/favicon.png>
+<link rel=canonical href=https://harasou.jp/2017/11/23/change-hugo-from-hexo/>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin=anonymous>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin=anonymous>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin=anonymous>
+<link rel=stylesheet href=/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css>
+<link rel=stylesheet href=https://harasou.jp/css/style.css swappaginator=true>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-62541096-1','auto'),ga('send','pageview'))</script>
+</head>
+<body>
+<div id=blog>
+<header id=header data-behavior=5>
+<i id=btn-open-sidebar class="fa fa-lg fa-bars"></i>
+<div class=header-title>
+<a class=header-title-link href=/>harasou.jp</a>
 </div>
-          
-          <div class="post-content markdown" itemprop="articleBody">
-            <div class="main-content-wrap">
-              <p><img src="hugo-logo.png" alt="" /></p>
-
-<p><a href="https://gohugo.io/">hugo</a> は golang製の静的サイトジェネレータ。以前は hexo を利用していたが、hexo で利用していたテーマ tranquilpeak の <a href="https://github.com/kakawait/hugo-tranquilpeak-theme">hugo版</a> が存在していたので、こちらに乗り換えた。</p>
-
-<h2 id="セットアップ">セットアップ</h2>
-
-<p><a href="https://gohugo.io/getting-started/quick-start/">Getting Started</a> を見ながらなぞっていく。とりあえず手元の MAC で hugo が実行できる環境を構築する。</p>
-
-<pre><code>brew install hugo
-</code></pre>
-
-<p>新規にサイトを作って、テーマを設定。</p>
-
-<pre><code>cd ~/src/github.com/harasou/ # ブログを管理する適当なディレクトリに移動
+<a class=header-right-picture href=/#about>
+<img class=header-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=90" alt=プロフィール画像>
+</a>
+</header>
+<nav id=sidebar data-behavior=5>
+<div class=sidebar-container>
+<div class=sidebar-profile>
+<a href=/#about>
+<img class=sidebar-profile-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt=プロフィール画像>
+</a>
+<h4 class=sidebar-profile-name>harasou</h4>
+<h5 class=sidebar-profile-bio>めくじらを立てない</h5>
+</div>
+<ul class=sidebar-buttons>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/>
+<i class="sidebar-button-icon fa fa-lg fa-home"></i>
+<span class=sidebar-button-desc>ホーム</span>
+</a>
+</li>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/tags>
+<i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+<span class=sidebar-button-desc>タグ</span>
+</a>
+</li>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/archives>
+<i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+<span class=sidebar-button-desc>アーカイブ</span>
+</a>
+</li>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/#about>
+<i class="sidebar-button-icon fa fa-lg fa-question"></i>
+<span class=sidebar-button-desc>プロフィール</span>
+</a>
+</li>
+</ul>
+<ul class=sidebar-buttons>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=https://github.com/harasou target=_blank rel=noopener>
+<i class="sidebar-button-icon fa fa-lg fa-github"></i>
+<span class=sidebar-button-desc>GitHub</span>
+</a>
+</li>
+</ul>
+<ul class=sidebar-buttons>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/index.xml>
+<i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+<span class=sidebar-button-desc>RSS</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+<div id=main data-behavior=5 class=hasCoverMetaIn>
+<article class=post itemscope itemtype=http://schema.org/BlogPosting>
+<div class="post-header main-content-wrap text-left">
+<h1 class=post-title itemprop=headline>
+ブログを hexo から hugo に変更した
+</h1>
+<div class="postShorten-meta post-meta">
+<time itemprop=datePublished datetime=2017-11-23T13:40:00+09:00>
+2017/11/23
+</time>
+</div>
+</div>
+<div class="post-content markdown" itemprop=articleBody>
+<div class=main-content-wrap>
+<p><img src=hugo-logo.png alt></p>
+<p><a href=https://gohugo.io/>hugo</a> は golang製の静的サイトジェネレータ。以前は hexo を利用していたが、hexo で利用していたテーマ tranquilpeak の <a href=https://github.com/kakawait/hugo-tranquilpeak-theme>hugo版</a> が存在していたので、こちらに乗り換えた。</p>
+<h2 id=セットアップ>セットアップ</h2>
+<p><a href=https://gohugo.io/getting-started/quick-start/>Getting Started</a> を見ながらなぞっていく。とりあえず手元の MAC で hugo が実行できる環境を構築する。</p>
+<pre tabindex=0><code>brew install hugo
+</code></pre><p>新規にサイトを作って、テーマを設定。</p>
+<pre tabindex=0><code>cd ~/src/github.com/harasou/ # ブログを管理する適当なディレクトリに移動
 hugo new site harasou.jp
 cd $_
 git init
@@ -277,23 +133,14 @@ git submodule add https://github.com/kakawait/hugo-tranquilpeak-theme.git themes
 echo 'theme = &quot;tranquilpeak&quot;' &gt;&gt; config.toml
 git add .
 git commit -m &quot;initial commit.&quot;
-</code></pre>
-
-<p>新規にページ作って表示してみる。<a href="http://127.0.0.1:1313/">http://127.0.0.1:1313/</a> へアクセス。</p>
-
-<pre><code>hugo new post/hugo-test.md
+</code></pre><p>新規にページ作って表示してみる。http://127.0.0.1:1313/ へアクセス。</p>
+<pre tabindex=0><code>hugo new post/hugo-test.md
 vim content/post/hugo-test.md
 hugo server -D
-</code></pre>
-
-<p>テーマの設定を何もしてないので、まともに見れないが、なんとなく表示されている。</p>
-
+</code></pre><p>テーマの設定を何もしてないので、まともに見れないが、なんとなく表示されている。</p>
 <p>ハマったのが、今回使用したテーマ tranquilpeak では、post 配下にページを作らないと認識してくれなかったこと。あと動作確認時の<code>hugo server</code>は、デフォルト <code>--watch</code> が有効なので、<code>-D, --buildDrafts</code> だけあればよさそう。</p>
-
-<h2 id="移行作業">移行作業</h2>
-
+<h2 id=移行作業>移行作業</h2>
 <p>hexo も hugo も Front-matter 付きの markdown なので、移行自体にはそれほど手間はかからなかった。移行の方針としては permalink やファイル構成がなるべく現行と変わらないように。ざっくりこんな感じのことをやった。</p>
-
 <ol>
 <li>記事を<code>content/post/</code>配下に cp</li>
 <li>記事の Front-matter にある<code>date:</code>を RFC3339 に変換</li>
@@ -301,19 +148,14 @@ hugo server -D
 <li>記事の Front-matter にある<code>thumbnailImage:</code>のパスを slug 配下に変更</li>
 <li>画像を記事に合わせたディレクトリ<code>static/:slug/</code>配下に cp</li>
 </ol>
-
 <p>それぞれの作業はワンライナーで適当に。あとは、サイト全体の設定とテーマの設定を<code>config.toml</code>で行う。</p>
-
-<h2 id="makefile">Makefile</h2>
-
+<h2 id=makefile>Makefile</h2>
 <p>hexo からの移行で以下の2点が不満だったので、Makefile で代替している。</p>
-
 <ul>
 <li>public 配下をプレビューできない</li>
-
-<li><p>hugo new する時のパス名の指定や画像用ディレクトリの作成が面倒</p>
-
-<pre><code>.PHONY: build server public clean new
+<li>hugo new する時のパス名の指定や画像用ディレクトリの作成が面倒</li>
+</ul>
+<pre tabindex=0><code>.PHONY: build server public clean new
 
 HUGO := hugo
 PREFIX := $(shell date +post/%Y-%m-%d)
@@ -343,28 +185,15 @@ new:
 		$(HUGO) new $(PREFIX)-$@.md --editor vim; \
 		;; \
 	esac
-</code></pre></li>
-</ul>
-
-<p>１つ目の publicディレクトリのプレビューには python 3系を利用。下記コマンドで、publicディレクトリをドキュメントルートしたサーバが立ち上がる。</p>
-
-<pre><code>make public
-</code></pre>
-
-<p>２つ目の<code>hugo new</code>の省力化については、</p>
-
-<pre><code>make new hugo-test
-</code></pre>
-
-<p>とすると、以下のような日付付きの記事ファイル<code>.md</code>と画像用のディレクトリができるようにした。</p>
-
-<pre><code>content/post/2017-11-23-hugo-test.md
+</code></pre><p>１つ目の publicディレクトリのプレビューには python 3系を利用。下記コマンドで、publicディレクトリをドキュメントルートしたサーバが立ち上がる。</p>
+<pre tabindex=0><code>make public
+</code></pre><p>２つ目の<code>hugo new</code>の省力化については、</p>
+<pre tabindex=0><code>make new hugo-test
+</code></pre><p>とすると、以下のような日付付きの記事ファイル<code>.md</code>と画像用のディレクトリができるようにした。</p>
+<pre tabindex=0><code>content/post/2017-11-23-hugo-test.md
 static/2017/11/23/hugo-test/
-</code></pre>
-
-<p>記事の中身は <code>archetypes/post.md</code> で変更しているので、初期状態でこんな感じになる。</p>
-
-<pre><code>---
+</code></pre><p>記事の中身は <code>archetypes/post.md</code> で変更しているので、初期状態でこんな感じになる。</p>
+<pre tabindex=0><code>---
 title: &quot;hugo-test&quot;
 date: 2017-11-23T20:30:51+09:00
 tags:
@@ -372,298 +201,177 @@ tags:
 url:            2017/11/23/hugo-test
 thumbnailImage: 2017/11/23/hugo-test/
 ---
-</code></pre>
-
-<p>make 便利。</p>
-              
-            </div>
-          </div>
-          <div id="post-footer" class="post-footer main-content-wrap">
-            
-              
-                
-                
-                  <div class="post-footer-tags">
-                    <span class="text-color-light text-small">タグ</span><br/>
-                    
-  <a class="tag tag--primary tag--small" href="/tags/hugo/">hugo</a>
-
-                  </div>
-                
-              
-            
-            <div class="post-actions-wrap">
-  
-      <nav >
-        <ul class="post-actions post-action-nav">
-          
-            <li class="post-action">
-              
-                <a class="post-action-btn btn btn--default tooltip--top" href="/2017/12/04/fuse/" data-tooltip="libfuse で Hello World !">
-              
-                  <i class="fa fa-angle-left"></i>
-                  <span class="hide-xs hide-sm text-small icon-ml">次</span>
-                </a>
-            </li>
-            <li class="post-action">
-              
-                <a class="post-action-btn btn btn--default tooltip--top" href="/2017/01/23/linux-signal/" data-tooltip="Linux シグナルの基礎">
-              
-                  <span class="hide-xs hide-sm text-small icon-mr">前</span>
-                  <i class="fa fa-angle-right"></i>
-                </a>
-            </li>
-          
-        </ul>
-      </nav>
-    <ul class="post-actions post-action-share" >
-      
-        <li class="post-action hide-lg hide-md hide-sm">
-          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
-            <i class="fa fa-share-alt"></i>
-          </a>
-        </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="http://b.hatena.ne.jp/entry/https://harasou.jp/2017/11/23/change-hugo-from-hexo/">
-              <i class="fa icon-hatebu"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="http://getpocket.com/edit?url=https://harasou.jp/2017/11/23/change-hugo-from-hexo/">
-              <i class="fa icon-pocket"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2017/11/23/change-hugo-from-hexo/">
-              <i class="fa fa-facebook-official"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://harasou.jp/2017/11/23/change-hugo-from-hexo/">
-              <i class="fa fa-twitter"></i>
-            </a>
-          </li>
-        
-      
-      
-      <li class="post-action">
-        
-          <a class="post-action-btn btn btn--default" href="#">
-        
-          <i class="fa fa-list"></i>
-        </a>
-      </li>
-    </ul>
-  
+</code></pre><p>make 便利。</p>
 </div>
-
-            
-              
-            
-          </div>
-        </article>
-        <footer id="footer" class="main-content-wrap">
-  <span class="copyrights">
-    &copy; 2019 harasou. All Rights Reserved
-  </span>
+</div>
+<div id=post-footer class="post-footer main-content-wrap">
+<div class=post-footer-tags>
+<span class="text-color-light text-small">タグ</span><br>
+<a class="tag tag--primary tag--small" href=/tags/hugo/>hugo</a>
+</div>
+<div class=post-actions-wrap>
+<nav>
+<ul class="post-actions post-action-nav">
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=/2017/12/04/fuse/ data-tooltip="libfuse で Hello World !">
+<i class="fa fa-angle-left"></i>
+<span class="hide-xs hide-sm text-small icon-ml">次</span>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=/2017/01/23/linux-signal/ data-tooltip="Linux シグナルの基礎">
+<span class="hide-xs hide-sm text-small icon-mr">前</span>
+<i class="fa fa-angle-right"></i>
+</a>
+</li>
+</ul>
+</nav>
+<ul class="post-actions post-action-share">
+<li class="post-action hide-lg hide-md hide-sm">
+<a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions>
+<i class="fa fa-share-alt"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.jp/2017/11/23/change-hugo-from-hexo/>
+<i class="fa icon-hatebu"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.jp/2017/11/23/change-hugo-from-hexo/">
+<i class="fa icon-pocket"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2017/11/23/change-hugo-from-hexo/">
+<i class="fa fa-facebook-official"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.jp/2017/11/23/change-hugo-from-hexo/">
+<i class="fa fa-twitter"></i>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default" href=#>
+<i class="fa fa-list"></i>
+</a>
+</li>
+</ul>
+</div>
+</div>
+</article>
+<footer id=footer class=main-content-wrap>
+<span class=copyrights>
+&copy; 2021 harasou. All Rights Reserved
+</span>
 </footer>
-
-      </div>
-      <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
-        <div class="post-actions-wrap">
-  
-      <nav >
-        <ul class="post-actions post-action-nav">
-          
-            <li class="post-action">
-              
-                <a class="post-action-btn btn btn--default tooltip--top" href="/2017/12/04/fuse/" data-tooltip="libfuse で Hello World !">
-              
-                  <i class="fa fa-angle-left"></i>
-                  <span class="hide-xs hide-sm text-small icon-ml">次</span>
-                </a>
-            </li>
-            <li class="post-action">
-              
-                <a class="post-action-btn btn btn--default tooltip--top" href="/2017/01/23/linux-signal/" data-tooltip="Linux シグナルの基礎">
-              
-                  <span class="hide-xs hide-sm text-small icon-mr">前</span>
-                  <i class="fa fa-angle-right"></i>
-                </a>
-            </li>
-          
-        </ul>
-      </nav>
-    <ul class="post-actions post-action-share" >
-      
-        <li class="post-action hide-lg hide-md hide-sm">
-          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
-            <i class="fa fa-share-alt"></i>
-          </a>
-        </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="http://b.hatena.ne.jp/entry/https://harasou.jp/2017/11/23/change-hugo-from-hexo/">
-              <i class="fa icon-hatebu"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="http://getpocket.com/edit?url=https://harasou.jp/2017/11/23/change-hugo-from-hexo/">
-              <i class="fa icon-pocket"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2017/11/23/change-hugo-from-hexo/">
-              <i class="fa fa-facebook-official"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://harasou.jp/2017/11/23/change-hugo-from-hexo/">
-              <i class="fa fa-twitter"></i>
-            </a>
-          </li>
-        
-      
-      
-      <li class="post-action">
-        
-          <a class="post-action-btn btn btn--default" href="#">
-        
-          <i class="fa fa-list"></i>
-        </a>
-      </li>
-    </ul>
-  
 </div>
-
-      </div>
-      <div id="share-options-bar" class="share-options-bar" data-behavior="5">
-  <i id="btn-close-shareoptions" class="fa fa-close"></i>
-  <ul class="share-options">
-    
-      <li class="share-option">
-        <a class="share-option-btn" target="new" href="http://b.hatena.ne.jp/entry/https%3A%2F%2Fharasou.jp%2F2017%2F11%2F23%2Fchange-hugo-from-hexo%2F">
-          <i class="fa icon-hatebu"></i><span>Hatebuで共有</span>
-        </a>
-      </li>
-    
-      <li class="share-option">
-        <a class="share-option-btn" target="new" href="http://getpocket.com/edit?url=https%3A%2F%2Fharasou.jp%2F2017%2F11%2F23%2Fchange-hugo-from-hexo%2F">
-          <i class="fa icon-pocket"></i><span>Pocketで共有</span>
-        </a>
-      </li>
-    
-      <li class="share-option">
-        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fharasou.jp%2F2017%2F11%2F23%2Fchange-hugo-from-hexo%2F">
-          <i class="fa fa-facebook-official"></i><span>Facebookで共有</span>
-        </a>
-      </li>
-    
-      <li class="share-option">
-        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fharasou.jp%2F2017%2F11%2F23%2Fchange-hugo-from-hexo%2F">
-          <i class="fa fa-twitter"></i><span>Twitterで共有</span>
-        </a>
-      </li>
-    
-  </ul>
+<div id=bottom-bar class=post-bottom-bar data-behavior=5>
+<div class=post-actions-wrap>
+<nav>
+<ul class="post-actions post-action-nav">
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=/2017/12/04/fuse/ data-tooltip="libfuse で Hello World !">
+<i class="fa fa-angle-left"></i>
+<span class="hide-xs hide-sm text-small icon-ml">次</span>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=/2017/01/23/linux-signal/ data-tooltip="Linux シグナルの基礎">
+<span class="hide-xs hide-sm text-small icon-mr">前</span>
+<i class="fa fa-angle-right"></i>
+</a>
+</li>
+</ul>
+</nav>
+<ul class="post-actions post-action-share">
+<li class="post-action hide-lg hide-md hide-sm">
+<a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions>
+<i class="fa fa-share-alt"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.jp/2017/11/23/change-hugo-from-hexo/>
+<i class="fa icon-hatebu"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.jp/2017/11/23/change-hugo-from-hexo/">
+<i class="fa icon-pocket"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2017/11/23/change-hugo-from-hexo/">
+<i class="fa fa-facebook-official"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.jp/2017/11/23/change-hugo-from-hexo/">
+<i class="fa fa-twitter"></i>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default" href=#>
+<i class="fa fa-list"></i>
+</a>
+</li>
+</ul>
 </div>
-<div id="share-options-mask" class="share-options-mask"></div>
-    </div>
-    
-    <div id="about">
-  <div id="about-card">
-    <div id="about-btn-close">
-      <i class="fa fa-remove"></i>
-    </div>
-    
-      <img id="about-card-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt="プロフィール画像" />
-    
-    <h4 id="about-card-name">harasou</h4>
-    
-      <div id="about-card-bio">めくじらを立てない</div>
-    
-    
-      <div id="about-card-job">
-        <i class="fa fa-briefcase"></i>
-        <br/>
-        Infra Engineer
-      </div>
-    
-    
-      <div id="about-card-location">
-        <i class="fa fa-map-marker"></i>
-        <br/>
-        Fukuoka Japan
-      </div>
-    
-  </div>
 </div>
-
-    
-
-    
-  
-    
-      
-      <div id="cover" style="background-image:url('https://harasou.jp/images/cover.jpg');"></div>
-    
-  
-
-
-    
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
-
-
-<script src="/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js"></script>
-
-
-<script lang="javascript">
-window.onload = updateMinWidth;
-window.onresize = updateMinWidth;
-document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
-function updateMinWidth() {
-  var sidebar = document.getElementById("sidebar");
-  var main = document.getElementById("main");
-  main.style.minWidth = "";
-  var w1 = getComputedStyle(main).getPropertyValue("min-width");
-  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
-  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
-  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
-}
-</script>
-
-<script>
-$(document).ready(function() {
-  hljs.configure({ classPrefix: '', useBR: false });
-  $('pre.code-highlight > code, pre > code').each(function(i, block) {
-    if (!$(this).hasClass('codeblock')) {
-      $(this).addClass('codeblock');
-    }
-    hljs.highlightBlock(block);
-  });
-});
-</script>
-
-
-  
-    
-  
-
-
-
-
-    
-  </body>
+<div id=share-options-bar class=share-options-bar data-behavior=5>
+<i id=btn-close-shareoptions class="fa fa-close"></i>
+<ul class=share-options>
+<li class=share-option>
+<a class=share-option-btn target=new href=http://b.hatena.ne.jp/entry/https%3A%2F%2Fharasou.jp%2F2017%2F11%2F23%2Fchange-hugo-from-hexo%2F>
+<i class="fa icon-hatebu"></i><span>Hatebuで共有</span>
+</a>
+</li>
+<li class=share-option>
+<a class=share-option-btn target=new href="http://getpocket.com/edit?url=https%3A%2F%2Fharasou.jp%2F2017%2F11%2F23%2Fchange-hugo-from-hexo%2F">
+<i class="fa icon-pocket"></i><span>Pocketで共有</span>
+</a>
+</li>
+<li class=share-option>
+<a class=share-option-btn target=new href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fharasou.jp%2F2017%2F11%2F23%2Fchange-hugo-from-hexo%2F">
+<i class="fa fa-facebook-official"></i><span>Facebookで共有</span>
+</a>
+</li>
+<li class=share-option>
+<a class=share-option-btn target=new href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fharasou.jp%2F2017%2F11%2F23%2Fchange-hugo-from-hexo%2F">
+<i class="fa fa-twitter"></i><span>Twitterで共有</span>
+</a>
+</li>
+</ul>
+</div>
+<div id=share-options-mask class=share-options-mask></div>
+</div>
+<div id=about>
+<div id=about-card>
+<div id=about-btn-close>
+<i class="fa fa-remove"></i>
+</div>
+<img id=about-card-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt=プロフィール画像>
+<h4 id=about-card-name>harasou</h4>
+<div id=about-card-bio>めくじらを立てない</div>
+<div id=about-card-job>
+<i class="fa fa-briefcase"></i>
+<br>
+Infra Engineer
+</div>
+<div id=about-card-location>
+<i class="fa fa-map-marker"></i>
+<br>
+Fukuoka Japan
+</div>
+</div>
+</div>
+<div id=cover style=background-image:url(https://harasou.jp/images/cover.jpg)></div>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin=anonymous></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin=anonymous></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin=anonymous></script>
+<script src=/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js></script>
+<script lang=javascript>window.onload=updateMinWidth,window.onresize=updateMinWidth,document.getElementById("sidebar").addEventListener("transitionend",updateMinWidth);function updateMinWidth(){var b=document.getElementById("sidebar"),a=document.getElementById("main"),c,d,e;a.style.minWidth="",c=getComputedStyle(a).getPropertyValue("min-width"),d=getComputedStyle(b).getPropertyValue("width"),e=getComputedStyle(b).getPropertyValue("left"),a.style.minWidth=`calc(${c} - ${d} - ${e})`}</script>
+<script>$(document).ready(function(){hljs.configure({classPrefix:'',useBR:!1}),$('pre.code-highlight > code, pre > code').each(function(b,a){$(this).hasClass('codeblock')||$(this).addClass('codeblock'),hljs.highlightBlock(a)})})</script>
+</body>
 </html>
-

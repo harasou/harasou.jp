@@ -1,93 +1,30 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>cgroup on harasou.jp</title>
-    <link>https://harasou.jp/tags/cgroup/</link>
-    <description>Recent content in cgroup on harasou.jp</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>ja</language>
-    <lastBuildDate>Tue, 02 Jun 2015 04:09:33 +0900</lastBuildDate>
-    
-	<atom:link href="https://harasou.jp/tags/cgroup/index.xml" rel="self" type="application/rss+xml" />
-    
-    
-    <item>
-      <title>cgroup の cpu.shares を検証した</title>
-      <link>https://harasou.jp/2015/06/02/cgroup-cpu-cpushare/</link>
-      <pubDate>Tue, 02 Jun 2015 04:09:33 +0900</pubDate>
-      
-      <guid>https://harasou.jp/2015/06/02/cgroup-cpu-cpushare/</guid>
-      <description>&lt;p&gt;cgroup には複数のサブシステム（controller）があるが、その中の &lt;code&gt;cpu.shares&lt;/code&gt; について検証してみた。&lt;/p&gt;
-
-&lt;h2 id=&#34;cpu-shares-とは&#34;&gt;cpu.shares とは&lt;/h2&gt;
-
-&lt;p&gt;cpu.shares を設定すると、タスクが使用できる CPU 時間の&lt;code&gt;割合&lt;/code&gt;を変更することができる。&lt;/p&gt;
-
-&lt;p&gt;具体的に言うと、&lt;code&gt;A&lt;/code&gt; &lt;code&gt;B&lt;/code&gt;２つのグループを作り、cpu.shares をそれぞれ&lt;code&gt;1024&lt;/code&gt; &lt;code&gt;2048&lt;/code&gt;とした場合、B のグループにいるプロセスが、A のグループにいるプロセスより 2倍 CPU を使えるようになる。以下、実行例。&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>cgroup による oom-killer の状態を eventfd 経由で受け取る</title>
-      <link>https://harasou.jp/2015/05/20/cgroup-eventfd/</link>
-      <pubDate>Wed, 20 May 2015 21:30:05 +0900</pubDate>
-      
-      <guid>https://harasou.jp/2015/05/20/cgroup-eventfd/</guid>
-      <description>&lt;h2 id=&#34;cgroup-の通知api&#34;&gt;cgroup の通知API&lt;/h2&gt;
-
-&lt;p&gt;cgroup の memory サブシテムを利用すると、登録したプロセスがメモリを使いすぎた際、oom-killer が動作し、対象プロセスを kill することができる（デフォルト動作)。&lt;/p&gt;
-
-&lt;p&gt;kill されたことは syslog など見ればわかるが、cgroup には&lt;code&gt;通知API&lt;/code&gt;といった機能があり、アプリ側で oom-killer が動作した際のイベントを受け取ることが可能なので、この機能を試してみる。&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>mruby-cgroup に memory サブシテムを追加してみた</title>
-      <link>https://harasou.jp/2015/05/17/mruby-cgroup/</link>
-      <pubDate>Sun, 17 May 2015 18:38:33 +0900</pubDate>
-      
-      <guid>https://harasou.jp/2015/05/17/mruby-cgroup/</guid>
-      <description>&lt;p&gt;mruby-cgroup は、mruby から cgroup を利用するためのモジュールで、いわゆる libcgroup のバインディング。現在、mruby-cgroup &lt;a href=&#34;https://github.com/matsumoto-r/mruby-cgroup/blob/9cad17343cf60449c2cc1b7475daefb863086a13/src/mrb_cgroup.c#L45-L50&#34;&gt;9cad17343&lt;/a&gt; で対応しているサブシテムは以下のとおり。&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;cpu&lt;/li&gt;
-&lt;li&gt;cpu_set&lt;/li&gt;
-&lt;li&gt;cpu_acct&lt;/li&gt;
-&lt;li&gt;blkio&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;他に、cgroup のサブシステムには以下のようなものがある(CentOS 6.4)&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;# cat /proc/cgroups
-#subsys_name    hierarchy   num_cgroups enabled
-cpuset  10  1   1
-ns  0   1   1
-cpu 11  1   1
-cpuacct 12  1   1
-memory  13  1   1
-devices 14  1   1
-freezer 15  1   1
-net_cls 16  1   1
-blkio   17  1   1
-perf_event  0   1   1
-net_prio    0   1   1
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;この中から、簡単に使えそうな memory サブシステムを追加してみた。&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>mruby-cgroup を boot2docker で build する</title>
-      <link>https://harasou.jp/2015/05/06/mruby-cgroups-build-on-boot2docker/</link>
-      <pubDate>Wed, 06 May 2015 02:47:32 +0900</pubDate>
-      
-      <guid>https://harasou.jp/2015/05/06/mruby-cgroups-build-on-boot2docker/</guid>
-      <description>&lt;h2 id=&#34;mruby-cgroup-とは&#34;&gt;mruby-cgroup とは&lt;/h2&gt;
-
-&lt;p&gt;mruby-cgroup は、@matsumotory が開発している mruby から cgroup を利用するためのライブラリ。&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://github.com/matsumoto-r/mruby-cgroup&#34;&gt;https://github.com/matsumoto-r/mruby-cgroup&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;cgroup は linux カーネルの機能で、タスク（プロセス）のリソース（CPU, メモリ, IO, etc）を制御するための仕組み。 これを利用すると「特定のプロセスが CPU100% 使うような処理を行っても 50% しか利用させない」といった制御ができるようになる。&lt;/p&gt;</description>
-    </item>
-    
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>cgroup on harasou.jp</title><link>https://harasou.jp/tags/cgroup/</link><description>Recent content in cgroup on harasou.jp</description><generator>Hugo -- gohugo.io</generator><language>ja</language><lastBuildDate>Tue, 02 Jun 2015 04:09:33 +0900</lastBuildDate><atom:link href="https://harasou.jp/tags/cgroup/index.xml" rel="self" type="application/rss+xml"/><item><title>cgroup の cpu.shares を検証した</title><link>https://harasou.jp/2015/06/02/cgroup-cpu-cpushare/</link><pubDate>Tue, 02 Jun 2015 04:09:33 +0900</pubDate><guid>https://harasou.jp/2015/06/02/cgroup-cpu-cpushare/</guid><description>&lt;p>cgroup には複数のサブシステム（controller）があるが、その中の &lt;code>cpu.shares&lt;/code> について検証してみた。&lt;/p>
+&lt;h2 id="cpushares-とは">cpu.shares とは&lt;/h2>
+&lt;p>cpu.shares を設定すると、タスクが使用できる CPU 時間の&lt;code>割合&lt;/code>を変更することができる。&lt;/p>
+&lt;p>具体的に言うと、&lt;code>A&lt;/code> &lt;code>B&lt;/code>２つのグループを作り、cpu.shares をそれぞれ&lt;code>1024&lt;/code> &lt;code>2048&lt;/code>とした場合、B のグループにいるプロセスが、A のグループにいるプロセスより 2倍 CPU を使えるようになる。以下、実行例。&lt;/p></description></item><item><title>cgroup による oom-killer の状態を eventfd 経由で受け取る</title><link>https://harasou.jp/2015/05/20/cgroup-eventfd/</link><pubDate>Wed, 20 May 2015 21:30:05 +0900</pubDate><guid>https://harasou.jp/2015/05/20/cgroup-eventfd/</guid><description>&lt;h2 id="cgroup-の通知api">cgroup の通知API&lt;/h2>
+&lt;p>cgroup の memory サブシテムを利用すると、登録したプロセスがメモリを使いすぎた際、oom-killer が動作し、対象プロセスを kill することができる（デフォルト動作)。&lt;/p>
+&lt;p>kill されたことは syslog など見ればわかるが、cgroup には&lt;code>通知API&lt;/code>といった機能があり、アプリ側で oom-killer が動作した際のイベントを受け取ることが可能なので、この機能を試してみる。&lt;/p></description></item><item><title>mruby-cgroup に memory サブシテムを追加してみた</title><link>https://harasou.jp/2015/05/17/mruby-cgroup/</link><pubDate>Sun, 17 May 2015 18:38:33 +0900</pubDate><guid>https://harasou.jp/2015/05/17/mruby-cgroup/</guid><description>&lt;p>mruby-cgroup は、mruby から cgroup を利用するためのモジュールで、いわゆる libcgroup のバインディング。現在、mruby-cgroup &lt;a href="https://github.com/matsumoto-r/mruby-cgroup/blob/9cad17343cf60449c2cc1b7475daefb863086a13/src/mrb_cgroup.c#L45-L50">9cad17343&lt;/a> で対応しているサブシテムは以下のとおり。&lt;/p>
+&lt;ul>
+&lt;li>cpu&lt;/li>
+&lt;li>cpu_set&lt;/li>
+&lt;li>cpu_acct&lt;/li>
+&lt;li>blkio&lt;/li>
+&lt;/ul>
+&lt;p>他に、cgroup のサブシステムには以下のようなものがある(CentOS 6.4)&lt;/p>
+&lt;pre tabindex="0">&lt;code># cat /proc/cgroups
+#subsys_name hierarchy num_cgroups enabled
+cpuset 10 1 1
+ns 0 1 1
+cpu 11 1 1
+cpuacct 12 1 1
+memory 13 1 1
+devices 14 1 1
+freezer 15 1 1
+net_cls 16 1 1
+blkio 17 1 1
+perf_event 0 1 1
+net_prio 0 1 1
+&lt;/code>&lt;/pre>&lt;p>この中から、簡単に使えそうな memory サブシステムを追加してみた。&lt;/p></description></item><item><title>mruby-cgroup を boot2docker で build する</title><link>https://harasou.jp/2015/05/06/mruby-cgroups-build-on-boot2docker/</link><pubDate>Wed, 06 May 2015 02:47:32 +0900</pubDate><guid>https://harasou.jp/2015/05/06/mruby-cgroups-build-on-boot2docker/</guid><description>&lt;h2 id="mruby-cgroup-とは">mruby-cgroup とは&lt;/h2>
+&lt;p>mruby-cgroup は、@matsumotory が開発している mruby から cgroup を利用するためのライブラリ。&lt;/p>
+&lt;p>&lt;a href="https://github.com/matsumoto-r/mruby-cgroup">https://github.com/matsumoto-r/mruby-cgroup&lt;/a>&lt;/p>
+&lt;p>cgroup は linux カーネルの機能で、タスク（プロセス）のリソース（CPU, メモリ, IO, etc）を制御するための仕組み。 これを利用すると「特定のプロセスが CPU100% 使うような処理を行っても 50% しか利用させない」といった制御ができるようになる。&lt;/p></description></item></channel></rss>

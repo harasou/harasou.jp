@@ -1,625 +1,344 @@
-<!DOCTYPE html>
-<html lang="ja">
-  <head>
-    
-    <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.59.0-DEV with theme Tranquilpeak 0.4.7-BETA">
-<meta name="author" content="harasou">
-<meta name="keywords" content="">
-<meta name="description" content="blog のトップページなどから日本語タイトルのリンクをたどると 404 になることがあった。
-
+<!doctype html><html lang=ja>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=generator content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name=author content="harasou">
+<meta name=keywords content>
+<meta name=description content="blog のトップページなどから日本語タイトルのリンクをたどると 404 になることがあった。
 ">
-
-
 <meta property="og:description" content="blog のトップページなどから日本語タイトルのリンクをたどると 404 になることがあった。
-
 ">
 <meta property="og:type" content="article">
 <meta property="og:title" content="hexo で 404 File not found">
-<meta name="twitter:title" content="hexo で 404 File not found">
+<meta name=twitter:title content="hexo で 404 File not found">
 <meta property="og:url" content="https://harasou.jp/2015/05/10/hexo-404-file-not-found/">
 <meta property="twitter:url" content="https://harasou.jp/2015/05/10/hexo-404-file-not-found/">
 <meta property="og:site_name" content="harasou.jp">
 <meta property="og:description" content="blog のトップページなどから日本語タイトルのリンクをたどると 404 になることがあった。
-
 ">
-<meta name="twitter:description" content="blog のトップページなどから日本語タイトルのリンクをたどると 404 になることがあった。
-
+<meta name=twitter:description content="blog のトップページなどから日本語タイトルのリンクをたどると 404 になることがあった。
 ">
 <meta property="og:locale" content="ja">
-
-  
-    <meta property="article:published_time" content="2015-05-10T01:38:53">
-  
-  
-    <meta property="article:modified_time" content="2015-05-10T01:38:53">
-  
-  
-  
-  
-    
-      <meta property="article:tag" content="hexo">
-    
-  
-
-
-<meta name="twitter:card" content="summary">
-
-  <meta name="twitter:site" content="@harasou5">
-
-
-  <meta name="twitter:creator" content="@harasou5">
-
-
-
-
-
-
-
-
-
-
-  <meta property="og:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
-  <meta property="twitter:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
-
-
-    <title>hexo で 404 File not found</title>
-
-    <link rel="icon" href="/favicon.png">
-    
-
-    
-
-    <link rel="canonical" href="https://harasou.jp/2015/05/10/hexo-404-file-not-found/">
-
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
-    
-    
-    <link rel="stylesheet" href="/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css" />
-    
-    
-      
-        <link rel="stylesheet"  href="https://harasou.jp/css/style.css" swapPaginator="true">
-      
-    
-
-    
-      
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-	ga('create', 'UA-62541096-1', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-
-    
-    
-  </head>
-
-  <body>
-    <div id="blog">
-      <header id="header" data-behavior="5">
-  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
-  <div class="header-title">
-    <a class="header-title-link" href="/">harasou.jp</a>
-  </div>
-  
-    
-      <a class="header-right-picture "
-         href="/#about">
-    
-    
-    
-      
-        <img class="header-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=90" alt="プロフィール画像" />
-      
-    
-    </a>
-  
-</header>
-
-      <nav id="sidebar" data-behavior="5">
-  <div class="sidebar-container">
-    
-      <div class="sidebar-profile">
-        <a href="/#about">
-          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt="プロフィール画像" />
-        </a>
-        <h4 class="sidebar-profile-name">harasou</h4>
-        
-          <h5 class="sidebar-profile-bio">めくじらを立てない</h5>
-        
-      </div>
-    
-    <ul class="sidebar-buttons">
-      
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="/">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
-      
-      <span class="sidebar-button-desc">ホーム</span>
-    </a>
-  </li>
-
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="/tags">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
-      
-      <span class="sidebar-button-desc">タグ</span>
-    </a>
-  </li>
-
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="/archives">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
-      
-      <span class="sidebar-button-desc">アーカイブ</span>
-    </a>
-  </li>
-
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="/#about">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
-      
-      <span class="sidebar-button-desc">プロフィール</span>
-    </a>
-  </li>
-
-
-    </ul>
-    <ul class="sidebar-buttons">
-      
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="https://github.com/harasou" target="_blank" rel="noopener">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
-      
-      <span class="sidebar-button-desc">GitHub</span>
-    </a>
-  </li>
-
-
-    </ul>
-    <ul class="sidebar-buttons">
-      
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="/index.xml">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
-      
-      <span class="sidebar-button-desc">RSS</span>
-    </a>
-  </li>
-
-
-    </ul>
-  </div>
-</nav>
-
-      
-
-      <div id="main" data-behavior="5"
-        class="
-               hasCoverMetaIn
-               ">
-        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
-          
-          
-            <div class="post-header main-content-wrap text-left">
-  
-    <h1 class="post-title" itemprop="headline">
-      hexo で 404 File not found
-    </h1>
-  
-  
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2015-05-10T01:38:53&#43;09:00">
-        
-  
-  
-  
-  
-    2015/5/10
-  
-
-      </time>
-    
-    
-  </div>
-
+<meta property="article:published_time" content="2015-05-10T01:38:53">
+<meta property="article:modified_time" content="2015-05-10T01:38:53">
+<meta property="article:tag" content="hexo">
+<meta name=twitter:card content="summary">
+<meta name=twitter:site content="@harasou5">
+<meta name=twitter:creator content="@harasou5">
+<meta property="og:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
+<meta property="twitter:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
+<title>hexo で 404 File not found</title>
+<link rel=icon href=/favicon.png>
+<link rel=canonical href=https://harasou.jp/2015/05/10/hexo-404-file-not-found/>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin=anonymous>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin=anonymous>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin=anonymous>
+<link rel=stylesheet href=/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css>
+<link rel=stylesheet href=https://harasou.jp/css/style.css swappaginator=true>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-62541096-1','auto'),ga('send','pageview'))</script>
+</head>
+<body>
+<div id=blog>
+<header id=header data-behavior=5>
+<i id=btn-open-sidebar class="fa fa-lg fa-bars"></i>
+<div class=header-title>
+<a class=header-title-link href=/>harasou.jp</a>
 </div>
-          
-          <div class="post-content markdown" itemprop="articleBody">
-            <div class="main-content-wrap">
-              <p>blog のトップページなどから<code>日本語タイトル</code>のリンクをたどると 404 になることがあった。</p>
-
-<p><img src="404.png" alt="" /></p>
-
-<h2 id="発生条件">発生条件</h2>
-
+<a class=header-right-picture href=/#about>
+<img class=header-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=90" alt=プロフィール画像>
+</a>
+</header>
+<nav id=sidebar data-behavior=5>
+<div class=sidebar-container>
+<div class=sidebar-profile>
+<a href=/#about>
+<img class=sidebar-profile-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt=プロフィール画像>
+</a>
+<h4 class=sidebar-profile-name>harasou</h4>
+<h5 class=sidebar-profile-bio>めくじらを立てない</h5>
+</div>
+<ul class=sidebar-buttons>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/>
+<i class="sidebar-button-icon fa fa-lg fa-home"></i>
+<span class=sidebar-button-desc>ホーム</span>
+</a>
+</li>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/tags>
+<i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+<span class=sidebar-button-desc>タグ</span>
+</a>
+</li>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/archives>
+<i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+<span class=sidebar-button-desc>アーカイブ</span>
+</a>
+</li>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/#about>
+<i class="sidebar-button-icon fa fa-lg fa-question"></i>
+<span class=sidebar-button-desc>プロフィール</span>
+</a>
+</li>
+</ul>
+<ul class=sidebar-buttons>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=https://github.com/harasou target=_blank rel=noopener>
+<i class="sidebar-button-icon fa fa-lg fa-github"></i>
+<span class=sidebar-button-desc>GitHub</span>
+</a>
+</li>
+</ul>
+<ul class=sidebar-buttons>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/index.xml>
+<i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+<span class=sidebar-button-desc>RSS</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+<div id=main data-behavior=5 class=hasCoverMetaIn>
+<article class=post itemscope itemtype=http://schema.org/BlogPosting>
+<div class="post-header main-content-wrap text-left">
+<h1 class=post-title itemprop=headline>
+hexo で 404 File not found
+</h1>
+<div class="postShorten-meta post-meta">
+<time itemprop=datePublished datetime=2015-05-10T01:38:53+09:00>
+2015/5/10
+</time>
+</div>
+</div>
+<div class="post-content markdown" itemprop=articleBody>
+<div class=main-content-wrap>
+<p>blog のトップページなどから<code>日本語タイトル</code>のリンクをたどると 404 になることがあった。</p>
+<p><img src=404.png alt></p>
+<h2 id=発生条件>発生条件</h2>
 <p>調べてわかった条件。</p>
-
 <ul>
 <li>MacOSX 上で記事を作成する。かつ</li>
 <li><code>hexo new</code> で、濁点・半濁点を使ったタイトルをつける。かつ</li>
 <li><code>hexo gen</code> した記事を MacOSX 以外にアップして blog を表示した場合。</li>
 </ul>
-
 <p>例えば MacOSX 上で</p>
-
-<pre><code>hexo new &quot;blog はじめました&quot;
-</code></pre>
-
-<p>などすると「じ」が濁点付きの文字なので、これを gh-pages にアップしてみるとリンクが 404 になる。なお、</p>
-
-<pre><code>hexo server
+<pre tabindex=0><code>hexo new &quot;blog はじめました&quot;
+</code></pre><p>などすると「じ」が濁点付きの文字なので、これを gh-pages にアップしてみるとリンクが 404 になる。なお、</p>
+<pre tabindex=0><code>hexo server
 open http://0.0.0.0:4000/
-</code></pre>
-
-<p>などして、MacOSX 上で確認すると問題ない。</p>
-
-<h2 id="原因">原因</h2>
-
+</code></pre><p>などして、MacOSX 上で確認すると問題ない。</p>
+<h2 id=原因>原因</h2>
 <p>自分は知らなかったが、結構有名な <code>NFD(Normalization Form D)</code> の問題だった。
 これは、Unicode による文字の正規化の種類の話で、以下のようなものがある(他にも NFKD NFKC などがある)。</p>
-
 <ul>
 <li>NFD: 濁点・半濁点がついた <code>じ</code> などの文字を <code>し</code>+<code>”</code> の組み合わせで表す</li>
 <li>NFC: 濁点・半濁点がついた <code>じ</code> などの文字を <code>じ</code> 単体で表す</li>
 </ul>
-
 <p>MacOSX で使用されているファイルシステム HFS+ は、日本語ファイル名の正規化に <code>NFD</code> を使用しているが、Linux や Windows は <code>NFC</code> が使われている。</p>
-
 <p>MacOSX 上で <code>hexo gen</code> すると source/_post 配下のファイル名は NFD になっているため index.html 内にあるタイトルのリンクも <code>NFD</code> になる。</p>
-
 <p>その後、<code>hexo deploy</code> などで Linux 系のサーバ(Github など)にデプロイすると、Linux 上のファイル名が <code>NFC</code> になるので、リンク(NFD)とファイル名(NFC)が違って 404 になってしまう。</p>
-
-<h2 id="対処">対処</h2>
-
-<p>deploy する際に、NFD -&gt; NFC の変換をかけてやれば良い。が、うまい方法を見つけられなかった。</p>
-
+<h2 id=対処>対処</h2>
+<p>deploy する際に、NFD -> NFC の変換をかけてやれば良い。が、うまい方法を見つけられなかった。</p>
 <p>iconv や nkf は変換に対応しているが、記事のファイルは、タイトルが NFD、それ以外 NFC といったように混在しているため、実際に iconv で変換してみるとエラーになるものがあった。</p>
-
 <p>また、以下のような変換を、hexo のプラグインとして作成できればベストだが、プラグラミングの能力がかなり低いので無理。</p>
-
-<p><a href="http://tsuyobi.heteml.jp/html/tools/nfd2nfc/">http://tsuyobi.heteml.jp/html/tools/nfd2nfc/</a></p>
-
-<p>よって、かなりベタベタな sed で対応した。<a href="https://github.com/harasou/harasou.github.io/blob/hexo/bin/nfd2nfc">このようなダサいスクリプト</a>を作成し、
+<p><a href=http://tsuyobi.heteml.jp/html/tools/nfd2nfc/>http://tsuyobi.heteml.jp/html/tools/nfd2nfc/</a></p>
+<p>よって、かなりベタベタな sed で対応した。<a href=https://github.com/harasou/harasou.github.io/blob/hexo/bin/nfd2nfc>このようなダサいスクリプト</a>を作成し、
 <code>hexo deploy</code> 時に実行されるよう js を修正。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-diff" data-lang="diff"><span style="color:#f92672">--- node_modules/hexo-deployer-git/lib/deployer.js.orig 2015-05-09 19:40:23.000000000 +0900
-</span><span style="color:#f92672"></span><span style="color:#a6e22e">+++ node_modules/hexo-deployer-git/lib/deployer.js  2015-05-09 19:05:59.000000000 +0900
-</span><span style="color:#a6e22e"></span><span style="color:#75715e">@@ -63,7 +63,12 @@
-</span><span style="color:#75715e"></span>   }
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-diff data-lang=diff><span style=color:#f92672>--- node_modules/hexo-deployer-git/lib/deployer.js.orig 2015-05-09 19:40:23.000000000 +0900
+</span><span style=color:#f92672></span><span style=color:#a6e22e>+++ node_modules/hexo-deployer-git/lib/deployer.js  2015-05-09 19:05:59.000000000 +0900
+</span><span style=color:#a6e22e></span><span style=color:#75715e>@@ -63,7 +63,12 @@
+</span><span style=color:#75715e></span>   }
 
    function push(repo){
-<span style="color:#f92672">-    return git(&#39;add&#39;, &#39;-A&#39;).then(function(){
-</span><span style="color:#f92672"></span><span style="color:#a6e22e">+    return spawn(&#39;../bin/nfd2nfc&#39;, &#39;&#39;, {
-</span><span style="color:#a6e22e">+      cwd: deployDir,
-</span><span style="color:#a6e22e">+      verbose: verbose
-</span><span style="color:#a6e22e">+    }).then(function(){
-</span><span style="color:#a6e22e">+      return git(&#39;add&#39;, &#39;-A&#39;);
-</span><span style="color:#a6e22e">+    }).then(function(){
-</span><span style="color:#a6e22e"></span>       return git(&#39;commit&#39;, &#39;-m&#39;, message).catch(function(){
+<span style=color:#f92672>-    return git(&#39;add&#39;, &#39;-A&#39;).then(function(){
+</span><span style=color:#f92672></span><span style=color:#a6e22e>+    return spawn(&#39;../bin/nfd2nfc&#39;, &#39;&#39;, {
+</span><span style=color:#a6e22e>+      cwd: deployDir,
+</span><span style=color:#a6e22e>+      verbose: verbose
+</span><span style=color:#a6e22e>+    }).then(function(){
+</span><span style=color:#a6e22e>+      return git(&#39;add&#39;, &#39;-A&#39;);
+</span><span style=color:#a6e22e>+    }).then(function(){
+</span><span style=color:#a6e22e></span>       return git(&#39;commit&#39;, &#39;-m&#39;, message).catch(function(){
          // Do nothing. It&#39;s OK if nothing to commit.
        });
-</code></pre></div>
-<p>これで、<code>hexo gen</code> するたびに濁点・半濁点のついた文字が NFC になるので、404 がなくなった。ダサいスクリプトについては、誰か助けてください。</p>
-
-<h2 id="2015-06-28-追記">2015/06/28 追記</h2>
-
+</code></pre></div><p>これで、<code>hexo gen</code> するたびに濁点・半濁点のついた文字が NFC になるので、404 がなくなった。ダサいスクリプトについては、誰か助けてください。</p>
+<h2 id=20150628-追記>2015/06/28 追記</h2>
 <p>助けてくれました。こちらの記事でどうぞ。
-<a href="/2016/05/28/hexo-goodby-404/">hexo の 404 File not found さようなら</a></p>
-              
-            </div>
-          </div>
-          <div id="post-footer" class="post-footer main-content-wrap">
-            
-              
-                
-                
-                  <div class="post-footer-tags">
-                    <span class="text-color-light text-small">タグ</span><br/>
-                    
-  <a class="tag tag--primary tag--small" href="/tags/hexo/">hexo</a>
-
-                  </div>
-                
-              
-            
-            <div class="post-actions-wrap">
-  
-      <nav >
-        <ul class="post-actions post-action-nav">
-          
-            <li class="post-action">
-              
-                <a class="post-action-btn btn btn--default tooltip--top" href="/2015/05/17/mruby-cgroup/" data-tooltip="mruby-cgroup に memory サブシテムを追加してみた">
-              
-                  <i class="fa fa-angle-left"></i>
-                  <span class="hide-xs hide-sm text-small icon-ml">次</span>
-                </a>
-            </li>
-            <li class="post-action">
-              
-                <a class="post-action-btn btn btn--default tooltip--top" href="/2015/05/06/mruby-cgroups-build-on-boot2docker/" data-tooltip="mruby-cgroup を boot2docker で build する">
-              
-                  <span class="hide-xs hide-sm text-small icon-mr">前</span>
-                  <i class="fa fa-angle-right"></i>
-                </a>
-            </li>
-          
-        </ul>
-      </nav>
-    <ul class="post-actions post-action-share" >
-      
-        <li class="post-action hide-lg hide-md hide-sm">
-          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
-            <i class="fa fa-share-alt"></i>
-          </a>
-        </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="http://b.hatena.ne.jp/entry/https://harasou.jp/2015/05/10/hexo-404-file-not-found/">
-              <i class="fa icon-hatebu"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="http://getpocket.com/edit?url=https://harasou.jp/2015/05/10/hexo-404-file-not-found/">
-              <i class="fa icon-pocket"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2015/05/10/hexo-404-file-not-found/">
-              <i class="fa fa-facebook-official"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://harasou.jp/2015/05/10/hexo-404-file-not-found/">
-              <i class="fa fa-twitter"></i>
-            </a>
-          </li>
-        
-      
-      
-      <li class="post-action">
-        
-          <a class="post-action-btn btn btn--default" href="#">
-        
-          <i class="fa fa-list"></i>
-        </a>
-      </li>
-    </ul>
-  
+<a href=/2016/05/28/hexo-goodby-404/>hexo の 404 File not found さようなら</a></p>
 </div>
-
-            
-              
-            
-          </div>
-        </article>
-        <footer id="footer" class="main-content-wrap">
-  <span class="copyrights">
-    &copy; 2019 harasou. All Rights Reserved
-  </span>
+</div>
+<div id=post-footer class="post-footer main-content-wrap">
+<div class=post-footer-tags>
+<span class="text-color-light text-small">タグ</span><br>
+<a class="tag tag--primary tag--small" href=/tags/hexo/>hexo</a>
+</div>
+<div class=post-actions-wrap>
+<nav>
+<ul class="post-actions post-action-nav">
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=/2015/05/17/mruby-cgroup/ data-tooltip="mruby-cgroup に memory サブシテムを追加してみた">
+<i class="fa fa-angle-left"></i>
+<span class="hide-xs hide-sm text-small icon-ml">次</span>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=/2015/05/06/mruby-cgroups-build-on-boot2docker/ data-tooltip="mruby-cgroup を boot2docker で build する">
+<span class="hide-xs hide-sm text-small icon-mr">前</span>
+<i class="fa fa-angle-right"></i>
+</a>
+</li>
+</ul>
+</nav>
+<ul class="post-actions post-action-share">
+<li class="post-action hide-lg hide-md hide-sm">
+<a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions>
+<i class="fa fa-share-alt"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.jp/2015/05/10/hexo-404-file-not-found/>
+<i class="fa icon-hatebu"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.jp/2015/05/10/hexo-404-file-not-found/">
+<i class="fa icon-pocket"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2015/05/10/hexo-404-file-not-found/">
+<i class="fa fa-facebook-official"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.jp/2015/05/10/hexo-404-file-not-found/">
+<i class="fa fa-twitter"></i>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default" href=#>
+<i class="fa fa-list"></i>
+</a>
+</li>
+</ul>
+</div>
+</div>
+</article>
+<footer id=footer class=main-content-wrap>
+<span class=copyrights>
+&copy; 2021 harasou. All Rights Reserved
+</span>
 </footer>
-
-      </div>
-      <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
-        <div class="post-actions-wrap">
-  
-      <nav >
-        <ul class="post-actions post-action-nav">
-          
-            <li class="post-action">
-              
-                <a class="post-action-btn btn btn--default tooltip--top" href="/2015/05/17/mruby-cgroup/" data-tooltip="mruby-cgroup に memory サブシテムを追加してみた">
-              
-                  <i class="fa fa-angle-left"></i>
-                  <span class="hide-xs hide-sm text-small icon-ml">次</span>
-                </a>
-            </li>
-            <li class="post-action">
-              
-                <a class="post-action-btn btn btn--default tooltip--top" href="/2015/05/06/mruby-cgroups-build-on-boot2docker/" data-tooltip="mruby-cgroup を boot2docker で build する">
-              
-                  <span class="hide-xs hide-sm text-small icon-mr">前</span>
-                  <i class="fa fa-angle-right"></i>
-                </a>
-            </li>
-          
-        </ul>
-      </nav>
-    <ul class="post-actions post-action-share" >
-      
-        <li class="post-action hide-lg hide-md hide-sm">
-          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
-            <i class="fa fa-share-alt"></i>
-          </a>
-        </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="http://b.hatena.ne.jp/entry/https://harasou.jp/2015/05/10/hexo-404-file-not-found/">
-              <i class="fa icon-hatebu"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="http://getpocket.com/edit?url=https://harasou.jp/2015/05/10/hexo-404-file-not-found/">
-              <i class="fa icon-pocket"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2015/05/10/hexo-404-file-not-found/">
-              <i class="fa fa-facebook-official"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://harasou.jp/2015/05/10/hexo-404-file-not-found/">
-              <i class="fa fa-twitter"></i>
-            </a>
-          </li>
-        
-      
-      
-      <li class="post-action">
-        
-          <a class="post-action-btn btn btn--default" href="#">
-        
-          <i class="fa fa-list"></i>
-        </a>
-      </li>
-    </ul>
-  
 </div>
-
-      </div>
-      <div id="share-options-bar" class="share-options-bar" data-behavior="5">
-  <i id="btn-close-shareoptions" class="fa fa-close"></i>
-  <ul class="share-options">
-    
-      <li class="share-option">
-        <a class="share-option-btn" target="new" href="http://b.hatena.ne.jp/entry/https%3A%2F%2Fharasou.jp%2F2015%2F05%2F10%2Fhexo-404-file-not-found%2F">
-          <i class="fa icon-hatebu"></i><span>Hatebuで共有</span>
-        </a>
-      </li>
-    
-      <li class="share-option">
-        <a class="share-option-btn" target="new" href="http://getpocket.com/edit?url=https%3A%2F%2Fharasou.jp%2F2015%2F05%2F10%2Fhexo-404-file-not-found%2F">
-          <i class="fa icon-pocket"></i><span>Pocketで共有</span>
-        </a>
-      </li>
-    
-      <li class="share-option">
-        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fharasou.jp%2F2015%2F05%2F10%2Fhexo-404-file-not-found%2F">
-          <i class="fa fa-facebook-official"></i><span>Facebookで共有</span>
-        </a>
-      </li>
-    
-      <li class="share-option">
-        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fharasou.jp%2F2015%2F05%2F10%2Fhexo-404-file-not-found%2F">
-          <i class="fa fa-twitter"></i><span>Twitterで共有</span>
-        </a>
-      </li>
-    
-  </ul>
+<div id=bottom-bar class=post-bottom-bar data-behavior=5>
+<div class=post-actions-wrap>
+<nav>
+<ul class="post-actions post-action-nav">
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=/2015/05/17/mruby-cgroup/ data-tooltip="mruby-cgroup に memory サブシテムを追加してみた">
+<i class="fa fa-angle-left"></i>
+<span class="hide-xs hide-sm text-small icon-ml">次</span>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=/2015/05/06/mruby-cgroups-build-on-boot2docker/ data-tooltip="mruby-cgroup を boot2docker で build する">
+<span class="hide-xs hide-sm text-small icon-mr">前</span>
+<i class="fa fa-angle-right"></i>
+</a>
+</li>
+</ul>
+</nav>
+<ul class="post-actions post-action-share">
+<li class="post-action hide-lg hide-md hide-sm">
+<a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions>
+<i class="fa fa-share-alt"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.jp/2015/05/10/hexo-404-file-not-found/>
+<i class="fa icon-hatebu"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.jp/2015/05/10/hexo-404-file-not-found/">
+<i class="fa icon-pocket"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2015/05/10/hexo-404-file-not-found/">
+<i class="fa fa-facebook-official"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.jp/2015/05/10/hexo-404-file-not-found/">
+<i class="fa fa-twitter"></i>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default" href=#>
+<i class="fa fa-list"></i>
+</a>
+</li>
+</ul>
 </div>
-<div id="share-options-mask" class="share-options-mask"></div>
-    </div>
-    
-    <div id="about">
-  <div id="about-card">
-    <div id="about-btn-close">
-      <i class="fa fa-remove"></i>
-    </div>
-    
-      <img id="about-card-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt="プロフィール画像" />
-    
-    <h4 id="about-card-name">harasou</h4>
-    
-      <div id="about-card-bio">めくじらを立てない</div>
-    
-    
-      <div id="about-card-job">
-        <i class="fa fa-briefcase"></i>
-        <br/>
-        Infra Engineer
-      </div>
-    
-    
-      <div id="about-card-location">
-        <i class="fa fa-map-marker"></i>
-        <br/>
-        Fukuoka Japan
-      </div>
-    
-  </div>
 </div>
-
-    
-
-    
-  
-    
-      
-      <div id="cover" style="background-image:url('https://harasou.jp/images/cover.jpg');"></div>
-    
-  
-
-
-    
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
-
-
-<script src="/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js"></script>
-
-
-<script lang="javascript">
-window.onload = updateMinWidth;
-window.onresize = updateMinWidth;
-document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
-function updateMinWidth() {
-  var sidebar = document.getElementById("sidebar");
-  var main = document.getElementById("main");
-  main.style.minWidth = "";
-  var w1 = getComputedStyle(main).getPropertyValue("min-width");
-  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
-  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
-  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
-}
-</script>
-
-<script>
-$(document).ready(function() {
-  hljs.configure({ classPrefix: '', useBR: false });
-  $('pre.code-highlight > code, pre > code').each(function(i, block) {
-    if (!$(this).hasClass('codeblock')) {
-      $(this).addClass('codeblock');
-    }
-    hljs.highlightBlock(block);
-  });
-});
-</script>
-
-
-  
-    
-  
-
-
-
-
-    
-  </body>
+<div id=share-options-bar class=share-options-bar data-behavior=5>
+<i id=btn-close-shareoptions class="fa fa-close"></i>
+<ul class=share-options>
+<li class=share-option>
+<a class=share-option-btn target=new href=http://b.hatena.ne.jp/entry/https%3A%2F%2Fharasou.jp%2F2015%2F05%2F10%2Fhexo-404-file-not-found%2F>
+<i class="fa icon-hatebu"></i><span>Hatebuで共有</span>
+</a>
+</li>
+<li class=share-option>
+<a class=share-option-btn target=new href="http://getpocket.com/edit?url=https%3A%2F%2Fharasou.jp%2F2015%2F05%2F10%2Fhexo-404-file-not-found%2F">
+<i class="fa icon-pocket"></i><span>Pocketで共有</span>
+</a>
+</li>
+<li class=share-option>
+<a class=share-option-btn target=new href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fharasou.jp%2F2015%2F05%2F10%2Fhexo-404-file-not-found%2F">
+<i class="fa fa-facebook-official"></i><span>Facebookで共有</span>
+</a>
+</li>
+<li class=share-option>
+<a class=share-option-btn target=new href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fharasou.jp%2F2015%2F05%2F10%2Fhexo-404-file-not-found%2F">
+<i class="fa fa-twitter"></i><span>Twitterで共有</span>
+</a>
+</li>
+</ul>
+</div>
+<div id=share-options-mask class=share-options-mask></div>
+</div>
+<div id=about>
+<div id=about-card>
+<div id=about-btn-close>
+<i class="fa fa-remove"></i>
+</div>
+<img id=about-card-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt=プロフィール画像>
+<h4 id=about-card-name>harasou</h4>
+<div id=about-card-bio>めくじらを立てない</div>
+<div id=about-card-job>
+<i class="fa fa-briefcase"></i>
+<br>
+Infra Engineer
+</div>
+<div id=about-card-location>
+<i class="fa fa-map-marker"></i>
+<br>
+Fukuoka Japan
+</div>
+</div>
+</div>
+<div id=cover style=background-image:url(https://harasou.jp/images/cover.jpg)></div>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin=anonymous></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin=anonymous></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin=anonymous></script>
+<script src=/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js></script>
+<script lang=javascript>window.onload=updateMinWidth,window.onresize=updateMinWidth,document.getElementById("sidebar").addEventListener("transitionend",updateMinWidth);function updateMinWidth(){var b=document.getElementById("sidebar"),a=document.getElementById("main"),c,d,e;a.style.minWidth="",c=getComputedStyle(a).getPropertyValue("min-width"),d=getComputedStyle(b).getPropertyValue("width"),e=getComputedStyle(b).getPropertyValue("left"),a.style.minWidth=`calc(${c} - ${d} - ${e})`}</script>
+<script>$(document).ready(function(){hljs.configure({classPrefix:'',useBR:!1}),$('pre.code-highlight > code, pre > code').each(function(b,a){$(this).hasClass('codeblock')||$(this).addClass('codeblock'),hljs.highlightBlock(a)})})</script>
+</body>
 </html>
-

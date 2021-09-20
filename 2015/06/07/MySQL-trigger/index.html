@@ -1,0 +1,529 @@
+<!doctype html><html lang=ja>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=generator content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name=author content="harasou">
+<meta name=keywords content>
+<meta name=description content="先日会社で「mysql のテーブルと、プロセス上の共有メモリを連携させたい」って話が出たとき、トリガで外部プログラムが実行できればいけるのでは？と思ったので、調べてみた。
+MySQL で外部コマンドを実行するには
+mysql で外部コマンドを実行するには system が使える。
+mysql> system uname -a
+Linux cent6 2.6.32-504.16.2.el6.x86_64 #1 SMP Wed Apr 22 06:48:29 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux
+ただ、これはターミナル上からとかでないと使えない。
+調べてみると、mysql には UDF(User Defined Function) という仕組みがあって、自作関数を作成することができるらしい。これは、C や C++ で書いて共有ライブラリ(.so)を作成し、mysql の plugindir に放り込めば使えるようになる。
+
+MySQL で UDF を定義しよう
+はじめてのUDF
+やったーJavaScriptの動くMySQLできたよー
+">
+<meta property="og:description" content="先日会社で「mysql のテーブルと、プロセス上の共有メモリを連携させたい」って話が出たとき、トリガで外部プログラムが実行できればいけるのでは？と思ったので、調べてみた。
+MySQL で外部コマンドを実行するには
+mysql で外部コマンドを実行するには system が使える。
+mysql> system uname -a
+Linux cent6 2.6.32-504.16.2.el6.x86_64 #1 SMP Wed Apr 22 06:48:29 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux
+ただ、これはターミナル上からとかでないと使えない。
+調べてみると、mysql には UDF(User Defined Function) という仕組みがあって、自作関数を作成することができるらしい。これは、C や C++ で書いて共有ライブラリ(.so)を作成し、mysql の plugindir に放り込めば使えるようになる。
+
+MySQL で UDF を定義しよう
+はじめてのUDF
+やったーJavaScriptの動くMySQLできたよー
+">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL のトリガで mruby を実行する">
+<meta name=twitter:title content="MySQL のトリガで mruby を実行する">
+<meta property="og:url" content="https://harasou.jp/2015/06/07/MySQL-trigger/">
+<meta property="twitter:url" content="https://harasou.jp/2015/06/07/MySQL-trigger/">
+<meta property="og:site_name" content="harasou.jp">
+<meta property="og:description" content="先日会社で「mysql のテーブルと、プロセス上の共有メモリを連携させたい」って話が出たとき、トリガで外部プログラムが実行できればいけるのでは？と思ったので、調べてみた。
+MySQL で外部コマンドを実行するには
+mysql で外部コマンドを実行するには system が使える。
+mysql> system uname -a
+Linux cent6 2.6.32-504.16.2.el6.x86_64 #1 SMP Wed Apr 22 06:48:29 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux
+ただ、これはターミナル上からとかでないと使えない。
+調べてみると、mysql には UDF(User Defined Function) という仕組みがあって、自作関数を作成することができるらしい。これは、C や C++ で書いて共有ライブラリ(.so)を作成し、mysql の plugindir に放り込めば使えるようになる。
+
+MySQL で UDF を定義しよう
+はじめてのUDF
+やったーJavaScriptの動くMySQLできたよー
+">
+<meta name=twitter:description content="先日会社で「mysql のテーブルと、プロセス上の共有メモリを連携させたい」って話が出たとき、トリガで外部プログラムが実行できればいけるのでは？と思ったので、調べてみた。
+MySQL で外部コマンドを実行するには
+mysql で外部コマンドを実行するには system が使える。
+mysql> system uname -a
+Linux cent6 2.6.32-504.16.2.el6.x86_64 #1 SMP Wed Apr 22 06:48:29 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux
+ただ、これはターミナル上からとかでないと使えない。
+調べてみると、mysql には UDF(User Defined Function) という仕組みがあって、自作関数を作成することができるらしい。これは、C や C++ で書いて共有ライブラリ(.so)を作成し、mysql の plugindir に放り込めば使えるようになる。
+
+MySQL で UDF を定義しよう
+はじめてのUDF
+やったーJavaScriptの動くMySQLできたよー
+">
+<meta property="og:locale" content="ja">
+<meta property="article:published_time" content="2015-06-07T02:06:30">
+<meta property="article:modified_time" content="2015-06-07T02:06:30">
+<meta property="article:tag" content="mysql">
+<meta property="article:tag" content="mruby">
+<meta name=twitter:card content="summary">
+<meta name=twitter:site content="@harasou5">
+<meta name=twitter:creator content="@harasou5">
+<meta property="og:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
+<meta property="twitter:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
+<title>MySQL のトリガで mruby を実行する</title>
+<link rel=icon href=/favicon.png>
+<link rel=canonical href=https://harasou.jp/2015/06/07/MySQL-trigger/>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin=anonymous>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin=anonymous>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin=anonymous>
+<link rel=stylesheet href=/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css>
+<link rel=stylesheet href=https://harasou.jp/css/style.css swappaginator=true>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-62541096-1','auto'),ga('send','pageview'))</script>
+</head>
+<body>
+<div id=blog>
+<header id=header data-behavior=5>
+<i id=btn-open-sidebar class="fa fa-lg fa-bars"></i>
+<div class=header-title>
+<a class=header-title-link href=/>harasou.jp</a>
+</div>
+<a class=header-right-picture href=/#about>
+<img class=header-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=90" alt=プロフィール画像>
+</a>
+</header>
+<nav id=sidebar data-behavior=5>
+<div class=sidebar-container>
+<div class=sidebar-profile>
+<a href=/#about>
+<img class=sidebar-profile-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt=プロフィール画像>
+</a>
+<h4 class=sidebar-profile-name>harasou</h4>
+<h5 class=sidebar-profile-bio>めくじらを立てない</h5>
+</div>
+<ul class=sidebar-buttons>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/>
+<i class="sidebar-button-icon fa fa-lg fa-home"></i>
+<span class=sidebar-button-desc>ホーム</span>
+</a>
+</li>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/tags>
+<i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+<span class=sidebar-button-desc>タグ</span>
+</a>
+</li>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/archives>
+<i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+<span class=sidebar-button-desc>アーカイブ</span>
+</a>
+</li>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/#about>
+<i class="sidebar-button-icon fa fa-lg fa-question"></i>
+<span class=sidebar-button-desc>プロフィール</span>
+</a>
+</li>
+</ul>
+<ul class=sidebar-buttons>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=https://github.com/harasou target=_blank rel=noopener>
+<i class="sidebar-button-icon fa fa-lg fa-github"></i>
+<span class=sidebar-button-desc>GitHub</span>
+</a>
+</li>
+</ul>
+<ul class=sidebar-buttons>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/index.xml>
+<i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+<span class=sidebar-button-desc>RSS</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+<div id=main data-behavior=5 class=hasCoverMetaIn>
+<article class=post itemscope itemtype=http://schema.org/BlogPosting>
+<div class="post-header main-content-wrap text-left">
+<h1 class=post-title itemprop=headline>
+MySQL のトリガで mruby を実行する
+</h1>
+<div class="postShorten-meta post-meta">
+<time itemprop=datePublished datetime=2015-06-07T02:06:30+09:00>
+2015/6/7
+</time>
+</div>
+</div>
+<div class="post-content markdown" itemprop=articleBody>
+<div class=main-content-wrap>
+<p>先日会社で「mysql のテーブルと、プロセス上の共有メモリを連携させたい」って話が出たとき、トリガで外部プログラムが実行できればいけるのでは？と思ったので、調べてみた。</p>
+<h2 id=mysql-で外部コマンドを実行するには>MySQL で外部コマンドを実行するには</h2>
+<p>mysql で外部コマンドを実行するには <code>system</code> が使える。</p>
+<pre tabindex=0><code>mysql&gt; system uname -a
+Linux cent6 2.6.32-504.16.2.el6.x86_64 #1 SMP Wed Apr 22 06:48:29 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux
+</code></pre><p>ただ、これはターミナル上からとかでないと使えない。</p>
+<p>調べてみると、mysql には UDF(User Defined Function) という仕組みがあって、自作関数を作成することができるらしい。これは、C や C++ で書いて共有ライブラリ(.so)を作成し、mysql の plugindir に放り込めば使えるようになる。</p>
+<ul>
+<li><a href=http://aoking.hatenablog.jp/entry/20120824/1345778096>MySQL で UDF を定義しよう</a></li>
+<li><a href=http://d.hatena.ne.jp/download_takeshi/20071124/1195915196>はじめてのUDF</a></li>
+<li><a href=http://zentoo.hatenablog.com/entry/20110925/1316961032>やったーJavaScriptの動くMySQLできたよー</a></li>
+</ul>
+<p>結構情報はある。で、JavaScript が動くなら、golang とか mruby があるのでは？ってさがすとやはりあった。以下 mruby。</p>
+<ul>
+<li><a href=http://mattn.kaoriya.net/software/lang/ruby/20120531210311.htm>2012/05/12 やったーmrubyの動くMySQLできたよーAdd Star</a></li>
+<li><a href=http://blog.kentarok.org/entry/2015/05/01/014548>2015/05/01 MySQLでmrubyを動かす</a></li>
+</ul>
+<p>さすが、mattn さん。しかも、なんともう一つの方はわれらが CTO の kentaro さん。</p>
+<p>早速試してみる。kentaro さんのは、make 一発で mruby のコンパイルから plugin ディレクトリへのインストールまでやってくる便利設計。</p>
+<p>ただ、今回は mruby に他の mrbgem 組み込んだりする予定なので、mattn さんのを使わせていただいた。</p>
+<h2 id=環境>環境</h2>
+<ul>
+<li>CentOS6.6 (2.6.32-504.16.2.el6.x86_64)</li>
+<li>mruby 1.1.0 (2014-11-19)</li>
+</ul>
+<h2 id=準備>準備</h2>
+<ol>
+<li>
+<p>mruby のコンパイル</p>
+<pre tabindex=0><code>cd
+git clone https://github.com/mruby/mruby.git
+cd mruby
+./minirake
+</code></pre></li>
+<li>
+<p>mysql-mruby のコンパイル</p>
+<pre tabindex=0><code>yum install -y gcc-c++ mysql-devel mysql-server
+cd
+git clone https://github.com/mattn/mysql-mruby.git
+cd mysql-mruby
+make
+g++ -I/usr/include/mysql  -g -pipe -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector --param=ssp-buffer-size=4 -m64 -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -fno-strict-aliasing -fwrapv -fPIC   -DUNIV_LINUX -DUNIV_LINUX -DDBUG_OFF -fPIC -fpermissive -I../mruby/include -shared -Wall -g mrb_eval.cc -o mrb_eval.so -rdynamic -L/usr/lib64/mysql -lmysqlclient -lz -lcrypt -lnsl -lm -lssl -lcrypto ../mruby/build/host/lib/libmruby.a
+mrb_eval.cc: In function ‘char* mrb_eval(UDF_INIT*, UDF_ARGS*, char*, long unsigned int*, char*, char*)’:
+mrb_eval.cc:96: 警告: 符合付きと符合無しの整数式同士の比較です
+/usr/bin/ld: ../mruby/build/host/lib/libmruby.a(string.o): relocation R_X86_64_32 against `.rodata' can not be used when making a shared object; recompile with -fPIC
+../mruby/build/host/lib/libmruby.a: could not read symbols: Bad value
+collect2: ld はステータス 1 で終了しました
+make: *** [all] エラー 1
+</code></pre><p>エラーが出た。<code>recompile with -fPIC</code> とのこと。</p>
+</li>
+<li>
+<p>mruby のコンパイルやり直し</p>
+<pre tabindex=0><code>cd ../mruby
+CFLAGS=&quot;-fPIC&quot; ./minirake
+</code></pre></li>
+<li>
+<p>mysql-mruby のコンパイル（再チャレンジ）</p>
+<pre tabindex=0><code>cd ../mysql-mruby/
+make
+g++ -I/usr/include/mysql  -g -pipe -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector --param=ssp-buffer-size=4 -m64 -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -fno-strict-aliasing -fwrapv -fPIC   -DUNIV_LINUX -DUNIV_LINUX -DDBUG_OFF -fPIC -fpermissive -I../mruby/include -shared -Wall -g mrb_eval.cc -o mrb_eval.so -rdynamic -L/usr/lib64/mysql -lmysqlclient -lz -lcrypt -lnsl -lm -lssl -lcrypto ../mruby/build/host/lib/libmruby.a
+mrb_eval.cc: In function 'char* mrb_eval(UDF_INIT*, UDF_ARGS*, char*, long unsigned int*, char*, char*)':
+mrb_eval.cc:96: warning: comparison between signed and unsigned integer expressions
+</code></pre><p>警告は出たけど、とりあえずコンパイルはできた。</p>
+<pre tabindex=0><code>ll
+total 3652
+-rw-r--r-- 1 root root     347 Jun  5 02:07 Makefile
+-rw-r--r-- 1 root root     316 Jun  5 01:32 Makefile.msc
+-rw-r--r-- 1 root root    1538 Jun  5 01:32 README.md
+-rw-r--r-- 1 root root    3473 Jun  5 01:32 mrb_eval.cc
+-rwxr-xr-x 1 root root 3719282 Jun  5 04:40 mrb_eval.so
+</code></pre></li>
+<li>
+<p>作成された mrb_eval.so を plugin ディレクトリにコピー</p>
+<pre tabindex=0><code>cp -v mrb_eval.so $(mysql_config --plugindir)/mrb_eval.so
+</code></pre></li>
+<li>
+<p>mysqld の再起動</p>
+<pre tabindex=0><code>/etc/init.d/mysqld restart
+</code></pre></li>
+</ol>
+<h2 id=mrb_eval-を使ってみる>mrb_eval() を使ってみる</h2>
+<ol>
+<li>
+<p>関数の作成</p>
+<pre tabindex=0><code>mysql -uroot
+mysql&gt; create function mrb_eval returns string soname 'mrb_eval.so';
+</code></pre></li>
+<li>
+<p>実行</p>
+<pre tabindex=0><code>mysql&gt; select mrb_eval('[1,2,3].map {|x| &quot;hello#{x}&quot;}');
++-------------------------------------------+
+| mrb_eval('[1,2,3].map {|x| &quot;hello#{x}&quot;}') |
++-------------------------------------------+
+| [&quot;hello1&quot;, &quot;hello2&quot;, &quot;hello3&quot;]            |
++-------------------------------------------+
+1 row in set (0.01 sec)
+</code></pre><p>おお、実行された。</p>
+</li>
+</ol>
+<h2 id=トリガとして使ってみる>トリガとして使ってみる</h2>
+<p>想定としては「テーブルのレコードが削除されたら、REST API 経由でアプリの共有メモリを削除する」というもの。</p>
+<h3 id=準備-1>準備</h3>
+<ol>
+<li>
+<p>mruby-simplehttp の組み込み
+とりあえず API が叩ければよいので、http clinet の機能を mruby に組み込む。あと、<code>PIC</code> もデフォルトで有効にしておく。</p>
+<pre tabindex=0><code>cd ~/mruby
+vim build_config     # 下記 diff を参照
+./minirake
+cd ~/mysql-mruby
+make
+cp -v mrb_eval.so $(mysql_config --plugindir)/mrb_eval.so
+/etc/init.d/mysql restart
+</code></pre><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-diff data-lang=diff>diff --git a/build_config.rb b/build_config.rb
+index 3408f19..ee149e9 100644
+<span style=color:#f92672>--- a/build_config.rb
+</span><span style=color:#f92672></span><span style=color:#a6e22e>+++ b/build_config.rb
+</span><span style=color:#a6e22e></span><span style=color:#75715e>@@ -18,6 +18,11 @@ MRuby::Build.new do |conf|
+</span><span style=color:#75715e></span>   # conf.gem &#39;examples/mrbgems/c_and_ruby_extension_example&#39;
+   # conf.gem :github =&gt; &#39;masuidrive/mrbgems-example&#39;, :checksum_hash =&gt; &#39;76518e8aecd131d047378448ac8055fa29d974a9&#39;
+   # conf.gem :git =&gt; &#39;git@github.com:masuidrive/mrbgems-example.git&#39;, :branch =&gt; &#39;master&#39;, :options =&gt; &#39;-v&#39;
+<span style=color:#a6e22e>+  conf.gem :github =&gt; &#39;iij/mruby-io&#39;
+</span><span style=color:#a6e22e>+  conf.gem :github =&gt; &#39;iij/mruby-mtest&#39;
+</span><span style=color:#a6e22e>+  conf.gem :github =&gt; &#39;iij/mruby-pack&#39;
+</span><span style=color:#a6e22e>+  conf.gem :github =&gt; &#39;iij/mruby-socket&#39;
+</span><span style=color:#a6e22e>+  conf.gem :github =&gt; &#39;matsumoto-r/mruby-simplehttp&#39;
+</span><span style=color:#a6e22e></span>
+   # include the default GEMs
+   conf.gembox &#39;default&#39;
+<span style=color:#75715e>@@ -25,7 +30,7 @@ MRuby::Build.new do |conf|
+</span><span style=color:#75715e></span>   # C compiler settings
+   # conf.cc do |cc|
+   #   cc.command = ENV[&#39;CC&#39;] || &#39;gcc&#39;
+<span style=color:#f92672>-  #   cc.flags = [ENV[&#39;CFLAGS&#39;] || %w()]
+</span><span style=color:#f92672></span><span style=color:#a6e22e>+  #   cc.flags = [ENV[&#39;CFLAGS&#39;] || %w(-fPIC)]
+</span><span style=color:#a6e22e></span>   #   cc.include_paths = [&#34;#{root}/include&#34;]
+   #   cc.defines = %w(DISABLE_GEMS)
+   #   cc.option_include_path = &#39;-I%s&#39;
+</code></pre></div></li>
+<li>
+<p>テスト用の table を作成</p>
+<pre tabindex=0><code>cat &lt;&lt;SQL | mysql -uroot
+create database test;
+use test;
+create table members(id int, name varchar(20));
+insert into members values (1,&quot;harasou1&quot;);
+insert into members values (2,&quot;harasou2&quot;);
+insert into members values (3,&quot;harasou3&quot;);
+select * from members;
+SQL
+</code></pre></li>
+<li>
+<p>mruby を実行するトリガの作成</p>
+<pre tabindex=0><code>DELIMITER //
+
+CREATE TRIGGER delete_mrb_eval AFTER DELETE ON members
+FOR EACH ROW
+BEGIN
+  DECLARE result CHAR(255);
+  DECLARE script CHAR(255);
+  SET script = CONCAT('SimpleHttp.new(&quot;http&quot;,&quot;localhost&quot;).request(&quot;DELETE&quot;,&quot;/api/items/', OLD.id ,'&quot;,{&quot;User-Agent&quot; =&gt; &quot;mruby-simplehttp&quot;})');
+  SET result = mrb_eval(script);
+END //
+
+DELIMITER ;
+</code></pre></li>
+</ol>
+<h3 id=テスト>テスト</h3>
+<p>nginx を localhost で実行した状態で、members テーブルのレコードを削除してみる。</p>
+<ol>
+<li>
+<p>レコードを１行削除</p>
+<pre tabindex=0><code>mysql&gt; delete from members where id = 2;
+Query OK, 1 row affected (0.02 sec)
+mysql&gt;
+mysql&gt; select * from members;
++------+----------+
+| id   | name     |
++------+----------+
+|    1 | harasou1 |
+|    3 | harasou3 |
++------+----------+
+2 rows in set (0.00 sec)
+</code></pre></li>
+<li>
+<p>ngix の access_log を確認</p>
+<pre tabindex=0><code>[root@cent6 mysql-mruby]# tail /var/log/nginx/access.log
+127.0.0.1 - - [07/Jun/2015:00:29:28 +0900] &quot;DELETE /api/items/2 HTTP/1.0&quot; 405 172 &quot;-&quot; &quot;mruby-simplehttp&quot; &quot;-&quot;
+</code></pre><p>API や共有メモリ周りの処理は何も入れていないので 405 になっているが、ちゃんとアクセスは来ている。</p>
+</li>
+</ol>
+<h2 id=まとめ>まとめ</h2>
+<p>トリガの細かい動きは調べられていないが、mysql のイベントを拾って mruby を実行することで、かなりいろんな処理ができそう。</p>
+<p>mruby には、いろいろな package が公開されているので、がしがし使っていきたい。</p>
+<p><a href=http://www.mruby.org/libraries/>http://www.mruby.org/libraries/</a></p>
+</div>
+</div>
+<div id=post-footer class="post-footer main-content-wrap">
+<div class=post-footer-tags>
+<span class="text-color-light text-small">タグ</span><br>
+<a class="tag tag--primary tag--small" href=/tags/mysql/>mysql</a>
+<a class="tag tag--primary tag--small" href=/tags/mruby/>mruby</a>
+</div>
+<div class=post-actions-wrap>
+<nav>
+<ul class="post-actions post-action-nav">
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=/2015/06/28/hexo-goodby-404/ data-tooltip="hexo の 404 File not found さようなら">
+<i class="fa fa-angle-left"></i>
+<span class="hide-xs hide-sm text-small icon-ml">次</span>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=/2015/06/02/cgroup-cpu-cpushare/ data-tooltip="cgroup の cpu.shares を検証した">
+<span class="hide-xs hide-sm text-small icon-mr">前</span>
+<i class="fa fa-angle-right"></i>
+</a>
+</li>
+</ul>
+</nav>
+<ul class="post-actions post-action-share">
+<li class="post-action hide-lg hide-md hide-sm">
+<a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions>
+<i class="fa fa-share-alt"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.jp/2015/06/07/MySQL-trigger/>
+<i class="fa icon-hatebu"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.jp/2015/06/07/MySQL-trigger/">
+<i class="fa icon-pocket"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2015/06/07/MySQL-trigger/">
+<i class="fa fa-facebook-official"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.jp/2015/06/07/MySQL-trigger/">
+<i class="fa fa-twitter"></i>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default" href=#>
+<i class="fa fa-list"></i>
+</a>
+</li>
+</ul>
+</div>
+</div>
+</article>
+<footer id=footer class=main-content-wrap>
+<span class=copyrights>
+&copy; 2021 harasou. All Rights Reserved
+</span>
+</footer>
+</div>
+<div id=bottom-bar class=post-bottom-bar data-behavior=5>
+<div class=post-actions-wrap>
+<nav>
+<ul class="post-actions post-action-nav">
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=/2015/06/28/hexo-goodby-404/ data-tooltip="hexo の 404 File not found さようなら">
+<i class="fa fa-angle-left"></i>
+<span class="hide-xs hide-sm text-small icon-ml">次</span>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=/2015/06/02/cgroup-cpu-cpushare/ data-tooltip="cgroup の cpu.shares を検証した">
+<span class="hide-xs hide-sm text-small icon-mr">前</span>
+<i class="fa fa-angle-right"></i>
+</a>
+</li>
+</ul>
+</nav>
+<ul class="post-actions post-action-share">
+<li class="post-action hide-lg hide-md hide-sm">
+<a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions>
+<i class="fa fa-share-alt"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.jp/2015/06/07/MySQL-trigger/>
+<i class="fa icon-hatebu"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.jp/2015/06/07/MySQL-trigger/">
+<i class="fa icon-pocket"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2015/06/07/MySQL-trigger/">
+<i class="fa fa-facebook-official"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.jp/2015/06/07/MySQL-trigger/">
+<i class="fa fa-twitter"></i>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default" href=#>
+<i class="fa fa-list"></i>
+</a>
+</li>
+</ul>
+</div>
+</div>
+<div id=share-options-bar class=share-options-bar data-behavior=5>
+<i id=btn-close-shareoptions class="fa fa-close"></i>
+<ul class=share-options>
+<li class=share-option>
+<a class=share-option-btn target=new href=http://b.hatena.ne.jp/entry/https%3A%2F%2Fharasou.jp%2F2015%2F06%2F07%2FMySQL-trigger%2F>
+<i class="fa icon-hatebu"></i><span>Hatebuで共有</span>
+</a>
+</li>
+<li class=share-option>
+<a class=share-option-btn target=new href="http://getpocket.com/edit?url=https%3A%2F%2Fharasou.jp%2F2015%2F06%2F07%2FMySQL-trigger%2F">
+<i class="fa icon-pocket"></i><span>Pocketで共有</span>
+</a>
+</li>
+<li class=share-option>
+<a class=share-option-btn target=new href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fharasou.jp%2F2015%2F06%2F07%2FMySQL-trigger%2F">
+<i class="fa fa-facebook-official"></i><span>Facebookで共有</span>
+</a>
+</li>
+<li class=share-option>
+<a class=share-option-btn target=new href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fharasou.jp%2F2015%2F06%2F07%2FMySQL-trigger%2F">
+<i class="fa fa-twitter"></i><span>Twitterで共有</span>
+</a>
+</li>
+</ul>
+</div>
+<div id=share-options-mask class=share-options-mask></div>
+</div>
+<div id=about>
+<div id=about-card>
+<div id=about-btn-close>
+<i class="fa fa-remove"></i>
+</div>
+<img id=about-card-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt=プロフィール画像>
+<h4 id=about-card-name>harasou</h4>
+<div id=about-card-bio>めくじらを立てない</div>
+<div id=about-card-job>
+<i class="fa fa-briefcase"></i>
+<br>
+Infra Engineer
+</div>
+<div id=about-card-location>
+<i class="fa fa-map-marker"></i>
+<br>
+Fukuoka Japan
+</div>
+</div>
+</div>
+<div id=cover style=background-image:url(https://harasou.jp/images/cover.jpg)></div>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin=anonymous></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin=anonymous></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin=anonymous></script>
+<script src=/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js></script>
+<script lang=javascript>window.onload=updateMinWidth,window.onresize=updateMinWidth,document.getElementById("sidebar").addEventListener("transitionend",updateMinWidth);function updateMinWidth(){var b=document.getElementById("sidebar"),a=document.getElementById("main"),c,d,e;a.style.minWidth="",c=getComputedStyle(a).getPropertyValue("min-width"),d=getComputedStyle(b).getPropertyValue("width"),e=getComputedStyle(b).getPropertyValue("left"),a.style.minWidth=`calc(${c} - ${d} - ${e})`}</script>
+<script>$(document).ready(function(){hljs.configure({classPrefix:'',useBR:!1}),$('pre.code-highlight > code, pre > code').each(function(b,a){$(this).hasClass('codeblock')||$(this).addClass('codeblock'),hljs.highlightBlock(a)})})</script>
+</body>
+</html>

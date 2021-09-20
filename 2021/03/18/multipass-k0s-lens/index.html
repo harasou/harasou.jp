@@ -1,0 +1,497 @@
+<!doctype html><html lang=ja>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=generator content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name=author content="harasou">
+<meta name=keywords content>
+<meta name=description content="CNDO2021 で、ミランティス社の嘉門さんが Lens のセッション やってて、面白そうだったので試してみた。
+macOS 上に multipass で VM 立てて、k0s で作った Kubernetesクラスタを Lens で操作。">
+<meta property="og:description" content="CNDO2021 で、ミランティス社の嘉門さんが Lens のセッション やってて、面白そうだったので試してみた。
+macOS 上に multipass で VM 立てて、k0s で作った Kubernetesクラスタを Lens で操作。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="macOS 上で k0s と Lens を使ってみた">
+<meta name=twitter:title content="macOS 上で k0s と Lens を使ってみた">
+<meta property="og:url" content="https://harasou.jp/2021/03/18/multipass-k0s-lens/">
+<meta property="twitter:url" content="https://harasou.jp/2021/03/18/multipass-k0s-lens/">
+<meta property="og:site_name" content="harasou.jp">
+<meta property="og:description" content="CNDO2021 で、ミランティス社の嘉門さんが Lens のセッション やってて、面白そうだったので試してみた。
+macOS 上に multipass で VM 立てて、k0s で作った Kubernetesクラスタを Lens で操作。">
+<meta name=twitter:description content="CNDO2021 で、ミランティス社の嘉門さんが Lens のセッション やってて、面白そうだったので試してみた。
+macOS 上に multipass で VM 立てて、k0s で作った Kubernetesクラスタを Lens で操作。">
+<meta property="og:locale" content="ja">
+<meta property="article:published_time" content="2021-03-18T01:47:41">
+<meta property="article:modified_time" content="2021-03-18T01:47:41">
+<meta property="article:tag" content="k8s">
+<meta property="article:tag" content="macos">
+<meta name=twitter:card content="summary">
+<meta name=twitter:site content="@harasou5">
+<meta name=twitter:creator content="@harasou5">
+<meta property="og:image" content="https://harasou.jp/2021/03/18/multipass-k0s-lens/k8s.png">
+<meta property="twitter:image" content="https://harasou.jp/2021/03/18/multipass-k0s-lens/k8s.png">
+<meta property="og:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
+<meta property="twitter:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
+<title>macOS 上で k0s と Lens を使ってみた</title>
+<link rel=icon href=/favicon.png>
+<link rel=canonical href=https://harasou.jp/2021/03/18/multipass-k0s-lens/>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin=anonymous>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin=anonymous>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin=anonymous>
+<link rel=stylesheet href=/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css>
+<link rel=stylesheet href=https://harasou.jp/css/style.css swappaginator=true>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-62541096-1','auto'),ga('send','pageview'))</script>
+</head>
+<body>
+<div id=blog>
+<header id=header data-behavior=5>
+<i id=btn-open-sidebar class="fa fa-lg fa-bars"></i>
+<div class=header-title>
+<a class=header-title-link href=/>harasou.jp</a>
+</div>
+<a class=header-right-picture href=/#about>
+<img class=header-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=90" alt=プロフィール画像>
+</a>
+</header>
+<nav id=sidebar data-behavior=5>
+<div class=sidebar-container>
+<div class=sidebar-profile>
+<a href=/#about>
+<img class=sidebar-profile-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt=プロフィール画像>
+</a>
+<h4 class=sidebar-profile-name>harasou</h4>
+<h5 class=sidebar-profile-bio>めくじらを立てない</h5>
+</div>
+<ul class=sidebar-buttons>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/>
+<i class="sidebar-button-icon fa fa-lg fa-home"></i>
+<span class=sidebar-button-desc>ホーム</span>
+</a>
+</li>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/tags>
+<i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+<span class=sidebar-button-desc>タグ</span>
+</a>
+</li>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/archives>
+<i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+<span class=sidebar-button-desc>アーカイブ</span>
+</a>
+</li>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/#about>
+<i class="sidebar-button-icon fa fa-lg fa-question"></i>
+<span class=sidebar-button-desc>プロフィール</span>
+</a>
+</li>
+</ul>
+<ul class=sidebar-buttons>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=https://github.com/harasou target=_blank rel=noopener>
+<i class="sidebar-button-icon fa fa-lg fa-github"></i>
+<span class=sidebar-button-desc>GitHub</span>
+</a>
+</li>
+</ul>
+<ul class=sidebar-buttons>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/index.xml>
+<i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+<span class=sidebar-button-desc>RSS</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+<div id=main data-behavior=5 class=hasCoverMetaIn>
+<article class=post itemscope itemtype=http://schema.org/BlogPosting>
+<div class="post-header main-content-wrap text-left">
+<h1 class=post-title itemprop=headline>
+macOS 上で k0s と Lens を使ってみた
+</h1>
+<div class="postShorten-meta post-meta">
+<time itemprop=datePublished datetime=2021-03-18T01:47:41+09:00>
+2021/3/18
+</time>
+</div>
+</div>
+<div class="post-content markdown" itemprop=articleBody>
+<div class=main-content-wrap>
+<p>CNDO2021 で、ミランティス社の嘉門さんが <a href=https://event.cloudnativedays.jp/cndo2021/talks/211>Lens のセッション</a> やってて、面白そうだったので試してみた。
+macOS 上に multipass で VM 立てて、k0s で作った Kubernetesクラスタを Lens で操作。</p>
+<h2 id=検証環境>検証環境</h2>
+<p><img src=macos-multipass-k0s-lens.png alt></p>
+<pre tabindex=0><code>macOS     ：10.14.6
+multipass ：1.6.2
+ubuntu    ：20.04 LTS
+k0s       ：0.11.0
+Lens      ：4.1.4
+</code></pre><ul>
+<li>「<a href=https://multipass.run/>multipass</a>」Ubuntu 専用の仮想マシンマネージャ、VM立てるやつ</li>
+<li>「<a href=https://docs.k0sproject.io/>k0s</a>」Kubernetesディストリビューションの一つ、お手軽ワンバイナリ</li>
+<li>「<a href=https://k8slens.dev/>Lens</a>」GUI で K8sクラスタを操作するアプリ</li>
+</ul>
+<p>以下、手動でごちゃごちゃやっているけど、Ansible が入ってるなら playbook も公開されてるので、一発で k0s が入る:-P
+<a href=https://docs.k0sproject.io/latest/examples/ansible-playbook/>https://docs.k0sproject.io/latest/examples/ansible-playbook/</a></p>
+<h2 id=k0s-によるクラスタ作成>k0s によるクラスタ作成</h2>
+<p>mac 上のクラスタなら、いくら壊れても構わないので、お気軽に試せる。<br>
+(しかし、やってると、おうちK8sクラスタが欲しくなるなぁ、今更だけど。Raspi か NUC か&mldr;)</p>
+<ol>
+<li>
+<p>インスタンスの作成（3台）</p>
+<p>multipass を使って、macOS 上に Ubuntu の VM を3つ立てる。node0 がコントロールプレーンで、
+node1・node2 をワーカーノードとする。</p>
+<pre tabindex=0><code>$ echo 0 1 2 | xargs -n1 -IN multipass launch -n nodeN
+Launched: node0
+Launched: node1
+Launched: node2
+$ multipass list
+Name                    State             IPv4             Image
+node0                   Running           192.168.64.10    Ubuntu 20.04 LTS
+node1                   Running           192.168.64.3     Ubuntu 20.04 LTS
+node2                   Running           192.168.64.4     Ubuntu 20.04 LTS
+</code></pre><p>複数台に同じコマンド打つことが多いので、<code>echo 0 1 2 | xargs -n1 -IN </code>＋「コマンド」みたいな形式を多用
+（コマンド内の文字<code>N</code>には echo の数字が入る）。
+あと、<code>multipass exec</code> を使って、VM上ではなく、すべて macOS上から操作している。</p>
+</li>
+<li>
+<p>k0s のインストール</p>
+<p>3台のインスタンスそれぞれに、k0s をインストールし、デフォルトの設定ファイルを設置。</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>$ echo <span style=color:#ae81ff>0</span> <span style=color:#ae81ff>1</span> <span style=color:#ae81ff>2</span> | xargs -n1 -IN multipass exec nodeN -- bash -c <span style=color:#e6db74>&#39;curl -sSLf https://get.k0s.sh | sudo sh&#39;</span>
+Downloading k0s from URL: https://github.com/k0sproject/k0s/releases/download/v0.11.0/k0s-v0.11.0-amd64
+Downloading k0s from URL: https://github.com/k0sproject/k0s/releases/download/v0.11.0/k0s-v0.11.0-amd64
+Downloading k0s from URL: https://github.com/k0sproject/k0s/releases/download/v0.11.0/k0s-v0.11.0-amd64
+$
+$ echo <span style=color:#ae81ff>0</span> <span style=color:#ae81ff>1</span> <span style=color:#ae81ff>2</span> | xargs -n1 -IN multipass exec nodeN -- sudo mkdir /etc/k0s
+$ echo <span style=color:#ae81ff>0</span> <span style=color:#ae81ff>1</span> <span style=color:#ae81ff>2</span> | xargs -n1 -IN multipass exec nodeN -- sudo sh -c <span style=color:#e6db74>&#39;k0s default-config &gt; /etc/k0s/k0s.yaml&#39;</span>
+</code></pre></div></li>
+<li>
+<p>コントロールプレーン（node0）の k0s を起動</p>
+<p>install サブコマンドで、k0s の unitファイル（systemd）を作成し、起動。</p>
+<pre tabindex=0><code>$ multipass exec node0 -- sudo k0s install controller -c /etc/k0s/k0s.yaml
+INFO[2021-03-15 01:21:07] creating user: etcd
+INFO[2021-03-15 01:21:07] creating user: kube-apiserver
+INFO[2021-03-15 01:21:07] creating user: konnectivity-server
+INFO[2021-03-15 01:21:07] creating user: kube-scheduler
+INFO[2021-03-15 01:21:07] Installing k0s service
+$
+$ multipass exec node0 -- sudo systemctl start k0scontroller
+$ multipass exec node0 -- sudo k0s status
+Version: v0.11.0
+Process ID: 2642
+Parent Process ID: 1
+Role: controller
+Init System: linux-systemd
+</code></pre></li>
+<li>
+<p>token の作成</p>
+<p>ワーカーノード上の kubelet が使用する token を生成。
+この token は、各ワーカーノードで必要なので、k0s の設定ファイルと同様に、/etc/k0s/ 配下に設置しておく。</p>
+<pre tabindex=0><code>$ multipass exec node0 -- sudo k0s token create --role=worker &gt; token-worker
+$
+$ echo 1 2 | xargs -n1 -IN multipass transfer token-worker nodeN:token-worker
+$ echo 1 2 | xargs -n1 -IN multipass exec nodeN -- sudo mv token-worker /etc/k0s/
+</code></pre><p>ちなみにこの token は、base64 + gzip になっているので、こんな感じでデコード可能。</p>
+<pre tabindex=0><code>$ cat token-worker | base64 -D | gzip -d -
+
+apiVersion: v1
+clusters:
+- cluster:
+    server: https://192.168.64.10:6443
+    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURBRENDQWVpZ0F3SUJBZ0lVUVBadXVoc2h6Tzh5Vlk2VE1YcmR3ZjFZZkRVd0RRWUpLb1pJaHZjTkFRRUwKQlFBd0dERVdNQlFHQTFVRUF4TU5hM1ZpWlhKdVpYUmxjeTFqWVRBZUZ3MHlNVEF6TVRReE5qRTJNREJhRncwegpNVEF6TVRJeE5qRTJNREJhTUJneEZqQVVCZ05WQkFNVERXdDFZbVZ5Ym1WMFpYTXRZMkV3Z2dFaU1BMEdDU3FHClNJYjNEUUVCQVFVQUE0SUJEd0F3Z2dFS0FvSUJBUUN2UUxDMXNzdnY2bVVwdXhLTEtjekEzOG9YOWZtZ0RsOEEKeU01dUpyTmpZdVJqTXFvaFJIQ3FPay83aHhuLzRaTmdrQ2U1Y1JQRXhyS2JCZkJEOXlhNXZqak1wU2VUSWd6Nwo2SlBBbnBwQityUTh6Z2pRaVBSeFRDcnI1MWZidjhkSjZjZmYrNWl1Q3E2eWI2VFNWdzZ0UkM2eGNvQ01aNGRIClZJRHpCdlY3OXhQV2VTeis1VkxpODNoalI0eGFGUkdTRDZsRXJoQng0Rmxnc2pFUVZkYVF6RktlN2RCZDJGeEgKZG1SVlg5SndESkZmaTVyT3pka3NYUnFJVGlrWWV4SEEzNUVFN05YV2Zsa0x4SWtOZ0hWMkpyeFRkaGRLVzBwMgpVUzJnZzBBWTR1UmQxNGRZeTQvS3dpdUVvTlNBQi9BaEVqUysrTE9RbHp0bzMvVllDMkFUQWdNQkFBR2pRakJBCk1BNEdBMVVkRHdFQi93UUVBd0lCQmpBUEJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJRd1Q4enUKMWxMZUMzRUJtSnVVRDk3N2JORkFMekFOQmdrcWhraUc5dzBCQVFzRkFBT0NBUUVBcnFXbDNNY2J5YzFtYU5maQp0T0h6ZzZSbEVHVnEzdDFQNnN4TUsyaTByNXBmc2FjanFxZllqdFpXVkc1Mkw1SHJUNlJIbFVCWnhocU1GZzNBCkRaUXhYVUlWRzB0dWwvV0phVlAwVCtxcUFaS1FHcVZveWU2WUZ4ckRpRnhQK3k2SlI3cTVSbjJrQ2tldERJTHkKWFE2YWZXekI3Q2xMekxlNTliZkpQeURRNElHYWYwSzRyWW44b1ZoVWFaRnVPQXI5VWZ5eitzRnlYWUl1SEY4KwpVd0tWWGE3VUtoM05aRjBjNGV5bnNJc1o2bVdMNmlscVNHOUpGSTIxMTFKeThNRENWOFdxYzRINGhYaXF4WnY5CnBCWUpDSmNuR1F6RkVsamtwM1JSRjRKL3VkRDMxenl0aXBrSjdyUGNFWlBTU3Iwd3pzMmljZVRkN3NWelZYTVAKb29jV0ZnPT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+  name: k0s
+contexts:
+- context:
+    cluster: k0s
+    user: kubelet-bootstrap
+  name: k0s
+current-context: k0s
+kind: Config
+preferences: {}
+users:
+- name: kubelet-bootstrap
+  user:
+    token: 1ew87q.nbbjnm39bqqzp1cw
+</code></pre></li>
+<li>
+<p>ワーカーノード（node1・node2）の k0s を起動</p>
+<p>前述の手順で作成した k0s.yaml と token-woker を指定して、k0s の unit ファイル（systemd）を作成し、起動。
+k0s のバイナリは同じなので、起動時のオプションによって controll plane か worker node か変わる。便利。</p>
+<pre tabindex=0><code>$ echo 1 2 | xargs -n1 -IN multipass exec nodeN -- sudo k0s install worker -c /etc/k0s/k0s.yaml --token-file /etc/k0s/token-worker
+time=&quot;2021-03-15 01:25:38&quot; level=info msg=&quot;Installing k0s service&quot;
+time=&quot;2021-03-15 01:25:39&quot; level=info msg=&quot;Installing k0s service&quot;
+$ 
+$ echo 1 2 | xargs -n1 -IN multipass exec nodeN -- sudo systemctl start k0sworker
+$ echo 1 2 | xargs -n1 -IN multipass exec nodeN -- sudo k0s status
+Version: v0.11.0
+Process ID: 3357
+Parent Process ID: 1
+Role: worker
+Init System: linux-systemd
+Version: v0.11.0
+Process ID: 3264
+Parent Process ID: 1
+Role: worker
+Init System: linux-systemd
+</code></pre></li>
+</ol>
+<h2 id=lens-によるクラスタの操作>Lens によるクラスタの操作</h2>
+<h3 id=準備>準備</h3>
+<ol>
+<li>Lens のインストール
+<ul>
+<li>github の <a href=https://github.com/lensapp/lens/releases/latest>releases</a> からダウンロード</li>
+</ul>
+</li>
+<li>kubeconfig の作成
+<ul>
+<li>macOS 上に kubeconfig を作成する</li>
+</ul>
+<pre tabindex=0><code>$ multipass list | grep node0
+node0                   Running           192.168.64.10    Ubuntu 20.04 LTS
+$
+$ ## localhost を node0 の IP に変更して作成
+$ multipass exec node0 -- sudo cat /var/lib/k0s/pki/admin.conf | sed 's/localhost/192.168.64.10/' &gt; k0s.conf
+$ ls $PWD/k0s.conf
+/Users/harasou/k0s/k0s.conf
+</code></pre></li>
+</ol>
+<h3 id=k0s-のクラスタを-lens-に登録>k0s のクラスタを Lens に登録</h3>
+<p>上記の /Users/harasou/k0s/k0s.conf を指定して、クラスタを追加。</p>
+<p><img src=lens-01.png alt>
+<img src=lens-02.png alt></p>
+<h3 id=lens-上の-terminal-から-replicaset-をデプロイ>Lens 上の Terminal から ReplicaSet をデプロイ</h3>
+<p>ウィンドウ下の方にある「Terminal」をクリックして、ターミナルを起動。
+ここで実行される kubectl は、クラスタのバージョンに合ったものになるらしい。</p>
+<blockquote>
+<p>kubectl create deployment nginx &ndash;image=gcr.io/google-containers/nginx &ndash;replicas=5</p>
+</blockquote>
+<p><img src=lens-03.png alt></p>
+<h3 id=node-の縮退>Node の縮退</h3>
+<p>Cordon / Uncordon、Drain / Undrain などが、各ノードのメニューから 1クリックでできる。</p>
+<p>Cordon</p>
+<p><img src=lens-05.png alt>
+<img src=lens-06.png alt></p>
+<p>Drain</p>
+<p><img src=lens-07.png alt>
+<img src=lens-08.png alt>
+<img src=lens-09.png alt></p>
+<p>ちゃんと、移動されてる。</p>
+<p><img src=lens-10.png alt></p>
+<h3 id=pod-への-attach>Pod への attach</h3>
+<p>各Pod のメニューから「Shell」を選択。新しいタブが開いて、コンソールが表示される。</p>
+<p><img src=lens-11.png alt>
+<img src=lens-12.png alt></p>
+<h3 id=node-への-attach>Node への attach</h3>
+<p>各ノードのメニューから「Shell」を選択。新しいタブが開いて、コンソールが表示される。</p>
+<p><img src=lens-13.png alt>
+<img src=lens-14.png alt></p>
+<h3 id=prometheus-のインストール>Prometheus のインストール</h3>
+<p>Lens の設定画面から、1クリックするだけで Prometheus がインストールされ、CPUやメモリの情報が見れるようになる。</p>
+<p>初期状態だと何も表示されていない。</p>
+<p><img src=lens-16.png alt></p>
+<p>ウィンドウ右上の歯車マークから設定を開くと、画面下部に Prometheus のインストールボタンがある。</p>
+<p><img src=lens-17.png alt></p>
+<p>クリックして、インストールすると、「lens-metrics」ネームスペースが作成され、prometheus や node-exporter などの pod が起動する。</p>
+<p><img src=lens-19.png alt>
+<img src=lens-20.png alt></p>
+<p>リソース状況が表示された。めちゃくちゃ簡単。</p>
+<p><img src=lens-21.png alt></p>
+<h2 id=後片づけ>後片づけ</h2>
+<p>起動した VM を削除。</p>
+<pre tabindex=0><code>$ multipass list
+Name                    State             IPv4             Image
+node0                   Running           192.168.64.10    Ubuntu 20.04 LTS
+node1                   Running           192.168.64.3     Ubuntu 20.04 LTS
+                                          10.244.166.128
+node2                   Running           192.168.64.4     Ubuntu 20.04 LTS
+                                          10.244.104.0
+$ multipass delete --all
+$ multipass list
+Name                    State             IPv4             Image
+node0                   Deleted           --               Not Available
+node1                   Deleted           --               Not Available
+node2                   Deleted           --               Not Available
+$ multipass purge
+$
+$ multipass list
+No instances found.
+</code></pre><p>プロダクション環境を GUI で操作するのはちょっと怖いけど、ちゃんと与えられた権限でしか動かないし、
+k8s を勉強するには、全体の関連や操作が理解しやすいので、かなり便利と感じた。</p>
+</div>
+</div>
+<div id=post-footer class="post-footer main-content-wrap">
+<div class=post-footer-tags>
+<span class="text-color-light text-small">タグ</span><br>
+<a class="tag tag--primary tag--small" href=/tags/k8s/>k8s</a>
+<a class="tag tag--primary tag--small" href=/tags/macos/>macos</a>
+</div>
+<div class=post-actions-wrap>
+<nav>
+<ul class="post-actions post-action-nav">
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=/2021/07/30/process-on-termainal/ data-tooltip=SSHが切れた時、実行中のプロセスはどうなるか?>
+<i class="fa fa-angle-left"></i>
+<span class="hide-xs hide-sm text-small icon-ml">次</span>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=/2021/02/11/bash-continue-error/ data-tooltip="continue: only meaningful in a `for', `while', or `until' loop">
+<span class="hide-xs hide-sm text-small icon-mr">前</span>
+<i class="fa fa-angle-right"></i>
+</a>
+</li>
+</ul>
+</nav>
+<ul class="post-actions post-action-share">
+<li class="post-action hide-lg hide-md hide-sm">
+<a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions>
+<i class="fa fa-share-alt"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.jp/2021/03/18/multipass-k0s-lens/>
+<i class="fa icon-hatebu"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.jp/2021/03/18/multipass-k0s-lens/">
+<i class="fa icon-pocket"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2021/03/18/multipass-k0s-lens/">
+<i class="fa fa-facebook-official"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.jp/2021/03/18/multipass-k0s-lens/">
+<i class="fa fa-twitter"></i>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default" href=#>
+<i class="fa fa-list"></i>
+</a>
+</li>
+</ul>
+</div>
+</div>
+</article>
+<footer id=footer class=main-content-wrap>
+<span class=copyrights>
+&copy; 2021 harasou. All Rights Reserved
+</span>
+</footer>
+</div>
+<div id=bottom-bar class=post-bottom-bar data-behavior=5>
+<div class=post-actions-wrap>
+<nav>
+<ul class="post-actions post-action-nav">
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=/2021/07/30/process-on-termainal/ data-tooltip=SSHが切れた時、実行中のプロセスはどうなるか?>
+<i class="fa fa-angle-left"></i>
+<span class="hide-xs hide-sm text-small icon-ml">次</span>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=/2021/02/11/bash-continue-error/ data-tooltip="continue: only meaningful in a `for', `while', or `until' loop">
+<span class="hide-xs hide-sm text-small icon-mr">前</span>
+<i class="fa fa-angle-right"></i>
+</a>
+</li>
+</ul>
+</nav>
+<ul class="post-actions post-action-share">
+<li class="post-action hide-lg hide-md hide-sm">
+<a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions>
+<i class="fa fa-share-alt"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.jp/2021/03/18/multipass-k0s-lens/>
+<i class="fa icon-hatebu"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.jp/2021/03/18/multipass-k0s-lens/">
+<i class="fa icon-pocket"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2021/03/18/multipass-k0s-lens/">
+<i class="fa fa-facebook-official"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.jp/2021/03/18/multipass-k0s-lens/">
+<i class="fa fa-twitter"></i>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default" href=#>
+<i class="fa fa-list"></i>
+</a>
+</li>
+</ul>
+</div>
+</div>
+<div id=share-options-bar class=share-options-bar data-behavior=5>
+<i id=btn-close-shareoptions class="fa fa-close"></i>
+<ul class=share-options>
+<li class=share-option>
+<a class=share-option-btn target=new href=http://b.hatena.ne.jp/entry/https%3A%2F%2Fharasou.jp%2F2021%2F03%2F18%2Fmultipass-k0s-lens%2F>
+<i class="fa icon-hatebu"></i><span>Hatebuで共有</span>
+</a>
+</li>
+<li class=share-option>
+<a class=share-option-btn target=new href="http://getpocket.com/edit?url=https%3A%2F%2Fharasou.jp%2F2021%2F03%2F18%2Fmultipass-k0s-lens%2F">
+<i class="fa icon-pocket"></i><span>Pocketで共有</span>
+</a>
+</li>
+<li class=share-option>
+<a class=share-option-btn target=new href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fharasou.jp%2F2021%2F03%2F18%2Fmultipass-k0s-lens%2F">
+<i class="fa fa-facebook-official"></i><span>Facebookで共有</span>
+</a>
+</li>
+<li class=share-option>
+<a class=share-option-btn target=new href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fharasou.jp%2F2021%2F03%2F18%2Fmultipass-k0s-lens%2F">
+<i class="fa fa-twitter"></i><span>Twitterで共有</span>
+</a>
+</li>
+</ul>
+</div>
+<div id=share-options-mask class=share-options-mask></div>
+</div>
+<div id=about>
+<div id=about-card>
+<div id=about-btn-close>
+<i class="fa fa-remove"></i>
+</div>
+<img id=about-card-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt=プロフィール画像>
+<h4 id=about-card-name>harasou</h4>
+<div id=about-card-bio>めくじらを立てない</div>
+<div id=about-card-job>
+<i class="fa fa-briefcase"></i>
+<br>
+Infra Engineer
+</div>
+<div id=about-card-location>
+<i class="fa fa-map-marker"></i>
+<br>
+Fukuoka Japan
+</div>
+</div>
+</div>
+<div id=cover style=background-image:url(https://harasou.jp/images/cover.jpg)></div>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin=anonymous></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin=anonymous></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin=anonymous></script>
+<script src=/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js></script>
+<script lang=javascript>window.onload=updateMinWidth,window.onresize=updateMinWidth,document.getElementById("sidebar").addEventListener("transitionend",updateMinWidth);function updateMinWidth(){var b=document.getElementById("sidebar"),a=document.getElementById("main"),c,d,e;a.style.minWidth="",c=getComputedStyle(a).getPropertyValue("min-width"),d=getComputedStyle(b).getPropertyValue("width"),e=getComputedStyle(b).getPropertyValue("left"),a.style.minWidth=`calc(${c} - ${d} - ${e})`}</script>
+<script>$(document).ready(function(){hljs.configure({classPrefix:'',useBR:!1}),$('pre.code-highlight > code, pre > code').each(function(b,a){$(this).hasClass('codeblock')||$(this).addClass('codeblock'),hljs.highlightBlock(a)})})</script>
+</body>
+</html>

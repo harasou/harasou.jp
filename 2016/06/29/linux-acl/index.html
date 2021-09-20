@@ -1,282 +1,138 @@
-<!DOCTYPE html>
-<html lang="ja">
-  <head>
-    
-    <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.59.0-DEV with theme Tranquilpeak 0.4.7-BETA">
-<meta name="author" content="harasou">
-<meta name="keywords" content="">
-<meta name="description" content="「Linux プログラミングインタフェース」再び。
-
+<!doctype html><html lang=ja>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=generator content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name=author content="harasou">
+<meta name=keywords content>
+<meta name=description content="「Linux プログラミングインタフェース」再び。
 輪読やりながら「こんな機能使うのか？」って、みんな文句言いながら読んでいた章。ここで触っとかないと、今後「ACL とか知らねぇ。」ってなりそうなので、まとめておく。">
-
-
 <meta property="og:description" content="「Linux プログラミングインタフェース」再び。
-
 輪読やりながら「こんな機能使うのか？」って、みんな文句言いながら読んでいた章。ここで触っとかないと、今後「ACL とか知らねぇ。」ってなりそうなので、まとめておく。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Linux ACL の基礎">
-<meta name="twitter:title" content="Linux ACL の基礎">
+<meta name=twitter:title content="Linux ACL の基礎">
 <meta property="og:url" content="https://harasou.jp/2016/06/29/linux-acl/">
 <meta property="twitter:url" content="https://harasou.jp/2016/06/29/linux-acl/">
 <meta property="og:site_name" content="harasou.jp">
 <meta property="og:description" content="「Linux プログラミングインタフェース」再び。
-
 輪読やりながら「こんな機能使うのか？」って、みんな文句言いながら読んでいた章。ここで触っとかないと、今後「ACL とか知らねぇ。」ってなりそうなので、まとめておく。">
-<meta name="twitter:description" content="「Linux プログラミングインタフェース」再び。
-
+<meta name=twitter:description content="「Linux プログラミングインタフェース」再び。
 輪読やりながら「こんな機能使うのか？」って、みんな文句言いながら読んでいた章。ここで触っとかないと、今後「ACL とか知らねぇ。」ってなりそうなので、まとめておく。">
 <meta property="og:locale" content="ja">
-
-  
-    <meta property="article:published_time" content="2016-06-29T23:37:56">
-  
-  
-    <meta property="article:modified_time" content="2016-06-29T23:37:56">
-  
-  
-  
-  
-    
-      <meta property="article:tag" content="kernel">
-    
-      <meta property="article:tag" content="filesystem">
-    
-  
-
-
-<meta name="twitter:card" content="summary">
-
-  <meta name="twitter:site" content="@harasou5">
-
-
-  <meta name="twitter:creator" content="@harasou5">
-
-
-
-
-
-
-  <meta property="og:image" content="https://harasou.jp/2016/06/29/linux-acl/linux-programming-interface.png">
-  <meta property="twitter:image" content="https://harasou.jp/2016/06/29/linux-acl/linux-programming-interface.png">
-
-
-
-
-
-  <meta property="og:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
-  <meta property="twitter:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
-
-
-    <title>Linux ACL の基礎</title>
-
-    <link rel="icon" href="/favicon.png">
-    
-
-    
-
-    <link rel="canonical" href="https://harasou.jp/2016/06/29/linux-acl/">
-
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
-    
-    
-    <link rel="stylesheet" href="/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css" />
-    
-    
-      
-        <link rel="stylesheet"  href="https://harasou.jp/css/style.css" swapPaginator="true">
-      
-    
-
-    
-      
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-	ga('create', 'UA-62541096-1', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-
-    
-    
-  </head>
-
-  <body>
-    <div id="blog">
-      <header id="header" data-behavior="5">
-  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
-  <div class="header-title">
-    <a class="header-title-link" href="/">harasou.jp</a>
-  </div>
-  
-    
-      <a class="header-right-picture "
-         href="/#about">
-    
-    
-    
-      
-        <img class="header-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=90" alt="プロフィール画像" />
-      
-    
-    </a>
-  
-</header>
-
-      <nav id="sidebar" data-behavior="5">
-  <div class="sidebar-container">
-    
-      <div class="sidebar-profile">
-        <a href="/#about">
-          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt="プロフィール画像" />
-        </a>
-        <h4 class="sidebar-profile-name">harasou</h4>
-        
-          <h5 class="sidebar-profile-bio">めくじらを立てない</h5>
-        
-      </div>
-    
-    <ul class="sidebar-buttons">
-      
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="/">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
-      
-      <span class="sidebar-button-desc">ホーム</span>
-    </a>
-  </li>
-
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="/tags">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
-      
-      <span class="sidebar-button-desc">タグ</span>
-    </a>
-  </li>
-
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="/archives">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
-      
-      <span class="sidebar-button-desc">アーカイブ</span>
-    </a>
-  </li>
-
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="/#about">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
-      
-      <span class="sidebar-button-desc">プロフィール</span>
-    </a>
-  </li>
-
-
-    </ul>
-    <ul class="sidebar-buttons">
-      
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="https://github.com/harasou" target="_blank" rel="noopener">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
-      
-      <span class="sidebar-button-desc">GitHub</span>
-    </a>
-  </li>
-
-
-    </ul>
-    <ul class="sidebar-buttons">
-      
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="/index.xml">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
-      
-      <span class="sidebar-button-desc">RSS</span>
-    </a>
-  </li>
-
-
-    </ul>
-  </div>
-</nav>
-
-      
-
-      <div id="main" data-behavior="5"
-        class="
-               hasCoverMetaIn
-               ">
-        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
-          
-          
-            <div class="post-header main-content-wrap text-left">
-  
-    <h1 class="post-title" itemprop="headline">
-      Linux ACL の基礎
-    </h1>
-  
-  
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-06-29T23:37:56&#43;09:00">
-        
-  
-  
-  
-  
-    2016/6/29
-  
-
-      </time>
-    
-    
-  </div>
-
+<meta property="article:published_time" content="2016-06-29T23:37:56">
+<meta property="article:modified_time" content="2016-06-29T23:37:56">
+<meta property="article:tag" content="kernel">
+<meta property="article:tag" content="filesystem">
+<meta name=twitter:card content="summary">
+<meta name=twitter:site content="@harasou5">
+<meta name=twitter:creator content="@harasou5">
+<meta property="og:image" content="https://harasou.jp/2016/06/29/linux-acl/linux-programming-interface.png">
+<meta property="twitter:image" content="https://harasou.jp/2016/06/29/linux-acl/linux-programming-interface.png">
+<meta property="og:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
+<meta property="twitter:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
+<title>Linux ACL の基礎</title>
+<link rel=icon href=/favicon.png>
+<link rel=canonical href=https://harasou.jp/2016/06/29/linux-acl/>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin=anonymous>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin=anonymous>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin=anonymous>
+<link rel=stylesheet href=/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css>
+<link rel=stylesheet href=https://harasou.jp/css/style.css swappaginator=true>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-62541096-1','auto'),ga('send','pageview'))</script>
+</head>
+<body>
+<div id=blog>
+<header id=header data-behavior=5>
+<i id=btn-open-sidebar class="fa fa-lg fa-bars"></i>
+<div class=header-title>
+<a class=header-title-link href=/>harasou.jp</a>
 </div>
-          
-          <div class="post-content markdown" itemprop="articleBody">
-            <div class="main-content-wrap">
-              <p>「Linux プログラミングインタフェース」再び。</p>
-
+<a class=header-right-picture href=/#about>
+<img class=header-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=90" alt=プロフィール画像>
+</a>
+</header>
+<nav id=sidebar data-behavior=5>
+<div class=sidebar-container>
+<div class=sidebar-profile>
+<a href=/#about>
+<img class=sidebar-profile-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt=プロフィール画像>
+</a>
+<h4 class=sidebar-profile-name>harasou</h4>
+<h5 class=sidebar-profile-bio>めくじらを立てない</h5>
+</div>
+<ul class=sidebar-buttons>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/>
+<i class="sidebar-button-icon fa fa-lg fa-home"></i>
+<span class=sidebar-button-desc>ホーム</span>
+</a>
+</li>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/tags>
+<i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+<span class=sidebar-button-desc>タグ</span>
+</a>
+</li>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/archives>
+<i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+<span class=sidebar-button-desc>アーカイブ</span>
+</a>
+</li>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/#about>
+<i class="sidebar-button-icon fa fa-lg fa-question"></i>
+<span class=sidebar-button-desc>プロフィール</span>
+</a>
+</li>
+</ul>
+<ul class=sidebar-buttons>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=https://github.com/harasou target=_blank rel=noopener>
+<i class="sidebar-button-icon fa fa-lg fa-github"></i>
+<span class=sidebar-button-desc>GitHub</span>
+</a>
+</li>
+</ul>
+<ul class=sidebar-buttons>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=/index.xml>
+<i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+<span class=sidebar-button-desc>RSS</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+<div id=main data-behavior=5 class=hasCoverMetaIn>
+<article class=post itemscope itemtype=http://schema.org/BlogPosting>
+<div class="post-header main-content-wrap text-left">
+<h1 class=post-title itemprop=headline>
+Linux ACL の基礎
+</h1>
+<div class="postShorten-meta post-meta">
+<time itemprop=datePublished datetime=2016-06-29T23:37:56+09:00>
+2016/6/29
+</time>
+</div>
+</div>
+<div class="post-content markdown" itemprop=articleBody>
+<div class=main-content-wrap>
+<p>「Linux プログラミングインタフェース」再び。</p>
 <p>輪読やりながら「こんな機能使うのか？」って、みんな文句言いながら読んでいた章。ここで触っとかないと、今後「ACL とか知らねぇ。」ってなりそうなので、まとめておく。</p>
-
 <blockquote>
 <p>17章 ACL</p>
-
+</blockquote>
+<blockquote>
 <p>ACL はユーザもしくはグループ単位でのパーミションを設定可能にするもので、ユーザ、グループ数を制限しません。Linux ではバージョン 2.6 で ACL を導入しました。</p>
 </blockquote>
-
-<p>refs: <a href="https://www.oreilly.co.jp/books/9784873115856/">https://www.oreilly.co.jp/books/9784873115856/</a></p>
-
-<h2 id="acl-access-control-list-とは">ACL(access control list) とは</h2>
-
+<p>refs: <a href=https://www.oreilly.co.jp/books/9784873115856/>https://www.oreilly.co.jp/books/9784873115856/</a></p>
+<h2 id=aclaccess-control-list-とは>ACL(access control list) とは</h2>
 <p>簡単に言うとファイルやディレクトリのパーミッションに <code>＋αのアクセス権</code> を設定できる機能。</p>
-
 <p>ACL を設定すると下記例のように、通常のパーミッション的には root しか読めないファイルに、vagrant ユーザの参照権限を追加することができる。</p>
-
-<pre><code># ls -l aclfile
+<pre tabindex=0><code># ls -l aclfile
 -rw-r-----+ 1 root root 5 Jun 29 15:13 aclfile  #拡張ACLが設定されたファイルには + がつく
 #
 # sudo -u vagrant cat aclfile
@@ -285,155 +141,120 @@ root
 # sudo -u harasou cat aclfile
 cat: aclfile: Permission denied
 #
-</code></pre>
-
-<pre><code># grep root /etc/group  #2ユーザ共に rootグループには属していない
+</code></pre><pre tabindex=0><code># grep root /etc/group  #2ユーザ共に rootグループには属していない
 root:x:0:
-</code></pre>
-
-<h2 id="acl-の設定方法">ACL の設定方法</h2>
-
+</code></pre><h2 id=acl-の設定方法>ACL の設定方法</h2>
 <p>ACL の表示や変更は、<code>getfacl</code>、<code>setfcal</code> を使用する。</p>
-
 <ul>
-<li><p>ACL の表示</p>
-
-<pre><code># getfacl -c acl_file
+<li>
+<p>ACL の表示</p>
+<pre tabindex=0><code># getfacl -c acl_file
 user::rw-
 user:vagrant:r--
 group::---
 mask::r--
 other::---
 </code></pre></li>
-
-<li><p>ACL の変更</p>
-
-<pre><code>setfacl -m user:vagrant:r acl_file  #ACLエントリの設定
+<li>
+<p>ACL の変更</p>
+<pre tabindex=0><code>setfacl -m user:vagrant:r acl_file  #ACLエントリの設定
 setfacl -x user:vagrant   acl_file  #ACLエントリの削除
 setfacl -b                acl_file  #全ての拡張ACLエントリを削除
 </code></pre></li>
 </ul>
-
-<h2 id="acl-の基礎">ACL の基礎</h2>
-
-<h3 id="acl-のテキスト表現">ACL のテキスト表現</h3>
-
+<h2 id=acl-の基礎>ACL の基礎</h2>
+<h3 id=acl-のテキスト表現>ACL のテキスト表現</h3>
 <p>setfacl で指定するパラメータは、以下のような感じで、ACLエントリ(テキスト表現)を<code>,</code>区切りで並べたものを指定する。</p>
-
-<pre><code>setfacl -m u::rw,u:paulh:rw,u:annabel:rw,g::r,g:teach:rw,km::rwx,o::- acl_file
-</code></pre>
-
-<p>各ACLエントリは <code>タグ種類:タグ修飾子:パーミッション</code> といった形式になっていて、上記 ACLを ACLエントリごとにわけると以下のようになる。</p>
-
+<pre tabindex=0><code>setfacl -m u::rw,u:paulh:rw,u:annabel:rw,g::r,g:teach:rw,km::rwx,o::- acl_file
+</code></pre><p>各ACLエントリは <code>タグ種類:タグ修飾子:パーミッション</code> といった形式になっていて、上記 ACLを ACLエントリごとにわけると以下のようになる。</p>
 <table>
 <thead>
 <tr>
-<th align="left">ACLエントリ</th>
-<th align="left">タグ種類</th>
+<th style=text-align:left>ACLエントリ</th>
+<th style=text-align:left>タグ種類</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left"><code>u::rw</code></td>
-<td align="left">ACL_USER_OBJ</td>
+<td style=text-align:left><code>u::rw</code></td>
+<td style=text-align:left>ACL_USER_OBJ</td>
 </tr>
-
 <tr>
-<td align="left"><code>g::r</code></td>
-<td align="left">ACL_GROUP_OBJ</td>
+<td style=text-align:left><code>g::r</code></td>
+<td style=text-align:left>ACL_GROUP_OBJ</td>
 </tr>
-
 <tr>
-<td align="left"><code>o::-</code></td>
-<td align="left">ACL_OTHER_OBJ</td>
+<td style=text-align:left><code>o::-</code></td>
+<td style=text-align:left>ACL_OTHER_OBJ</td>
 </tr>
-
 <tr>
-<td align="left"><code>u:paulh:rw</code></td>
-<td align="left">ACL_USER</td>
+<td style=text-align:left><code>u:paulh:rw</code></td>
+<td style=text-align:left>ACL_USER</td>
 </tr>
-
 <tr>
-<td align="left"><code>u:annabel:rw</code></td>
-<td align="left">ACL_USER</td>
+<td style=text-align:left><code>u:annabel:rw</code></td>
+<td style=text-align:left>ACL_USER</td>
 </tr>
-
 <tr>
-<td align="left"><code>g:teach:rw</code></td>
-<td align="left">ACL_GROUP</td>
+<td style=text-align:left><code>g:teach:rw</code></td>
+<td style=text-align:left>ACL_GROUP</td>
 </tr>
-
 <tr>
-<td align="left"><code>m::rwx</code></td>
-<td align="left">ACL_MASK</td>
+<td style=text-align:left><code>m::rwx</code></td>
+<td style=text-align:left>ACL_MASK</td>
 </tr>
 </tbody>
 </table>
-
 <p>上記 ACL を言葉で説明すると以下のような感じになる。</p>
-
 <blockquote>
 <p>acl_file に、通常のパーミッション <code>640</code> を設定し、追加で paulhユーザ と annabelユーザ、teachグループに <code>rw</code> のアクセス権を設定する。</p>
 </blockquote>
-
-<h3 id="タグの種類">タグの種類</h3>
-
+<h3 id=タグの種類>タグの種類</h3>
 <p>タグの種類は、通常のパーミッションに相当する<code>基本ACL</code>と、追加で設定するイメージの<code>拡張ACL</code>に分類される。</p>
-
 <ul>
 <li>基本ACL
-
 <ul>
-<li><code>ACL_USER_OBJ</code>  : 従来パーミッションの owner に相当</li>
+<li><code>ACL_USER_OBJ</code> : 従来パーミッションの owner に相当</li>
 <li><code>ACL_GROUP_OBJ</code> : 従来パーミッションの group に相当</li>
-<li><code>ACL_OTHER</code>     : 従来パーミッションの other に相当</li>
-</ul></li>
-<li>拡張ACL
-
-<ul>
-<li><code>ACL_USER</code>  : エントリのパーミションをタグ修飾子に指定されたユーザへ適用する</li>
-<li><code>ACL_GROUP</code> : エントリのパーミションをタグ修飾子に指定されたグループへ適用する</li>
-<li><code>ACL_MASK</code>  : グループクラス（ACL_GROUP_OBJ,ACL_USER,ACL_GROUP）で設定されている権限の最大値</li>
-</ul></li>
+<li><code>ACL_OTHER</code> : 従来パーミッションの other に相当</li>
 </ul>
-
-<h2 id="acl-の動作確認">ACL の動作確認</h2>
-
-<h3 id="準備">準備</h3>
-
+</li>
+<li>拡張ACL
+<ul>
+<li><code>ACL_USER</code> : エントリのパーミションをタグ修飾子に指定されたユーザへ適用する</li>
+<li><code>ACL_GROUP</code> : エントリのパーミションをタグ修飾子に指定されたグループへ適用する</li>
+<li><code>ACL_MASK</code> : グループクラス（ACL_GROUP_OBJ,ACL_USER,ACL_GROUP）で設定されている権限の最大値</li>
+</ul>
+</li>
+</ul>
+<h2 id=acl-の動作確認>ACL の動作確認</h2>
+<h3 id=準備>準備</h3>
 <p>ACL はファイルシステムの拡張機能として実装れていて、デフォルトでは無効になっているため、mount オプションで有効にする必要がある。</p>
-
 <p>ここでは、パーティション準備するのが面倒なので、ファイルを loop mount してテスト。</p>
-
 <ol>
-<li><p>ファイルシステムとなる image ファイルを作成</p>
-
-<pre><code># dd if=/dev/zero of=image bs=10M count=1
+<li>
+<p>ファイルシステムとなる image ファイルを作成</p>
+<pre tabindex=0><code># dd if=/dev/zero of=image bs=10M count=1
 # ls -l image
 -rw-r--r-- 1 root root 10485760 Jun 28 23:26 image
 </code></pre></li>
-
-<li><p>フォーマット</p>
-
-<pre><code># mke2fs -t ext4 -F image
+<li>
+<p>フォーマット</p>
+<pre tabindex=0><code># mke2fs -t ext4 -F image
 </code></pre></li>
-
-<li><p>マウント</p>
-
-<pre><code># mkdir acltest                
+<li>
+<p>マウント</p>
+<pre tabindex=0><code># mkdir acltest                
 # mount -o loop,acl image acltest/ 
 # mount | tail -1              
 /home/vagrant/image on /home/vagrant/acltest type ext4 (rw,acl)
 </code></pre></li>
 </ol>
-
-<h3 id="動作確認">動作確認</h3>
-
+<h3 id=動作確認>動作確認</h3>
 <ul>
-<li><p>root オーナのファイル<code>aclfile</code> に、vagrant ユーザの <code>rw</code> を設定</p>
-
-<pre><code># ll aclfile
+<li>
+<p>root オーナのファイル<code>aclfile</code> に、vagrant ユーザの <code>rw</code> を設定</p>
+<pre tabindex=0><code># ll aclfile
 -rw-r--r-- 1 root root 5 Jun 28 23:31 aclfile
 #
 # setfacl -m user:vagrant:rw aclfile
@@ -446,32 +267,26 @@ user:vagrant:rw-
 group::r--
 mask::rw-
 other::r--
-    
+
 # sudo -u vagrant sh -c &quot;echo vagrant &gt; aclfile&quot;
 # cat aclfile
 vagrant
-</code></pre>
-
-<ul>
+</code></pre><ul>
 <li>拡張ACL を設定したので、ls で表示されるパーミッションの横に <code>+</code> がつく</li>
 <li>root オーナファイルに vagrant ユーザで書き込み可能になる</li>
-</ul></li>
-
-<li><p>ACL の削除</p>
-
+</ul>
+</li>
+<li>
+<p>ACL の削除</p>
 <p>基本ACL は削除できない</p>
-
-<pre><code># setfacl -x user:: aclfile
+<pre tabindex=0><code># setfacl -x user:: aclfile
 setfacl: aclfile: Malformed access ACL `user:vagrant:r--,group::r--,mask::r--,other::---': Missing or wrong entry at entry 1
 # setfacl -x groupt:: aclfile
 setfacl: aclfile: Malformed access ACL `user::rw-,user:vagrant:r--,mask::r--,other::---': Missing or wrong entry at entry 3
 # setfacl -x other:: aclfile
 setfacl: aclfile: Malformed access ACL `user::rw-,user:vagrant:r--,group::r--,mask::r--': Missing or wrong entry at entry 5
-</code></pre>
-
-<p>拡張ACL の削除。一つでも残っていると ls のパーミッションに <code>+</code>。</p>
-
-<pre><code># setfacl -x user:vagrant aclfile
+</code></pre><p>拡張ACL の削除。一つでも残っていると ls のパーミッションに <code>+</code>。</p>
+<pre tabindex=0><code># setfacl -x user:vagrant aclfile
 #
 # ls -l aclfile; getfacl -c aclfile
 -rw-r-----+ 1 root root 5 Jun 29 15:13 aclfile
@@ -479,7 +294,7 @@ user::rw-
 group::r--
 mask::r--
 other::---
-    
+
 # setfacl -x mask aclfile
 # ls -l aclfile; getfacl -c aclfile
 -rw-r----- 1 root root 5 Jun 29 15:13 aclfile
@@ -487,22 +302,17 @@ user::rw-
 group::r--
 other::---
 </code></pre></li>
-
-<li><p>ls で表示されるグループのパーミッションは mask の値</p>
-
+<li>
+<p>ls で表示されるグループのパーミッションは mask の値</p>
 <p>ACLの設定を行っていない状態。グループは <code>r</code>。</p>
-
-<pre><code># ls -l aclfile; getfacl -c aclfile
+<pre tabindex=0><code># ls -l aclfile; getfacl -c aclfile
 -rw-r----- 1 root root 5 Jun 29 15:13 aclfile
 user::rw-
 group::r--
 other::---
-</code></pre>
-
-<p>拡張ACL を設定。
+</code></pre><p>拡張ACL を設定。
 グループのパーミッションは mask の値と一致する。mask の値は、拡張ACLの最大のパーミッションになっている。</p>
-
-<pre><code># setfacl -m user:vagrant:r aclfile
+<pre tabindex=0><code># setfacl -m user:vagrant:r aclfile
 # ls -l aclfile; getfacl -c aclfile
 -rw-r-----+ 1 root root 5 Jun 29 15:13 aclfile
 user::rw-
@@ -510,7 +320,7 @@ user:vagrant:r--
 group::r--
 mask::r--
 other::---
-    
+
 # setfacl -m user:harasou:rw aclfile
 # ls -l aclfile; getfacl -c aclfile
 -rw-rw----+ 1 root root 5 Jun 29 15:13 aclfile
@@ -520,11 +330,8 @@ user:harasou:rw-
 group::r--
 mask::rw-
 other::---
-</code></pre>
-
-<p>拡張ACL を全て削除すると、ls の表示は、もともとのグループパーミッション <code>r</code> に戻る</p>
-
-<pre><code># setfacl -b aclfile
+</code></pre><p>拡張ACL を全て削除すると、ls の表示は、もともとのグループパーミッション <code>r</code> に戻る</p>
+<pre tabindex=0><code># setfacl -b aclfile
 # ls -l aclfile; getfacl -c aclfile
 -rw-r----- 1 root root 5 Jun 29 15:13 aclfile
 user::rw-
@@ -532,301 +339,179 @@ group::r--
 other::---
 </code></pre></li>
 </ul>
-
-<h2 id="所感">所感</h2>
-
+<h2 id=所感>所感</h2>
 <p>なかなか使い所が難しい（運用しづらい）感があるが、例えば、レンサバなどは、各ユーザ権限で基本、ファイルを作成するが、apache ユーザでも読み込みができる必要がある。こういったところで使うとわりとシンプルに権限周りを管理できるのかもしれない。</p>
-              
-            </div>
-          </div>
-          <div id="post-footer" class="post-footer main-content-wrap">
-            
-              
-                
-                
-                  <div class="post-footer-tags">
-                    <span class="text-color-light text-small">タグ</span><br/>
-                    
-  <a class="tag tag--primary tag--small" href="/tags/kernel/">kernel</a>
-
-  <a class="tag tag--primary tag--small" href="/tags/filesystem/">filesystem</a>
-
-                  </div>
-                
-              
-            
-            <div class="post-actions-wrap">
-  
-      <nav >
-        <ul class="post-actions post-action-nav">
-          
-            <li class="post-action">
-              
-                <a class="post-action-btn btn btn--default tooltip--top" href="/2017/01/23/linux-signal/" data-tooltip="Linux シグナルの基礎">
-              
-                  <i class="fa fa-angle-left"></i>
-                  <span class="hide-xs hide-sm text-small icon-ml">次</span>
-                </a>
-            </li>
-            <li class="post-action">
-              
-                <a class="post-action-btn btn btn--default tooltip--top" href="/2016/03/24/sparse-file/" data-tooltip="Sparse File (スパースファイル) の仕組み">
-              
-                  <span class="hide-xs hide-sm text-small icon-mr">前</span>
-                  <i class="fa fa-angle-right"></i>
-                </a>
-            </li>
-          
-        </ul>
-      </nav>
-    <ul class="post-actions post-action-share" >
-      
-        <li class="post-action hide-lg hide-md hide-sm">
-          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
-            <i class="fa fa-share-alt"></i>
-          </a>
-        </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="http://b.hatena.ne.jp/entry/https://harasou.jp/2016/06/29/linux-acl/">
-              <i class="fa icon-hatebu"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="http://getpocket.com/edit?url=https://harasou.jp/2016/06/29/linux-acl/">
-              <i class="fa icon-pocket"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2016/06/29/linux-acl/">
-              <i class="fa fa-facebook-official"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://harasou.jp/2016/06/29/linux-acl/">
-              <i class="fa fa-twitter"></i>
-            </a>
-          </li>
-        
-      
-      
-      <li class="post-action">
-        
-          <a class="post-action-btn btn btn--default" href="#">
-        
-          <i class="fa fa-list"></i>
-        </a>
-      </li>
-    </ul>
-  
 </div>
-
-            
-              
-            
-          </div>
-        </article>
-        <footer id="footer" class="main-content-wrap">
-  <span class="copyrights">
-    &copy; 2019 harasou. All Rights Reserved
-  </span>
+</div>
+<div id=post-footer class="post-footer main-content-wrap">
+<div class=post-footer-tags>
+<span class="text-color-light text-small">タグ</span><br>
+<a class="tag tag--primary tag--small" href=/tags/kernel/>kernel</a>
+<a class="tag tag--primary tag--small" href=/tags/filesystem/>filesystem</a>
+</div>
+<div class=post-actions-wrap>
+<nav>
+<ul class="post-actions post-action-nav">
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=/2017/01/23/linux-signal/ data-tooltip="Linux シグナルの基礎">
+<i class="fa fa-angle-left"></i>
+<span class="hide-xs hide-sm text-small icon-ml">次</span>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=/2016/03/24/sparse-file/ data-tooltip="Sparse File (スパースファイル) の仕組み">
+<span class="hide-xs hide-sm text-small icon-mr">前</span>
+<i class="fa fa-angle-right"></i>
+</a>
+</li>
+</ul>
+</nav>
+<ul class="post-actions post-action-share">
+<li class="post-action hide-lg hide-md hide-sm">
+<a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions>
+<i class="fa fa-share-alt"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.jp/2016/06/29/linux-acl/>
+<i class="fa icon-hatebu"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.jp/2016/06/29/linux-acl/">
+<i class="fa icon-pocket"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2016/06/29/linux-acl/">
+<i class="fa fa-facebook-official"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.jp/2016/06/29/linux-acl/">
+<i class="fa fa-twitter"></i>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default" href=#>
+<i class="fa fa-list"></i>
+</a>
+</li>
+</ul>
+</div>
+</div>
+</article>
+<footer id=footer class=main-content-wrap>
+<span class=copyrights>
+&copy; 2021 harasou. All Rights Reserved
+</span>
 </footer>
-
-      </div>
-      <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
-        <div class="post-actions-wrap">
-  
-      <nav >
-        <ul class="post-actions post-action-nav">
-          
-            <li class="post-action">
-              
-                <a class="post-action-btn btn btn--default tooltip--top" href="/2017/01/23/linux-signal/" data-tooltip="Linux シグナルの基礎">
-              
-                  <i class="fa fa-angle-left"></i>
-                  <span class="hide-xs hide-sm text-small icon-ml">次</span>
-                </a>
-            </li>
-            <li class="post-action">
-              
-                <a class="post-action-btn btn btn--default tooltip--top" href="/2016/03/24/sparse-file/" data-tooltip="Sparse File (スパースファイル) の仕組み">
-              
-                  <span class="hide-xs hide-sm text-small icon-mr">前</span>
-                  <i class="fa fa-angle-right"></i>
-                </a>
-            </li>
-          
-        </ul>
-      </nav>
-    <ul class="post-actions post-action-share" >
-      
-        <li class="post-action hide-lg hide-md hide-sm">
-          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
-            <i class="fa fa-share-alt"></i>
-          </a>
-        </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="http://b.hatena.ne.jp/entry/https://harasou.jp/2016/06/29/linux-acl/">
-              <i class="fa icon-hatebu"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="http://getpocket.com/edit?url=https://harasou.jp/2016/06/29/linux-acl/">
-              <i class="fa icon-pocket"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2016/06/29/linux-acl/">
-              <i class="fa fa-facebook-official"></i>
-            </a>
-          </li>
-        
-          <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://harasou.jp/2016/06/29/linux-acl/">
-              <i class="fa fa-twitter"></i>
-            </a>
-          </li>
-        
-      
-      
-      <li class="post-action">
-        
-          <a class="post-action-btn btn btn--default" href="#">
-        
-          <i class="fa fa-list"></i>
-        </a>
-      </li>
-    </ul>
-  
 </div>
-
-      </div>
-      <div id="share-options-bar" class="share-options-bar" data-behavior="5">
-  <i id="btn-close-shareoptions" class="fa fa-close"></i>
-  <ul class="share-options">
-    
-      <li class="share-option">
-        <a class="share-option-btn" target="new" href="http://b.hatena.ne.jp/entry/https%3A%2F%2Fharasou.jp%2F2016%2F06%2F29%2Flinux-acl%2F">
-          <i class="fa icon-hatebu"></i><span>Hatebuで共有</span>
-        </a>
-      </li>
-    
-      <li class="share-option">
-        <a class="share-option-btn" target="new" href="http://getpocket.com/edit?url=https%3A%2F%2Fharasou.jp%2F2016%2F06%2F29%2Flinux-acl%2F">
-          <i class="fa icon-pocket"></i><span>Pocketで共有</span>
-        </a>
-      </li>
-    
-      <li class="share-option">
-        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fharasou.jp%2F2016%2F06%2F29%2Flinux-acl%2F">
-          <i class="fa fa-facebook-official"></i><span>Facebookで共有</span>
-        </a>
-      </li>
-    
-      <li class="share-option">
-        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fharasou.jp%2F2016%2F06%2F29%2Flinux-acl%2F">
-          <i class="fa fa-twitter"></i><span>Twitterで共有</span>
-        </a>
-      </li>
-    
-  </ul>
+<div id=bottom-bar class=post-bottom-bar data-behavior=5>
+<div class=post-actions-wrap>
+<nav>
+<ul class="post-actions post-action-nav">
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=/2017/01/23/linux-signal/ data-tooltip="Linux シグナルの基礎">
+<i class="fa fa-angle-left"></i>
+<span class="hide-xs hide-sm text-small icon-ml">次</span>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=/2016/03/24/sparse-file/ data-tooltip="Sparse File (スパースファイル) の仕組み">
+<span class="hide-xs hide-sm text-small icon-mr">前</span>
+<i class="fa fa-angle-right"></i>
+</a>
+</li>
+</ul>
+</nav>
+<ul class="post-actions post-action-share">
+<li class="post-action hide-lg hide-md hide-sm">
+<a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions>
+<i class="fa fa-share-alt"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.jp/2016/06/29/linux-acl/>
+<i class="fa icon-hatebu"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.jp/2016/06/29/linux-acl/">
+<i class="fa icon-pocket"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2016/06/29/linux-acl/">
+<i class="fa fa-facebook-official"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.jp/2016/06/29/linux-acl/">
+<i class="fa fa-twitter"></i>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default" href=#>
+<i class="fa fa-list"></i>
+</a>
+</li>
+</ul>
 </div>
-<div id="share-options-mask" class="share-options-mask"></div>
-    </div>
-    
-    <div id="about">
-  <div id="about-card">
-    <div id="about-btn-close">
-      <i class="fa fa-remove"></i>
-    </div>
-    
-      <img id="about-card-picture" src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt="プロフィール画像" />
-    
-    <h4 id="about-card-name">harasou</h4>
-    
-      <div id="about-card-bio">めくじらを立てない</div>
-    
-    
-      <div id="about-card-job">
-        <i class="fa fa-briefcase"></i>
-        <br/>
-        Infra Engineer
-      </div>
-    
-    
-      <div id="about-card-location">
-        <i class="fa fa-map-marker"></i>
-        <br/>
-        Fukuoka Japan
-      </div>
-    
-  </div>
 </div>
-
-    
-
-    
-  
-    
-      
-      <div id="cover" style="background-image:url('https://harasou.jp/images/cover.jpg');"></div>
-    
-  
-
-
-    
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
-
-
-<script src="/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js"></script>
-
-
-<script lang="javascript">
-window.onload = updateMinWidth;
-window.onresize = updateMinWidth;
-document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
-function updateMinWidth() {
-  var sidebar = document.getElementById("sidebar");
-  var main = document.getElementById("main");
-  main.style.minWidth = "";
-  var w1 = getComputedStyle(main).getPropertyValue("min-width");
-  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
-  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
-  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
-}
-</script>
-
-<script>
-$(document).ready(function() {
-  hljs.configure({ classPrefix: '', useBR: false });
-  $('pre.code-highlight > code, pre > code').each(function(i, block) {
-    if (!$(this).hasClass('codeblock')) {
-      $(this).addClass('codeblock');
-    }
-    hljs.highlightBlock(block);
-  });
-});
-</script>
-
-
-  
-    
-  
-
-
-
-
-    
-  </body>
+<div id=share-options-bar class=share-options-bar data-behavior=5>
+<i id=btn-close-shareoptions class="fa fa-close"></i>
+<ul class=share-options>
+<li class=share-option>
+<a class=share-option-btn target=new href=http://b.hatena.ne.jp/entry/https%3A%2F%2Fharasou.jp%2F2016%2F06%2F29%2Flinux-acl%2F>
+<i class="fa icon-hatebu"></i><span>Hatebuで共有</span>
+</a>
+</li>
+<li class=share-option>
+<a class=share-option-btn target=new href="http://getpocket.com/edit?url=https%3A%2F%2Fharasou.jp%2F2016%2F06%2F29%2Flinux-acl%2F">
+<i class="fa icon-pocket"></i><span>Pocketで共有</span>
+</a>
+</li>
+<li class=share-option>
+<a class=share-option-btn target=new href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fharasou.jp%2F2016%2F06%2F29%2Flinux-acl%2F">
+<i class="fa fa-facebook-official"></i><span>Facebookで共有</span>
+</a>
+</li>
+<li class=share-option>
+<a class=share-option-btn target=new href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fharasou.jp%2F2016%2F06%2F29%2Flinux-acl%2F">
+<i class="fa fa-twitter"></i><span>Twitterで共有</span>
+</a>
+</li>
+</ul>
+</div>
+<div id=share-options-mask class=share-options-mask></div>
+</div>
+<div id=about>
+<div id=about-card>
+<div id=about-btn-close>
+<i class="fa fa-remove"></i>
+</div>
+<img id=about-card-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt=プロフィール画像>
+<h4 id=about-card-name>harasou</h4>
+<div id=about-card-bio>めくじらを立てない</div>
+<div id=about-card-job>
+<i class="fa fa-briefcase"></i>
+<br>
+Infra Engineer
+</div>
+<div id=about-card-location>
+<i class="fa fa-map-marker"></i>
+<br>
+Fukuoka Japan
+</div>
+</div>
+</div>
+<div id=cover style=background-image:url(https://harasou.jp/images/cover.jpg)></div>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin=anonymous></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin=anonymous></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin=anonymous></script>
+<script src=/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js></script>
+<script lang=javascript>window.onload=updateMinWidth,window.onresize=updateMinWidth,document.getElementById("sidebar").addEventListener("transitionend",updateMinWidth);function updateMinWidth(){var b=document.getElementById("sidebar"),a=document.getElementById("main"),c,d,e;a.style.minWidth="",c=getComputedStyle(a).getPropertyValue("min-width"),d=getComputedStyle(b).getPropertyValue("width"),e=getComputedStyle(b).getPropertyValue("left"),a.style.minWidth=`calc(${c} - ${d} - ${e})`}</script>
+<script>$(document).ready(function(){hljs.configure({classPrefix:'',useBR:!1}),$('pre.code-highlight > code, pre > code').each(function(b,a){$(this).hasClass('codeblock')||$(this).addClass('codeblock'),hljs.highlightBlock(a)})})</script>
+</body>
 </html>
-

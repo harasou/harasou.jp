@@ -1,35 +1,3 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>GCP on harasou.jp</title>
-    <link>https://harasou.jp/tags/gcp/</link>
-    <description>Recent content in GCP on harasou.jp</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>ja</language>
-    <lastBuildDate>Sun, 28 Jan 2018 02:21:58 +0900</lastBuildDate>
-    
-	<atom:link href="https://harasou.jp/tags/gcp/index.xml" rel="self" type="application/rss+xml" />
-    
-    
-    <item>
-      <title>GAE/Go で静的サイトを公開する</title>
-      <link>https://harasou.jp/2018/01/28/gaego-static-hosting/</link>
-      <pubDate>Sun, 28 Jan 2018 02:21:58 +0900</pubDate>
-      
-      <guid>https://harasou.jp/2018/01/28/gaego-static-hosting/</guid>
-      <description>&lt;p&gt;Google Compute Engine 上の Nginx で運用していたブログを、GAE/Go (Go on Google App
-Engine) に移行した。&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>lego と Cloud DNS で Let&#39;s Encrypt の自動更新</title>
-      <link>https://harasou.jp/2018/01/27/lego-and-clouddns/</link>
-      <pubDate>Sat, 27 Jan 2018 16:26:25 +0900</pubDate>
-      
-      <guid>https://harasou.jp/2018/01/27/lego-and-clouddns/</guid>
-      <description>&lt;p&gt;気づいたらブログの証明書の期限が切れていた。めんどくさて数日放置していたけど、
-さすがにエンジニアとしてまずいだろうということで自動化することに。&lt;/p&gt;</description>
-    </item>
-    
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>GCP on harasou.jp</title><link>https://harasou.jp/tags/gcp/</link><description>Recent content in GCP on harasou.jp</description><generator>Hugo -- gohugo.io</generator><language>ja</language><lastBuildDate>Sun, 28 Jan 2018 02:21:58 +0900</lastBuildDate><atom:link href="https://harasou.jp/tags/gcp/index.xml" rel="self" type="application/rss+xml"/><item><title>GAE/Go で静的サイトを公開する</title><link>https://harasou.jp/2018/01/28/gaego-static-hosting/</link><pubDate>Sun, 28 Jan 2018 02:21:58 +0900</pubDate><guid>https://harasou.jp/2018/01/28/gaego-static-hosting/</guid><description>&lt;p>Google Compute Engine 上の Nginx で運用していたブログを、GAE/Go (Go on Google App
+Engine) に移行した。&lt;/p></description></item><item><title>lego と Cloud DNS で Let's Encrypt の自動更新</title><link>https://harasou.jp/2018/01/27/lego-and-clouddns/</link><pubDate>Sat, 27 Jan 2018 16:26:25 +0900</pubDate><guid>https://harasou.jp/2018/01/27/lego-and-clouddns/</guid><description>&lt;p>気づいたらブログの証明書の期限が切れていた。めんどくさて数日放置していたけど、
+さすがにエンジニアとしてまずいだろうということで自動化することに。&lt;/p></description></item></channel></rss>
