@@ -16,13 +16,13 @@ jobs:
       with:
         submodules: true
         fetch-depth: 0
-    
+
     - uses: peaceiris/actions-hugo@v2
       with:
         hugo-version: 'latest'
-      
+
     - name: Build
-      run: hugo --minify --baseURL https://harasou.github.com/harasou.jp/
+      run: hugo --minify --baseURL https://harasou.github.io/harasou.jp/
 
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
