@@ -22,7 +22,7 @@ jobs:
         hugo-version: 'latest'
       
     - name: Build
-      run: hugo --minify
+      run: hugo --minify --baseURL https://harasou.github.com/harasou.jp/
 
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
