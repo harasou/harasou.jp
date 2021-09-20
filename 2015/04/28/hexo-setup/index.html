@@ -15,8 +15,8 @@ hexo は、node.js で作成された静的サイトジェネレータ。blog �
 <meta property="og:type" content="article">
 <meta property="og:title" content="hexo セットアップメモ">
 <meta name=twitter:title content="hexo セットアップメモ">
-<meta property="og:url" content="https://harasou.jp/2015/04/28/hexo-setup/">
-<meta property="twitter:url" content="https://harasou.jp/2015/04/28/hexo-setup/">
+<meta property="og:url" content="https://harasou.github.com/harasou.jp/2015/04/28/hexo-setup/">
+<meta property="twitter:url" content="https://harasou.github.com/harasou.jp/2015/04/28/hexo-setup/">
 <meta property="og:site_name" content="harasou.jp">
 <meta property="og:description" content="hexo とは
 hexo は、node.js で作成された静的サイトジェネレータ。blog の作成に特化していてコマンド一発で gh-pages などに blog を deploy できる。
@@ -35,12 +35,12 @@ hexo は、node.js で作成された静的サイトジェネレータ。blog �
 <meta property="twitter:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
 <title>hexo セットアップメモ</title>
 <link rel=icon href=/favicon.png>
-<link rel=canonical href=https://harasou.jp/2015/04/28/hexo-setup/>
+<link rel=canonical href=https://harasou.github.com/harasou.jp/2015/04/28/hexo-setup/>
 <link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin=anonymous>
 <link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin=anonymous>
 <link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin=anonymous>
 <link rel=stylesheet href=/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css>
-<link rel=stylesheet href=https://harasou.jp/css/style.css swappaginator=true>
+<link rel=stylesheet href=https://harasou.github.com/harasou.jp/css/style.css swappaginator=true>
 <script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-62541096-1','auto'),ga('send','pageview'))</script>
 </head>
 <body>
@@ -48,7 +48,7 @@ hexo は、node.js で作成された静的サイトジェネレータ。blog �
 <header id=header data-behavior=5>
 <i id=btn-open-sidebar class="fa fa-lg fa-bars"></i>
 <div class=header-title>
-<a class=header-title-link href=/>harasou.jp</a>
+<a class=header-title-link href=/harasou.jp/>harasou.jp</a>
 </div>
 <a class=header-right-picture href=/#about>
 <img class=header-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=90" alt=プロフィール画像>
@@ -65,25 +65,25 @@ hexo は、node.js で作成された静的サイトジェネレータ。blog �
 </div>
 <ul class=sidebar-buttons>
 <li class=sidebar-button>
-<a class=sidebar-button-link href=/>
+<a class=sidebar-button-link href=/harasou.jp/harasou.jp/>
 <i class="sidebar-button-icon fa fa-lg fa-home"></i>
 <span class=sidebar-button-desc>ホーム</span>
 </a>
 </li>
 <li class=sidebar-button>
-<a class=sidebar-button-link href=/tags>
+<a class=sidebar-button-link href=/harasou.jp/harasou.jp/tags>
 <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
 <span class=sidebar-button-desc>タグ</span>
 </a>
 </li>
 <li class=sidebar-button>
-<a class=sidebar-button-link href=/archives>
+<a class=sidebar-button-link href=/harasou.jp/harasou.jp/archives>
 <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
 <span class=sidebar-button-desc>アーカイブ</span>
 </a>
 </li>
 <li class=sidebar-button>
-<a class=sidebar-button-link href=/#about>
+<a class=sidebar-button-link href=/harasou.jp/harasou.jp/#about>
 <i class="sidebar-button-icon fa fa-lg fa-question"></i>
 <span class=sidebar-button-desc>プロフィール</span>
 </a>
@@ -99,7 +99,7 @@ hexo は、node.js で作成された静的サイトジェネレータ。blog �
 </ul>
 <ul class=sidebar-buttons>
 <li class=sidebar-button>
-<a class=sidebar-button-link href=/index.xml>
+<a class=sidebar-button-link href=/harasou.jp/harasou.jp/index.xml>
 <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
 <span class=sidebar-button-desc>RSS</span>
 </a>
@@ -194,13 +194,13 @@ git push origin hexo
 <nav>
 <ul class="post-actions post-action-nav">
 <li class=post-action>
-<a class="post-action-btn btn btn--default tooltip--top" href=/2015/05/02/mruby-faststep/ data-tooltip="mruby をさわってみた">
+<a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2015/05/02/mruby-faststep/ data-tooltip="mruby をさわってみた">
 <i class="fa fa-angle-left"></i>
 <span class="hide-xs hide-sm text-small icon-ml">次</span>
 </a>
 </li>
 <li class=post-action>
-<a class="post-action-btn btn btn--default tooltip--top" href=/2015/04/27/hello-blog/ data-tooltip="blog はじめました">
+<a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2015/04/27/hello-blog/ data-tooltip="blog はじめました">
 <span class="hide-xs hide-sm text-small icon-mr">前</span>
 <i class="fa fa-angle-right"></i>
 </a>
@@ -214,22 +214,22 @@ git push origin hexo
 </a>
 </li>
 <li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.jp/2015/04/28/hexo-setup/>
+<a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.github.com/harasou.jp/2015/04/28/hexo-setup/>
 <i class="fa icon-hatebu"></i>
 </a>
 </li>
 <li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.jp/2015/04/28/hexo-setup/">
+<a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.github.com/harasou.jp/2015/04/28/hexo-setup/">
 <i class="fa icon-pocket"></i>
 </a>
 </li>
 <li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2015/04/28/hexo-setup/">
+<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.github.com/harasou.jp/2015/04/28/hexo-setup/">
 <i class="fa fa-facebook-official"></i>
 </a>
 </li>
 <li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.jp/2015/04/28/hexo-setup/">
+<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.github.com/harasou.jp/2015/04/28/hexo-setup/">
 <i class="fa fa-twitter"></i>
 </a>
 </li>
@@ -253,13 +253,13 @@ git push origin hexo
 <nav>
 <ul class="post-actions post-action-nav">
 <li class=post-action>
-<a class="post-action-btn btn btn--default tooltip--top" href=/2015/05/02/mruby-faststep/ data-tooltip="mruby をさわってみた">
+<a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2015/05/02/mruby-faststep/ data-tooltip="mruby をさわってみた">
 <i class="fa fa-angle-left"></i>
 <span class="hide-xs hide-sm text-small icon-ml">次</span>
 </a>
 </li>
 <li class=post-action>
-<a class="post-action-btn btn btn--default tooltip--top" href=/2015/04/27/hello-blog/ data-tooltip="blog はじめました">
+<a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2015/04/27/hello-blog/ data-tooltip="blog はじめました">
 <span class="hide-xs hide-sm text-small icon-mr">前</span>
 <i class="fa fa-angle-right"></i>
 </a>
@@ -273,22 +273,22 @@ git push origin hexo
 </a>
 </li>
 <li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.jp/2015/04/28/hexo-setup/>
+<a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.github.com/harasou.jp/2015/04/28/hexo-setup/>
 <i class="fa icon-hatebu"></i>
 </a>
 </li>
 <li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.jp/2015/04/28/hexo-setup/">
+<a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.github.com/harasou.jp/2015/04/28/hexo-setup/">
 <i class="fa icon-pocket"></i>
 </a>
 </li>
 <li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.jp/2015/04/28/hexo-setup/">
+<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.github.com/harasou.jp/2015/04/28/hexo-setup/">
 <i class="fa fa-facebook-official"></i>
 </a>
 </li>
 <li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.jp/2015/04/28/hexo-setup/">
+<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.github.com/harasou.jp/2015/04/28/hexo-setup/">
 <i class="fa fa-twitter"></i>
 </a>
 </li>
@@ -304,22 +304,22 @@ git push origin hexo
 <i id=btn-close-shareoptions class="fa fa-close"></i>
 <ul class=share-options>
 <li class=share-option>
-<a class=share-option-btn target=new href=http://b.hatena.ne.jp/entry/https%3A%2F%2Fharasou.jp%2F2015%2F04%2F28%2Fhexo-setup%2F>
+<a class=share-option-btn target=new href=http://b.hatena.ne.jp/entry/https%3A%2F%2Fharasou.github.com%2Fharasou.jp%2F2015%2F04%2F28%2Fhexo-setup%2F>
 <i class="fa icon-hatebu"></i><span>Hatebuで共有</span>
 </a>
 </li>
 <li class=share-option>
-<a class=share-option-btn target=new href="http://getpocket.com/edit?url=https%3A%2F%2Fharasou.jp%2F2015%2F04%2F28%2Fhexo-setup%2F">
+<a class=share-option-btn target=new href="http://getpocket.com/edit?url=https%3A%2F%2Fharasou.github.com%2Fharasou.jp%2F2015%2F04%2F28%2Fhexo-setup%2F">
 <i class="fa icon-pocket"></i><span>Pocketで共有</span>
 </a>
 </li>
 <li class=share-option>
-<a class=share-option-btn target=new href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fharasou.jp%2F2015%2F04%2F28%2Fhexo-setup%2F">
+<a class=share-option-btn target=new href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fharasou.github.com%2Fharasou.jp%2F2015%2F04%2F28%2Fhexo-setup%2F">
 <i class="fa fa-facebook-official"></i><span>Facebookで共有</span>
 </a>
 </li>
 <li class=share-option>
-<a class=share-option-btn target=new href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fharasou.jp%2F2015%2F04%2F28%2Fhexo-setup%2F">
+<a class=share-option-btn target=new href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fharasou.github.com%2Fharasou.jp%2F2015%2F04%2F28%2Fhexo-setup%2F">
 <i class="fa fa-twitter"></i><span>Twitterで共有</span>
 </a>
 </li>
@@ -347,7 +347,7 @@ Fukuoka Japan
 </div>
 </div>
 </div>
-<div id=cover style=background-image:url(https://harasou.jp/images/cover.jpg)></div>
+<div id=cover style=background-image:url(https://harasou.github.com/harasou.jp/images/cover.jpg)></div>
 <script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin=anonymous></script>
 <script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin=anonymous></script>
 <script src=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin=anonymous></script>
