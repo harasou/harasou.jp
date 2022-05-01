@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	http.Handle("/", http.FileServer(http.Dir("public")))
+	http.Handle("/", noCache(http.FileServer(http.Dir("public"))))
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -18,4 +18,11 @@ func main() {
 
 	log.Printf("Listening on port %s", port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
+}
+
+func noCache(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control","no-store")
+		next.ServeHTTP(w, r)
+	})
 }
