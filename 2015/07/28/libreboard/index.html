@@ -1,151 +1,20 @@
-<!doctype html><html lang=ja>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=x-ua-compatible content="IE=edge">
-<meta name=generator content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
-<meta name=author content="harasou">
-<meta name=keywords content>
-<meta name=description content="社内で便利に活用しているかんばんソフトtrello 。このクローンである Libreboard を boot2docker で動かしてみた。
-">
-<meta property="og:description" content="社内で便利に活用しているかんばんソフトtrello 。このクローンである Libreboard を boot2docker で動かしてみた。
-">
-<meta property="og:type" content="article">
-<meta property="og:title" content="trello クローンの Libreboard を動かしてみた">
-<meta name=twitter:title content="trello クローンの Libreboard を動かしてみた">
-<meta property="og:url" content="https://harasou.github.io/harasou.jp/2015/07/28/libreboard/">
-<meta property="twitter:url" content="https://harasou.github.io/harasou.jp/2015/07/28/libreboard/">
-<meta property="og:site_name" content="harasou.jp">
-<meta property="og:description" content="社内で便利に活用しているかんばんソフトtrello 。このクローンである Libreboard を boot2docker で動かしてみた。
-">
-<meta name=twitter:description content="社内で便利に活用しているかんばんソフトtrello 。このクローンである Libreboard を boot2docker で動かしてみた。
-">
-<meta property="og:locale" content="ja">
-<meta property="article:published_time" content="2015-07-28T01:47:46">
-<meta property="article:modified_time" content="2015-07-28T01:47:46">
-<meta property="article:tag" content="others">
-<meta name=twitter:card content="summary">
-<meta name=twitter:site content="@harasou5">
-<meta name=twitter:creator content="@harasou5">
-<meta property="og:image" content="https://harasou.github.io/harasou.jp/2015/07/28/libreboard/libreboard-1.png">
-<meta property="twitter:image" content="https://harasou.github.io/harasou.jp/2015/07/28/libreboard/libreboard-1.png">
-<meta property="og:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
-<meta property="twitter:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
-<title>trello クローンの Libreboard を動かしてみた</title>
-<link rel=icon href=/favicon.png>
-<link rel=canonical href=https://harasou.github.io/harasou.jp/2015/07/28/libreboard/>
-<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin=anonymous>
-<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin=anonymous>
-<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin=anonymous>
-<link rel=stylesheet href=/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css>
-<link rel=stylesheet href=https://harasou.github.io/harasou.jp/css/style.css swappaginator=true>
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-62541096-1','auto'),ga('send','pageview'))</script>
-</head>
-<body>
-<div id=blog>
-<header id=header data-behavior=5>
-<i id=btn-open-sidebar class="fa fa-lg fa-bars"></i>
-<div class=header-title>
-<a class=header-title-link href=/harasou.jp/>harasou.jp</a>
-</div>
-<a class=header-right-picture href=/#about>
-<img class=header-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=90" alt=プロフィール画像>
-</a>
-</header>
-<nav id=sidebar data-behavior=5>
-<div class=sidebar-container>
-<div class=sidebar-profile>
-<a href=/#about>
-<img class=sidebar-profile-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt=プロフィール画像>
-</a>
-<h4 class=sidebar-profile-name>harasou</h4>
-<h5 class=sidebar-profile-bio>めくじらを立てない</h5>
-</div>
-<ul class=sidebar-buttons>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=/harasou.jp/harasou.jp/>
-<i class="sidebar-button-icon fa fa-lg fa-home"></i>
-<span class=sidebar-button-desc>ホーム</span>
-</a>
-</li>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=/harasou.jp/harasou.jp/tags>
-<i class="sidebar-button-icon fa fa-lg fa-tags"></i>
-<span class=sidebar-button-desc>タグ</span>
-</a>
-</li>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=/harasou.jp/harasou.jp/archives>
-<i class="sidebar-button-icon fa fa-lg fa-archive"></i>
-<span class=sidebar-button-desc>アーカイブ</span>
-</a>
-</li>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=/harasou.jp/harasou.jp/#about>
-<i class="sidebar-button-icon fa fa-lg fa-question"></i>
-<span class=sidebar-button-desc>プロフィール</span>
-</a>
-</li>
-</ul>
-<ul class=sidebar-buttons>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=https://github.com/harasou target=_blank rel=noopener>
-<i class="sidebar-button-icon fa fa-lg fa-github"></i>
-<span class=sidebar-button-desc>GitHub</span>
-</a>
-</li>
-</ul>
-<ul class=sidebar-buttons>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=/harasou.jp/harasou.jp/index.xml>
-<i class="sidebar-button-icon fa fa-lg fa-rss"></i>
-<span class=sidebar-button-desc>RSS</span>
-</a>
-</li>
-</ul>
-</div>
-</nav>
-<div id=main data-behavior=5 class=hasCoverMetaIn>
-<article class=post itemscope itemtype=http://schema.org/BlogPosting>
-<div class="post-header main-content-wrap text-left">
-<h1 class=post-title itemprop=headline>
-trello クローンの Libreboard を動かしてみた
-</h1>
-<div class="postShorten-meta post-meta">
-<time itemprop=datePublished datetime=2015-07-28T01:47:46+09:00>
-2015/7/28
-</time>
-</div>
-</div>
-<div class="post-content markdown" itemprop=articleBody>
-<div class=main-content-wrap>
-<p>社内で便利に活用しているかんばんソフト<a href=https://trello.com/>trello</a> 。このクローンである <a href=https://github.com/libreboard/libreboard/wiki>Libreboard</a> を boot2docker で動かしてみた。</p>
-<p><img src=libreboard-1.png alt></p>
-<h2 id=libreboard-とは>Libreboard とは</h2>
-<p>Libreboard は、node.js のフレームワークである meteor(メテオ) 、DB として MongoDB が使われている trello のクローン。
-github に公開されているリポジトリには、Dockerfile が含まれているので、Mac 上の boot2docker で動かしてみる。</p>
-<h2 id=環境>環境</h2>
-<ul>
-<li>MacOSX Yosemite 10.10.4</li>
-<li>boot2docker v1.7.1</li>
-</ul>
-<h2 id=手順>手順</h2>
-<ol>
-<li>
-<p>boot2docker を最新化</p>
-<pre tabindex=0><code>brew upgrade boot2docker
+<!doctype html><html lang=ja><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=generator content="Hugo 0.98.0 with theme Tranquilpeak 0.4.7-BETA"><meta name=author content="harasou"><meta name=keywords content><meta name=description content="社内で便利に活用しているかんばんソフトtrello 。このクローンである Libreboard を boot2docker で動かしてみた。
+"><meta property="og:description" content="社内で便利に活用しているかんばんソフトtrello 。このクローンである Libreboard を boot2docker で動かしてみた。
+"><meta property="og:type" content="article"><meta property="og:title" content="trello クローンの Libreboard を動かしてみた"><meta name=twitter:title content="trello クローンの Libreboard を動かしてみた"><meta property="og:url" content="https://harasou.github.io/harasou.jp/2015/07/28/libreboard/"><meta property="twitter:url" content="https://harasou.github.io/harasou.jp/2015/07/28/libreboard/"><meta property="og:site_name" content="harasou.jp"><meta property="og:description" content="社内で便利に活用しているかんばんソフトtrello 。このクローンである Libreboard を boot2docker で動かしてみた。
+"><meta name=twitter:description content="社内で便利に活用しているかんばんソフトtrello 。このクローンである Libreboard を boot2docker で動かしてみた。
+"><meta property="og:locale" content="ja"><meta property="article:published_time" content="2015-07-28T01:47:46"><meta property="article:modified_time" content="2015-07-28T01:47:46"><meta property="article:tag" content="others"><meta name=twitter:card content="summary"><meta name=twitter:site content="@harasou5"><meta name=twitter:creator content="@harasou5"><meta property="og:image" content="https://harasou.github.io/harasou.jp/2015/07/28/libreboard/libreboard-1.png"><meta property="twitter:image" content="https://harasou.github.io/harasou.jp/2015/07/28/libreboard/libreboard-1.png"><meta property="og:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640"><meta property="twitter:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640"><title>trello クローンの Libreboard を動かしてみた</title><link rel=icon href=/favicon.png><link rel=canonical href=https://harasou.github.io/harasou.jp/2015/07/28/libreboard/><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin=anonymous><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin=anonymous><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin=anonymous><link rel=stylesheet href=/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css><link rel=stylesheet href=https://harasou.github.io/harasou.jp/css/style.css swappaginator=true><script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(e,o,i,a,t,n,s){e.GoogleAnalyticsObject=t,e[t]=e[t]||function(){(e[t].q=e[t].q||[]).push(arguments)},e[t].l=1*new Date,n=o.createElement(i),s=o.getElementsByTagName(i)[0],n.async=1,n.src=a,s.parentNode.insertBefore(n,s)}(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-62541096-1","auto"),ga("send","pageview"))</script></head><body><div id=blog><header id=header data-behavior=5><i id=btn-open-sidebar class="fa fa-lg fa-bars"></i><div class=header-title><a class=header-title-link href=/harasou.jp/>harasou.jp</a></div><a class=header-right-picture href=/#about><img class=header-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=90" alt=プロフィール画像></a></header><nav id=sidebar data-behavior=5><div class=sidebar-container><div class=sidebar-profile><a href=/#about><img class=sidebar-profile-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt=プロフィール画像></a><h4 class=sidebar-profile-name>harasou</h4><h5 class=sidebar-profile-bio>めくじらを立てない</h5></div><ul class=sidebar-buttons><li class=sidebar-button><a class=sidebar-button-link href=/harasou.jp/harasou.jp/><i class="sidebar-button-icon fa fa-lg fa-home"></i>
+<span class=sidebar-button-desc>ホーム</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=/harasou.jp/harasou.jp/tags><i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+<span class=sidebar-button-desc>タグ</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=/harasou.jp/harasou.jp/archives><i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+<span class=sidebar-button-desc>アーカイブ</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=/harasou.jp/harasou.jp/#about><i class="sidebar-button-icon fa fa-lg fa-question"></i>
+<span class=sidebar-button-desc>プロフィール</span></a></li></ul><ul class=sidebar-buttons><li class=sidebar-button><a class=sidebar-button-link href=https://github.com/harasou target=_blank rel=noopener><i class="sidebar-button-icon fa fa-lg fa-github"></i>
+<span class=sidebar-button-desc>GitHub</span></a></li></ul><ul class=sidebar-buttons><li class=sidebar-button><a class=sidebar-button-link href=/harasou.jp/harasou.jp/index.xml><i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+<span class=sidebar-button-desc>RSS</span></a></li></ul></div></nav><div id=main data-behavior=5 class=hasCoverMetaIn><article class=post itemscope itemtype=http://schema.org/BlogPosting><div class="post-header main-content-wrap text-left"><h1 class=post-title itemprop=headline>trello クローンの Libreboard を動かしてみた</h1><div class="postShorten-meta post-meta"><time itemprop=datePublished datetime=2015-07-28T01:47:46+09:00>2015/7/28</time></div></div><div class="post-content markdown" itemprop=articleBody><div class=main-content-wrap><p>社内で便利に活用しているかんばんソフト<a href=https://trello.com/>trello</a> 。このクローンである <a href=https://github.com/libreboard/libreboard/wiki>Libreboard</a> を boot2docker で動かしてみた。</p><p><img src=libreboard-1.png alt></p><h2 id=libreboard-とは>Libreboard とは</h2><p>Libreboard は、node.js のフレームワークである meteor(メテオ) 、DB として MongoDB が使われている trello のクローン。
+github に公開されているリポジトリには、Dockerfile が含まれているので、Mac 上の boot2docker で動かしてみる。</p><h2 id=環境>環境</h2><ul><li>MacOSX Yosemite 10.10.4</li><li>boot2docker v1.7.1</li></ul><h2 id=手順>手順</h2><ol><li><p>boot2docker を最新化</p><pre tabindex=0><code>brew upgrade boot2docker
 boot2docker update
 $(boot2docker shellinit)
-</code></pre></li>
-<li>
-<p>Libreboard のリポジトリを clone</p>
-<pre tabindex=0><code>git clone git@github.com:libreboard/libreboard.git
+</code></pre></li><li><p>Libreboard のリポジトリを clone</p><pre tabindex=0><code>git clone git@github.com:libreboard/libreboard.git
 cd libreboard
-</code></pre></li>
-<li>
-<p>Libreboard の docker image を build</p>
-<p><code>docker build</code> してみるとエラーになった。</p>
-<pre tabindex=0><code>$ docker build -t libreboard/libreboard .
+</code></pre></li><li><p>Libreboard の docker image を build</p><p><code>docker build</code> してみるとエラーになった。</p><pre tabindex=0><code>$ docker build -t libreboard/libreboard .
  :
 Meteor 1.1.0.2 has been installed in your home directory (~/.meteor).
 Writing a launcher script to /usr/local/bin/meteor for your convenience.
@@ -166,7 +35,7 @@ Bower:  { [Error: git is not installed or not in the PATH] stack: [Getter] }
 Bower:  { [Error: git is not installed or not in the PATH] stack: [Getter] }
 Errors prevented bundling:
 While building the application:
-packages/bower/plugin/handler.js:191:1: Cannot read property 'name' of
+packages/bower/plugin/handler.js:191:1: Cannot read property &#39;name&#39; of
 undefined (compiling bower.json)
 at getDependencies (packages/bower/plugin/handler.js:191:1)
 at packages/bower/plugin/handler.js:203:1
@@ -176,48 +45,35 @@ at bowerHandler (packages/bower/plugin/handler.js:65:1)
 at Package (packages/bower/plugin/handler.js:229:1)
 
 
-The command '/bin/sh -c bash $METEORD_DIR/on_build.sh' returned a non-zero code: 1
-</code></pre><p>git がない模様。とりあえず、失敗したコンテナとイメージを削除しておく。</p>
-<pre tabindex=0><code>docker ps -a
+The command &#39;/bin/sh -c bash $METEORD_DIR/on_build.sh&#39; returned a non-zero code: 1
+</code></pre><p>git がない模様。とりあえず、失敗したコンテナとイメージを削除しておく。</p><pre tabindex=0><code>docker ps -a
 docker rm &lt;コンテナID&gt;
 docker images
 docker rmi &lt;イメージID&gt;
-</code></pre></li>
-<li>
-<p>meteorhacks/meteord の再作成</p>
-<p>Libreboard の Dockerfile を見ると <code>meteorhacks/meteord:onbuild</code> の image を参照している。タグを含めると docker の image は以下のような階層になっている。</p>
-<pre tabindex=0><code>libreboard/libreboard
+</code></pre></li><li><p>meteorhacks/meteord の再作成</p><p>Libreboard の Dockerfile を見ると <code>meteorhacks/meteord:onbuild</code> の image を参照している。タグを含めると docker の image は以下のような階層になっている。</p><pre tabindex=0><code>libreboard/libreboard
   └  meteorhacks/meteord:onbuild
     └  meteorhacks/meteord:base
       └  debian:wheezy
-</code></pre><p>Bower 実行時に git がないことが原因のようなので、<code>meteorhacks/meteord:base</code> のイメージに git を含めてやる。</p>
-</li>
-<li>
-<p>git を組み込んだ meteorhacks/meteord:onbuild を作成</p>
-<pre tabindex=0><code>git clone https://github.com/meteorhacks/meteord.git
+</code></pre><p>Bower 実行時に git がないことが原因のようなので、<code>meteorhacks/meteord:base</code> のイメージに git を含めてやる。</p></li><li><p>git を組み込んだ meteorhacks/meteord:onbuild を作成</p><pre tabindex=0><code>git clone https://github.com/meteorhacks/meteord.git
 cd meteord/base/
 vim scripts/lib/install_base.sh
-</code></pre><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-diff data-lang=diff><span style=color:#f92672>--- a/scripts/lib/install_base.sh
-</span><span style=color:#f92672></span><span style=color:#a6e22e>+++ b/scripts/lib/install_base.sh
-</span><span style=color:#a6e22e></span><span style=color:#75715e>@@ -1,4 +1,4 @@
-</span><span style=color:#75715e></span> #!/bin/bash
- set -e
- apt-get update -y
-<span style=color:#f92672>-apt-get install -y curl bzip2 build-essential python
-</span><span style=color:#f92672></span>\ No newline at end of file
-<span style=color:#a6e22e>+apt-get install -y curl bzip2 build-essential python git
-</span></code></pre></div><pre tabindex=0><code>docker build -t meteorhacks/meteord:base .
+</code></pre><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-diff data-lang=diff><span style=display:flex><span><span style=color:#f92672>--- a/scripts/lib/install_base.sh
+</span></span></span><span style=display:flex><span><span style=color:#f92672></span><span style=color:#a6e22e>+++ b/scripts/lib/install_base.sh
+</span></span></span><span style=display:flex><span><span style=color:#a6e22e></span><span style=color:#75715e>@@ -1,4 +1,4 @@
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span> #!/bin/bash
+</span></span><span style=display:flex><span> set -e
+</span></span><span style=display:flex><span> apt-get update -y
+</span></span><span style=display:flex><span><span style=color:#f92672>-apt-get install -y curl bzip2 build-essential python
+</span></span></span><span style=display:flex><span><span style=color:#f92672></span>\ No newline at end of file
+</span></span><span style=display:flex><span><span style=color:#a6e22e>+apt-get install -y curl bzip2 build-essential python git
+</span></span></span></code></pre></div><pre tabindex=0><code>docker build -t meteorhacks/meteord:base .
 cd ../onbuild/
 docker build -t meteorhacks/meteord:onbuild .
 </code></pre><pre tabindex=0><code>$ docker images
 REPOSITORY              TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
 meteorhacks/meteord     onbuild             4878b6e24949        About an hour ago   328.8 MB
 meteorhacks/meteord     base                b76d66c56aee        About an hour ago   328.8 MB
-</code></pre><p>作成した image はこんな感じ。</p>
-</li>
-<li>
-<p>再度 Libreboard の docker image を build</p>
-<pre tabindex=0><code>$ docker build -t libreboard/libreboard .
+</code></pre><p>作成した image はこんな感じ。</p></li><li><p>再度 Libreboard の docker image を build</p><pre tabindex=0><code>$ docker build -t libreboard/libreboard .
  :
 Bower:  { [Error: Package autosize not found] stack: [Getter] }
 Bower:  autosize v3.0.6 successfully installed
@@ -257,211 +113,27 @@ Step 1 : MAINTAINER Maxime Quandalle &lt;maxime@quandalle.com&gt;
  ---&gt; 0c5dc1c69d71
 Removing intermediate container 55215a871ca7
 Successfully built 0c5dc1c69d71
-</code></pre><p>npm の WARN は出ているが、とりあえず build 完了。</p>
-</li>
-</ol>
-<h2 id=動作確認>動作確認</h2>
-<ol>
-<li>
-<p>コンテナの起動</p>
-<p>Libreboard の Dockerfile に書かれている通り、コンテナを 2つ起動する。
-なお、２つ目のコンテナが使用するイメージは、先ほど build したタグ<code>libreboard/libreboard</code>を指定。</p>
-<pre tabindex=0><code>docker run -d --name libreboard-db mongo
-docker run -d --link &quot;libreboard-db:db&quot; -e &quot;MONGO_URL=mongodb://db&quot; \
-  -e &quot;ROOT_URL=http://example.com&quot; -p 8080:80 libreboard/libreboard
+</code></pre><p>npm の WARN は出ているが、とりあえず build 完了。</p></li></ol><h2 id=動作確認>動作確認</h2><ol><li><p>コンテナの起動</p><p>Libreboard の Dockerfile に書かれている通り、コンテナを 2つ起動する。
+なお、２つ目のコンテナが使用するイメージは、先ほど build したタグ<code>libreboard/libreboard</code>を指定。</p><pre tabindex=0><code>docker run -d --name libreboard-db mongo
+docker run -d --link &#34;libreboard-db:db&#34; -e &#34;MONGO_URL=mongodb://db&#34; \
+  -e &#34;ROOT_URL=http://example.com&#34; -p 8080:80 libreboard/libreboard
 </code></pre><pre tabindex=0><code>$ docker ps
 CONTAINER ID        IMAGE                   COMMAND                CREATED              STATUS              PORTS                  NAMES
-e97fcb032d48        libreboard/libreboard   &quot;/bin/sh -c 'bash $M   6 seconds ago        Up 5 seconds        0.0.0.0:8080-&gt;80/tcp   cranky_wilson
-45bcc5b47ffc        mongo                   &quot;/entrypoint.sh mong   About a minute ago   Up About a minute   27017/tcp              libreboard-db
-</code></pre></li>
-<li>
-<p>VirtualBox でポートフォワーディング</p>
-<p>boot2docker 上では、8080 でアクセスすることができるが、Mac 上からはアクセスできない。このため、VirtualBox でポートフォワーディングの設定を行う。</p>
-<p><img src=portfowarding.png alt></p>
-</li>
-<li>
-<p>ブラウザからアクセス</p>
-<p>http://localhost:8080/ 適当にアカウント作ってログインして、カード作ってみた。</p>
-<p>ログイン画面。
+e97fcb032d48        libreboard/libreboard   &#34;/bin/sh -c &#39;bash $M   6 seconds ago        Up 5 seconds        0.0.0.0:8080-&gt;80/tcp   cranky_wilson
+45bcc5b47ffc        mongo                   &#34;/entrypoint.sh mong   About a minute ago   Up About a minute   27017/tcp              libreboard-db
+</code></pre></li><li><p>VirtualBox でポートフォワーディング</p><p>boot2docker 上では、8080 でアクセスすることができるが、Mac 上からはアクセスできない。このため、VirtualBox でポートフォワーディングの設定を行う。</p><p><img src=portfowarding.png alt></p></li><li><p>ブラウザからアクセス</p><p>http://localhost:8080/ 適当にアカウント作ってログインして、カード作ってみた。</p><p>ログイン画面。
 <img src=libreboard-2.png alt>
 ボードの追加。
 <img src=libreboard-3.png alt>
 言語とプロファイルを設定。
 <img src=libreboard-4.png alt>
 カードの追加。Markdown もいけるっぽい。
-<img src=libreboard-5.png alt></p>
-</li>
-</ol>
-</div>
-</div>
-<div id=post-footer class="post-footer main-content-wrap">
-<div class=post-footer-tags>
-<span class="text-color-light text-small">タグ</span><br>
-<a class="tag tag--primary tag--small" href=/tags/others/>others</a>
-</div>
-<div class=post-actions-wrap>
-<nav>
-<ul class="post-actions post-action-nav">
-<li class=post-action>
-<a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2015/08/05/h2o-mruby/ data-tooltip="h2o + mruby セットアップメモ">
-<i class="fa fa-angle-left"></i>
-<span class="hide-xs hide-sm text-small icon-ml">次</span>
-</a>
-</li>
-<li class=post-action>
-<a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2015/07/26/minutes-mrbgems/ data-tooltip="5分でつくる mrbgems">
-<span class="hide-xs hide-sm text-small icon-mr">前</span>
-<i class="fa fa-angle-right"></i>
-</a>
-</li>
-</ul>
-</nav>
-<ul class="post-actions post-action-share">
-<li class="post-action hide-lg hide-md hide-sm">
-<a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions>
-<i class="fa fa-share-alt"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.github.io/harasou.jp/2015/07/28/libreboard/>
-<i class="fa icon-hatebu"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.github.io/harasou.jp/2015/07/28/libreboard/">
-<i class="fa icon-pocket"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.github.io/harasou.jp/2015/07/28/libreboard/">
-<i class="fa fa-facebook-official"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.github.io/harasou.jp/2015/07/28/libreboard/">
-<i class="fa fa-twitter"></i>
-</a>
-</li>
-<li class=post-action>
-<a class="post-action-btn btn btn--default" href=#>
-<i class="fa fa-list"></i>
-</a>
-</li>
-</ul>
-</div>
-</div>
-</article>
-<footer id=footer class=main-content-wrap>
-<span class=copyrights>
-&copy; 2021 harasou. All Rights Reserved
-</span>
-</footer>
-</div>
-<div id=bottom-bar class=post-bottom-bar data-behavior=5>
-<div class=post-actions-wrap>
-<nav>
-<ul class="post-actions post-action-nav">
-<li class=post-action>
-<a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2015/08/05/h2o-mruby/ data-tooltip="h2o + mruby セットアップメモ">
-<i class="fa fa-angle-left"></i>
-<span class="hide-xs hide-sm text-small icon-ml">次</span>
-</a>
-</li>
-<li class=post-action>
-<a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2015/07/26/minutes-mrbgems/ data-tooltip="5分でつくる mrbgems">
-<span class="hide-xs hide-sm text-small icon-mr">前</span>
-<i class="fa fa-angle-right"></i>
-</a>
-</li>
-</ul>
-</nav>
-<ul class="post-actions post-action-share">
-<li class="post-action hide-lg hide-md hide-sm">
-<a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions>
-<i class="fa fa-share-alt"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.github.io/harasou.jp/2015/07/28/libreboard/>
-<i class="fa icon-hatebu"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.github.io/harasou.jp/2015/07/28/libreboard/">
-<i class="fa icon-pocket"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.github.io/harasou.jp/2015/07/28/libreboard/">
-<i class="fa fa-facebook-official"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.github.io/harasou.jp/2015/07/28/libreboard/">
-<i class="fa fa-twitter"></i>
-</a>
-</li>
-<li class=post-action>
-<a class="post-action-btn btn btn--default" href=#>
-<i class="fa fa-list"></i>
-</a>
-</li>
-</ul>
-</div>
-</div>
-<div id=share-options-bar class=share-options-bar data-behavior=5>
-<i id=btn-close-shareoptions class="fa fa-close"></i>
-<ul class=share-options>
-<li class=share-option>
-<a class=share-option-btn target=new href=http://b.hatena.ne.jp/entry/https%3A%2F%2Fharasou.github.io%2Fharasou.jp%2F2015%2F07%2F28%2Flibreboard%2F>
-<i class="fa icon-hatebu"></i><span>Hatebuで共有</span>
-</a>
-</li>
-<li class=share-option>
-<a class=share-option-btn target=new href="http://getpocket.com/edit?url=https%3A%2F%2Fharasou.github.io%2Fharasou.jp%2F2015%2F07%2F28%2Flibreboard%2F">
-<i class="fa icon-pocket"></i><span>Pocketで共有</span>
-</a>
-</li>
-<li class=share-option>
-<a class=share-option-btn target=new href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fharasou.github.io%2Fharasou.jp%2F2015%2F07%2F28%2Flibreboard%2F">
-<i class="fa fa-facebook-official"></i><span>Facebookで共有</span>
-</a>
-</li>
-<li class=share-option>
-<a class=share-option-btn target=new href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fharasou.github.io%2Fharasou.jp%2F2015%2F07%2F28%2Flibreboard%2F">
-<i class="fa fa-twitter"></i><span>Twitterで共有</span>
-</a>
-</li>
-</ul>
-</div>
-<div id=share-options-mask class=share-options-mask></div>
-</div>
-<div id=about>
-<div id=about-card>
-<div id=about-btn-close>
-<i class="fa fa-remove"></i>
-</div>
-<img id=about-card-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt=プロフィール画像>
-<h4 id=about-card-name>harasou</h4>
-<div id=about-card-bio>めくじらを立てない</div>
-<div id=about-card-job>
-<i class="fa fa-briefcase"></i>
-<br>
-Infra Engineer
-</div>
-<div id=about-card-location>
-<i class="fa fa-map-marker"></i>
-<br>
-Fukuoka Japan
-</div>
-</div>
-</div>
-<div id=cover style=background-image:url(https://harasou.github.io/harasou.jp/images/cover.jpg)></div>
-<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin=anonymous></script>
+<img src=libreboard-5.png alt></p></li></ol></div></div><div id=post-footer class="post-footer main-content-wrap"><div class=post-footer-tags><span class="text-color-light text-small">タグ</span><br><a class="tag tag--primary tag--small" href=/tags/others/>others</a></div><div class=post-actions-wrap><nav><ul class="post-actions post-action-nav"><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2015/08/05/h2o-mruby/ data-tooltip="h2o + mruby セットアップメモ"><i class="fa fa-angle-left"></i>
+<span class="hide-xs hide-sm text-small icon-ml">次</span></a></li><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2015/07/26/minutes-mrbgems/ data-tooltip="5分でつくる mrbgems"><span class="hide-xs hide-sm text-small icon-mr">前</span>
+<i class="fa fa-angle-right"></i></a></li></ul></nav><ul class="post-actions post-action-share"><li class="post-action hide-lg hide-md hide-sm"><a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions><i class="fa fa-share-alt"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.github.io/harasou.jp/2015/07/28/libreboard/><i class="fa icon-hatebu"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.github.io/harasou.jp/2015/07/28/libreboard/"><i class="fa icon-pocket"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.github.io/harasou.jp/2015/07/28/libreboard/"><i class="fa fa-facebook-official"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.github.io/harasou.jp/2015/07/28/libreboard/"><i class="fa fa-twitter"></i></a></li><li class=post-action><a class="post-action-btn btn btn--default" href=#><i class="fa fa-list"></i></a></li></ul></div></div></article><footer id=footer class=main-content-wrap><span class=copyrights>&copy; 2022 harasou. All Rights Reserved</span></footer></div><div id=bottom-bar class=post-bottom-bar data-behavior=5><div class=post-actions-wrap><nav><ul class="post-actions post-action-nav"><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2015/08/05/h2o-mruby/ data-tooltip="h2o + mruby セットアップメモ"><i class="fa fa-angle-left"></i>
+<span class="hide-xs hide-sm text-small icon-ml">次</span></a></li><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2015/07/26/minutes-mrbgems/ data-tooltip="5分でつくる mrbgems"><span class="hide-xs hide-sm text-small icon-mr">前</span>
+<i class="fa fa-angle-right"></i></a></li></ul></nav><ul class="post-actions post-action-share"><li class="post-action hide-lg hide-md hide-sm"><a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions><i class="fa fa-share-alt"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.github.io/harasou.jp/2015/07/28/libreboard/><i class="fa icon-hatebu"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.github.io/harasou.jp/2015/07/28/libreboard/"><i class="fa icon-pocket"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.github.io/harasou.jp/2015/07/28/libreboard/"><i class="fa fa-facebook-official"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.github.io/harasou.jp/2015/07/28/libreboard/"><i class="fa fa-twitter"></i></a></li><li class=post-action><a class="post-action-btn btn btn--default" href=#><i class="fa fa-list"></i></a></li></ul></div></div><div id=share-options-bar class=share-options-bar data-behavior=5><i id=btn-close-shareoptions class="fa fa-close"></i><ul class=share-options><li class=share-option><a class=share-option-btn target=new href=http://b.hatena.ne.jp/entry/https%3A%2F%2Fharasou.github.io%2Fharasou.jp%2F2015%2F07%2F28%2Flibreboard%2F><i class="fa icon-hatebu"></i><span>Hatebuで共有</span></a></li><li class=share-option><a class=share-option-btn target=new href="http://getpocket.com/edit?url=https%3A%2F%2Fharasou.github.io%2Fharasou.jp%2F2015%2F07%2F28%2Flibreboard%2F"><i class="fa icon-pocket"></i><span>Pocketで共有</span></a></li><li class=share-option><a class=share-option-btn target=new href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fharasou.github.io%2Fharasou.jp%2F2015%2F07%2F28%2Flibreboard%2F"><i class="fa fa-facebook-official"></i><span>Facebookで共有</span></a></li><li class=share-option><a class=share-option-btn target=new href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fharasou.github.io%2Fharasou.jp%2F2015%2F07%2F28%2Flibreboard%2F"><i class="fa fa-twitter"></i><span>Twitterで共有</span></a></li></ul></div><div id=share-options-mask class=share-options-mask></div></div><div id=about><div id=about-card><div id=about-btn-close><i class="fa fa-remove"></i></div><img id=about-card-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt=プロフィール画像><h4 id=about-card-name>harasou</h4><div id=about-card-bio>めくじらを立てない</div><div id=about-card-job><i class="fa fa-briefcase"></i><br>Infra Engineer</div><div id=about-card-location><i class="fa fa-map-marker"></i><br>Fukuoka Japan</div></div></div><div id=cover style=background-image:url(https://harasou.github.io/harasou.jp/images/cover.jpg)></div><script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin=anonymous></script>
 <script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin=anonymous></script>
 <script src=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin=anonymous></script>
 <script src=/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js></script>
-<script lang=javascript>window.onload=updateMinWidth,window.onresize=updateMinWidth,document.getElementById("sidebar").addEventListener("transitionend",updateMinWidth);function updateMinWidth(){var b=document.getElementById("sidebar"),a=document.getElementById("main"),c,d,e;a.style.minWidth="",c=getComputedStyle(a).getPropertyValue("min-width"),d=getComputedStyle(b).getPropertyValue("width"),e=getComputedStyle(b).getPropertyValue("left"),a.style.minWidth=`calc(${c} - ${d} - ${e})`}</script>
-<script>$(document).ready(function(){hljs.configure({classPrefix:'',useBR:!1}),$('pre.code-highlight > code, pre > code').each(function(b,a){$(this).hasClass('codeblock')||$(this).addClass('codeblock'),hljs.highlightBlock(a)})})</script>
-</body>
-</html>
+<script lang=javascript>window.onload=updateMinWidth,window.onresize=updateMinWidth,document.getElementById("sidebar").addEventListener("transitionend",updateMinWidth);function updateMinWidth(){var n,s,o,t=document.getElementById("sidebar"),e=document.getElementById("main");e.style.minWidth="",n=getComputedStyle(e).getPropertyValue("min-width"),s=getComputedStyle(t).getPropertyValue("width"),o=getComputedStyle(t).getPropertyValue("left"),e.style.minWidth=`calc(${n} - ${s} - ${o})`}</script><script>$(document).ready(function(){hljs.configure({classPrefix:'',useBR:!1}),$("pre.code-highlight > code, pre > code").each(function(t,e){$(this).hasClass("codeblock")||$(this).addClass("codeblock"),hljs.highlightBlock(e)})})</script></body></html>

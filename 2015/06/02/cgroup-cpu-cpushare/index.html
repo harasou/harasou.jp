@@ -1,178 +1,35 @@
-<!doctype html><html lang=ja>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=x-ua-compatible content="IE=edge">
-<meta name=generator content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
-<meta name=author content="harasou">
-<meta name=keywords content>
-<meta name=description content="cgroup には複数のサブシステム（controller）があるが、その中の cpu.shares について検証してみた。
+<!doctype html><html lang=ja><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=generator content="Hugo 0.98.0 with theme Tranquilpeak 0.4.7-BETA"><meta name=author content="harasou"><meta name=keywords content><meta name=description content="cgroup には複数のサブシステム（controller）があるが、その中の cpu.shares について検証してみた。
 cpu.shares とは
 cpu.shares を設定すると、タスクが使用できる CPU 時間の割合を変更することができる。
-具体的に言うと、A B２つのグループを作り、cpu.shares をそれぞれ1024 2048とした場合、B のグループにいるプロセスが、A のグループにいるプロセスより 2倍 CPU を使えるようになる。以下、実行例。">
-<meta property="og:description" content="cgroup には複数のサブシステム（controller）があるが、その中の cpu.shares について検証してみた。
+具体的に言うと、A B２つのグループを作り、cpu.shares をそれぞれ1024 2048とした場合、B のグループにいるプロセスが、A のグループにいるプロセスより 2倍 CPU を使えるようになる。以下、実行例。"><meta property="og:description" content="cgroup には複数のサブシステム（controller）があるが、その中の cpu.shares について検証してみた。
 cpu.shares とは
 cpu.shares を設定すると、タスクが使用できる CPU 時間の割合を変更することができる。
-具体的に言うと、A B２つのグループを作り、cpu.shares をそれぞれ1024 2048とした場合、B のグループにいるプロセスが、A のグループにいるプロセスより 2倍 CPU を使えるようになる。以下、実行例。">
-<meta property="og:type" content="article">
-<meta property="og:title" content="cgroup の cpu.shares を検証した">
-<meta name=twitter:title content="cgroup の cpu.shares を検証した">
-<meta property="og:url" content="https://harasou.github.io/harasou.jp/2015/06/02/cgroup-cpu-cpushare/">
-<meta property="twitter:url" content="https://harasou.github.io/harasou.jp/2015/06/02/cgroup-cpu-cpushare/">
-<meta property="og:site_name" content="harasou.jp">
-<meta property="og:description" content="cgroup には複数のサブシステム（controller）があるが、その中の cpu.shares について検証してみた。
+具体的に言うと、A B２つのグループを作り、cpu.shares をそれぞれ1024 2048とした場合、B のグループにいるプロセスが、A のグループにいるプロセスより 2倍 CPU を使えるようになる。以下、実行例。"><meta property="og:type" content="article"><meta property="og:title" content="cgroup の cpu.shares を検証した"><meta name=twitter:title content="cgroup の cpu.shares を検証した"><meta property="og:url" content="https://harasou.github.io/harasou.jp/2015/06/02/cgroup-cpu-cpushare/"><meta property="twitter:url" content="https://harasou.github.io/harasou.jp/2015/06/02/cgroup-cpu-cpushare/"><meta property="og:site_name" content="harasou.jp"><meta property="og:description" content="cgroup には複数のサブシステム（controller）があるが、その中の cpu.shares について検証してみた。
 cpu.shares とは
 cpu.shares を設定すると、タスクが使用できる CPU 時間の割合を変更することができる。
-具体的に言うと、A B２つのグループを作り、cpu.shares をそれぞれ1024 2048とした場合、B のグループにいるプロセスが、A のグループにいるプロセスより 2倍 CPU を使えるようになる。以下、実行例。">
-<meta name=twitter:description content="cgroup には複数のサブシステム（controller）があるが、その中の cpu.shares について検証してみた。
+具体的に言うと、A B２つのグループを作り、cpu.shares をそれぞれ1024 2048とした場合、B のグループにいるプロセスが、A のグループにいるプロセスより 2倍 CPU を使えるようになる。以下、実行例。"><meta name=twitter:description content="cgroup には複数のサブシステム（controller）があるが、その中の cpu.shares について検証してみた。
 cpu.shares とは
 cpu.shares を設定すると、タスクが使用できる CPU 時間の割合を変更することができる。
-具体的に言うと、A B２つのグループを作り、cpu.shares をそれぞれ1024 2048とした場合、B のグループにいるプロセスが、A のグループにいるプロセスより 2倍 CPU を使えるようになる。以下、実行例。">
-<meta property="og:locale" content="ja">
-<meta property="article:published_time" content="2015-06-02T04:09:33">
-<meta property="article:modified_time" content="2015-06-02T04:09:33">
-<meta property="article:tag" content="cgroup">
-<meta name=twitter:card content="summary">
-<meta name=twitter:site content="@harasou5">
-<meta name=twitter:creator content="@harasou5">
-<meta property="og:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
-<meta property="twitter:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
-<title>cgroup の cpu.shares を検証した</title>
-<link rel=icon href=/favicon.png>
-<link rel=canonical href=https://harasou.github.io/harasou.jp/2015/06/02/cgroup-cpu-cpushare/>
-<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin=anonymous>
-<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin=anonymous>
-<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin=anonymous>
-<link rel=stylesheet href=/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css>
-<link rel=stylesheet href=https://harasou.github.io/harasou.jp/css/style.css swappaginator=true>
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-62541096-1','auto'),ga('send','pageview'))</script>
-</head>
-<body>
-<div id=blog>
-<header id=header data-behavior=5>
-<i id=btn-open-sidebar class="fa fa-lg fa-bars"></i>
-<div class=header-title>
-<a class=header-title-link href=/harasou.jp/>harasou.jp</a>
-</div>
-<a class=header-right-picture href=/#about>
-<img class=header-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=90" alt=プロフィール画像>
-</a>
-</header>
-<nav id=sidebar data-behavior=5>
-<div class=sidebar-container>
-<div class=sidebar-profile>
-<a href=/#about>
-<img class=sidebar-profile-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt=プロフィール画像>
-</a>
-<h4 class=sidebar-profile-name>harasou</h4>
-<h5 class=sidebar-profile-bio>めくじらを立てない</h5>
-</div>
-<ul class=sidebar-buttons>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=/harasou.jp/harasou.jp/>
-<i class="sidebar-button-icon fa fa-lg fa-home"></i>
-<span class=sidebar-button-desc>ホーム</span>
-</a>
-</li>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=/harasou.jp/harasou.jp/tags>
-<i class="sidebar-button-icon fa fa-lg fa-tags"></i>
-<span class=sidebar-button-desc>タグ</span>
-</a>
-</li>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=/harasou.jp/harasou.jp/archives>
-<i class="sidebar-button-icon fa fa-lg fa-archive"></i>
-<span class=sidebar-button-desc>アーカイブ</span>
-</a>
-</li>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=/harasou.jp/harasou.jp/#about>
-<i class="sidebar-button-icon fa fa-lg fa-question"></i>
-<span class=sidebar-button-desc>プロフィール</span>
-</a>
-</li>
-</ul>
-<ul class=sidebar-buttons>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=https://github.com/harasou target=_blank rel=noopener>
-<i class="sidebar-button-icon fa fa-lg fa-github"></i>
-<span class=sidebar-button-desc>GitHub</span>
-</a>
-</li>
-</ul>
-<ul class=sidebar-buttons>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=/harasou.jp/harasou.jp/index.xml>
-<i class="sidebar-button-icon fa fa-lg fa-rss"></i>
-<span class=sidebar-button-desc>RSS</span>
-</a>
-</li>
-</ul>
-</div>
-</nav>
-<div id=main data-behavior=5 class=hasCoverMetaIn>
-<article class=post itemscope itemtype=http://schema.org/BlogPosting>
-<div class="post-header main-content-wrap text-left">
-<h1 class=post-title itemprop=headline>
-cgroup の cpu.shares を検証した
-</h1>
-<div class="postShorten-meta post-meta">
-<time itemprop=datePublished datetime=2015-06-02T04:09:33+09:00>
-2015/6/2
-</time>
-</div>
-</div>
-<div class="post-content markdown" itemprop=articleBody>
-<div class=main-content-wrap>
-<p>cgroup には複数のサブシステム（controller）があるが、その中の <code>cpu.shares</code> について検証してみた。</p>
-<h2 id=cpushares-とは>cpu.shares とは</h2>
-<p>cpu.shares を設定すると、タスクが使用できる CPU 時間の<code>割合</code>を変更することができる。</p>
-<p>具体的に言うと、<code>A</code> <code>B</code>２つのグループを作り、cpu.shares をそれぞれ<code>1024</code> <code>2048</code>とした場合、B のグループにいるプロセスが、A のグループにいるプロセスより 2倍 CPU を使えるようになる。以下、実行例。</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=color:#75715e># mkdir /cgroup/{A,B}</span>
-<span style=color:#75715e># echo 1024 &gt; /cgroup/A/cpu.shares</span>
-<span style=color:#75715e># echo 2048 &gt; /cgroup/B/cpu.shares</span>
-<span style=color:#75715e># sh -c &#34;while : ; do : ; done&#34; &amp; echo $! &gt; /cgroup/A/tasks</span>
-<span style=color:#f92672>[</span>1<span style=color:#f92672>]</span> <span style=color:#ae81ff>2835</span>
-<span style=color:#75715e># sh -c &#34;while : ; do : ; done&#34; &amp; echo $! &gt; /cgroup/B/tasks</span>
-<span style=color:#f92672>[</span>2<span style=color:#f92672>]</span> <span style=color:#ae81ff>2836</span>
-<span style=color:#75715e># ps uf</span>
-USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-root      <span style=color:#ae81ff>2816</span>  0.0  0.5 <span style=color:#ae81ff>175140</span>  <span style=color:#ae81ff>2656</span> pts/2    S    21:44   0:00 sudo -s
-root      <span style=color:#ae81ff>2817</span>  0.0  0.3 <span style=color:#ae81ff>108300</span>  <span style=color:#ae81ff>1908</span> pts/2    S+   21:44   0:00  <span style=color:#ae81ff>\_</span> /bin/bash
-root      <span style=color:#ae81ff>2835</span> 34.9  0.2 <span style=color:#ae81ff>106056</span>  <span style=color:#ae81ff>1268</span> pts/2    R    21:47   0:56      <span style=color:#ae81ff>\_</span> sh -c <span style=color:#66d9ef>while</span> : ; <span style=color:#66d9ef>do</span> : ; <span style=color:#66d9ef>done</span>
-root      <span style=color:#ae81ff>2836</span> 66.1  0.2 <span style=color:#ae81ff>106056</span>  <span style=color:#ae81ff>1268</span> pts/2    R    21:47   1:43      <span style=color:#ae81ff>\_</span> sh -c <span style=color:#66d9ef>while</span> : ; <span style=color:#66d9ef>do</span> : ; <span style=color:#66d9ef>done</span>
-</code></pre></div><p>グループ B に登録した PID:2836 のプロセスが、グループ A に登録した PID:2835 の 2倍 CPU を使用している。</p>
-<h2 id=今回の疑問点>今回の疑問点</h2>
-<p>これだけなら、わかりやすいが、以下の点が不明だったので実際に検証してみた。</p>
-<ul>
-<li>グループ内に複数プロセスがいる場合どのように CPU が割り振られるのか</li>
-<li>ルートグループに属するプロセスの CPU の割り振りはどうなるか</li>
-</ul>
-<h2 id=環境>環境</h2>
-<ul>
-<li>
-<p>マシン: Vagrant(CPU コア1)</p>
-</li>
-<li>
-<p>OS:</p>
-<ul>
-<li>CentOS6.6 (2.6.32-504.16.2.el6.x86_64)</li>
-<li>CentOS7.1 (3.10.0-229.el7.x86_64)</li>
-</ul>
-</li>
-<li>
-<p>今回検証したグループ構成</p>
-<p><img src=cgroup.png alt></p>
-<ul>
-<li>CPU のルートグループ配下に <code>test</code> グループを作成する</li>
-<li>test グループ配下に、<code>A</code> <code>B</code> <code>C</code> グループを作成する</li>
-<li>作成した全てのグループの<code>cpu.shares</code> は、全て <code>1024</code> と同じにする</li>
-</ul>
-</li>
-<li>
-<p>環境構築手順(CentOS6.6)</p>
-<pre tabindex=0><code>[root@localhost vagrant]# mkdir /cgroup
+具体的に言うと、A B２つのグループを作り、cpu.shares をそれぞれ1024 2048とした場合、B のグループにいるプロセスが、A のグループにいるプロセスより 2倍 CPU を使えるようになる。以下、実行例。"><meta property="og:locale" content="ja"><meta property="article:published_time" content="2015-06-02T04:09:33"><meta property="article:modified_time" content="2015-06-02T04:09:33"><meta property="article:tag" content="cgroup"><meta name=twitter:card content="summary"><meta name=twitter:site content="@harasou5"><meta name=twitter:creator content="@harasou5"><meta property="og:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640"><meta property="twitter:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640"><title>cgroup の cpu.shares を検証した</title><link rel=icon href=/favicon.png><link rel=canonical href=https://harasou.github.io/harasou.jp/2015/06/02/cgroup-cpu-cpushare/><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin=anonymous><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin=anonymous><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin=anonymous><link rel=stylesheet href=/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css><link rel=stylesheet href=https://harasou.github.io/harasou.jp/css/style.css swappaginator=true><script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(e,o,i,a,t,n,s){e.GoogleAnalyticsObject=t,e[t]=e[t]||function(){(e[t].q=e[t].q||[]).push(arguments)},e[t].l=1*new Date,n=o.createElement(i),s=o.getElementsByTagName(i)[0],n.async=1,n.src=a,s.parentNode.insertBefore(n,s)}(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-62541096-1","auto"),ga("send","pageview"))</script></head><body><div id=blog><header id=header data-behavior=5><i id=btn-open-sidebar class="fa fa-lg fa-bars"></i><div class=header-title><a class=header-title-link href=/harasou.jp/>harasou.jp</a></div><a class=header-right-picture href=/#about><img class=header-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=90" alt=プロフィール画像></a></header><nav id=sidebar data-behavior=5><div class=sidebar-container><div class=sidebar-profile><a href=/#about><img class=sidebar-profile-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt=プロフィール画像></a><h4 class=sidebar-profile-name>harasou</h4><h5 class=sidebar-profile-bio>めくじらを立てない</h5></div><ul class=sidebar-buttons><li class=sidebar-button><a class=sidebar-button-link href=/harasou.jp/harasou.jp/><i class="sidebar-button-icon fa fa-lg fa-home"></i>
+<span class=sidebar-button-desc>ホーム</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=/harasou.jp/harasou.jp/tags><i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+<span class=sidebar-button-desc>タグ</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=/harasou.jp/harasou.jp/archives><i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+<span class=sidebar-button-desc>アーカイブ</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=/harasou.jp/harasou.jp/#about><i class="sidebar-button-icon fa fa-lg fa-question"></i>
+<span class=sidebar-button-desc>プロフィール</span></a></li></ul><ul class=sidebar-buttons><li class=sidebar-button><a class=sidebar-button-link href=https://github.com/harasou target=_blank rel=noopener><i class="sidebar-button-icon fa fa-lg fa-github"></i>
+<span class=sidebar-button-desc>GitHub</span></a></li></ul><ul class=sidebar-buttons><li class=sidebar-button><a class=sidebar-button-link href=/harasou.jp/harasou.jp/index.xml><i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+<span class=sidebar-button-desc>RSS</span></a></li></ul></div></nav><div id=main data-behavior=5 class=hasCoverMetaIn><article class=post itemscope itemtype=http://schema.org/BlogPosting><div class="post-header main-content-wrap text-left"><h1 class=post-title itemprop=headline>cgroup の cpu.shares を検証した</h1><div class="postShorten-meta post-meta"><time itemprop=datePublished datetime=2015-06-02T04:09:33+09:00>2015/6/2</time></div></div><div class="post-content markdown" itemprop=articleBody><div class=main-content-wrap><p>cgroup には複数のサブシステム（controller）があるが、その中の <code>cpu.shares</code> について検証してみた。</p><h2 id=cpushares-とは>cpu.shares とは</h2><p>cpu.shares を設定すると、タスクが使用できる CPU 時間の<code>割合</code>を変更することができる。</p><p>具体的に言うと、<code>A</code> <code>B</code>２つのグループを作り、cpu.shares をそれぞれ<code>1024</code> <code>2048</code>とした場合、B のグループにいるプロセスが、A のグループにいるプロセスより 2倍 CPU を使えるようになる。以下、実行例。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#75715e># mkdir /cgroup/{A,B}</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># echo 1024 &gt; /cgroup/A/cpu.shares</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># echo 2048 &gt; /cgroup/B/cpu.shares</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># sh -c &#34;while : ; do : ; done&#34; &amp; echo $! &gt; /cgroup/A/tasks</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>[</span>1<span style=color:#f92672>]</span> <span style=color:#ae81ff>2835</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># sh -c &#34;while : ; do : ; done&#34; &amp; echo $! &gt; /cgroup/B/tasks</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>[</span>2<span style=color:#f92672>]</span> <span style=color:#ae81ff>2836</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># ps uf</span>
+</span></span><span style=display:flex><span>USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+</span></span><span style=display:flex><span>root      <span style=color:#ae81ff>2816</span>  0.0  0.5 <span style=color:#ae81ff>175140</span>  <span style=color:#ae81ff>2656</span> pts/2    S    21:44   0:00 sudo -s
+</span></span><span style=display:flex><span>root      <span style=color:#ae81ff>2817</span>  0.0  0.3 <span style=color:#ae81ff>108300</span>  <span style=color:#ae81ff>1908</span> pts/2    S+   21:44   0:00  <span style=color:#ae81ff>\_</span> /bin/bash
+</span></span><span style=display:flex><span>root      <span style=color:#ae81ff>2835</span> 34.9  0.2 <span style=color:#ae81ff>106056</span>  <span style=color:#ae81ff>1268</span> pts/2    R    21:47   0:56      <span style=color:#ae81ff>\_</span> sh -c <span style=color:#66d9ef>while</span> : ; <span style=color:#66d9ef>do</span> : ; <span style=color:#66d9ef>done</span>
+</span></span><span style=display:flex><span>root      <span style=color:#ae81ff>2836</span> 66.1  0.2 <span style=color:#ae81ff>106056</span>  <span style=color:#ae81ff>1268</span> pts/2    R    21:47   1:43      <span style=color:#ae81ff>\_</span> sh -c <span style=color:#66d9ef>while</span> : ; <span style=color:#66d9ef>do</span> : ; <span style=color:#66d9ef>done</span>
+</span></span></code></pre></div><p>グループ B に登録した PID:2836 のプロセスが、グループ A に登録した PID:2835 の 2倍 CPU を使用している。</p><h2 id=今回の疑問点>今回の疑問点</h2><p>これだけなら、わかりやすいが、以下の点が不明だったので実際に検証してみた。</p><ul><li>グループ内に複数プロセスがいる場合どのように CPU が割り振られるのか</li><li>ルートグループに属するプロセスの CPU の割り振りはどうなるか</li></ul><h2 id=環境>環境</h2><ul><li><p>マシン: Vagrant(CPU コア1)</p></li><li><p>OS:</p><ul><li>CentOS6.6 (2.6.32-504.16.2.el6.x86_64)</li><li>CentOS7.1 (3.10.0-229.el7.x86_64)</li></ul></li><li><p>今回検証したグループ構成</p><p><img src=cgroup.png alt></p><ul><li>CPU のルートグループ配下に <code>test</code> グループを作成する</li><li>test グループ配下に、<code>A</code> <code>B</code> <code>C</code> グループを作成する</li><li>作成した全てのグループの<code>cpu.shares</code> は、全て <code>1024</code> と同じにする</li></ul></li><li><p>環境構築手順(CentOS6.6)</p><pre tabindex=0><code>[root@localhost vagrant]# mkdir /cgroup
 [root@localhost vagrant]# mount -t cgroup -o cpu cgroup /cgroup/
 [root@localhost vagrant]# mkdir -p /cgroup/test/{A,B,C}
 [root@localhost vagrant]# head /cgroup/{,test/{,{A,B,C}/}}cpu.shares
@@ -190,72 +47,37 @@ root      <span style=color:#ae81ff>2836</span> 66.1  0.2 <span style=color:#ae8
 
 ==&gt; /cgroup/test/C/cpu.shares &lt;==
 1024
-</code></pre></li>
-<li>
-<p>CPU を使用するシェルスクリプト</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=color:#75715e>#!/bin/bash
-</span><span style=color:#75715e></span>CGROUP<span style=color:#f92672>=</span><span style=color:#66d9ef>$(</span>mount|grep -w cpu|awk <span style=color:#e6db74>&#39;{print $3}&#39;</span><span style=color:#66d9ef>)</span>
-echo $$ &gt; $CGROUP/tasks <span style=color:#f92672>||</span> exit <span style=color:#ae81ff>1</span>
-<span style=color:#66d9ef>while</span> : ; <span style=color:#66d9ef>do</span> : ; <span style=color:#66d9ef>done</span>
-</code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>loop.sh &amp;            <span style=color:#75715e># ルートグループに自身の PID を登録し無限ループ</span>
-loop_test.sh &amp;       <span style=color:#75715e># test グループに自身の PID を登録し無限ループ</span>
-loop_test_A.sh &amp;     <span style=color:#75715e># test/A グループに自身の PID を登録し無限ループ</span>
-loop_test_B.sh &amp;     <span style=color:#75715e># test/B グループに自身の PID を登録し無限ループ</span>
-loop_test_C.sh &amp;     <span style=color:#75715e># test/C グループに自身の PID を登録し無限ループ</span>
-</code></pre></div><p>自分自身の PID をスクリプト名にあったグループに登録し、無限ループを行うシェルスクリプト。</p>
-</li>
-</ul>
-<h2 id=検証１>検証１</h2>
-<p><code>A</code> グループに、無限ループするプロセスを一つ登録した場合の CPU 利用状況。</p>
-<p><img src=cgroup_test1.png alt></p>
-<pre tabindex=0><code># 結果
+</code></pre></li><li><p>CPU を使用するシェルスクリプト</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#75715e>#!/bin/bash
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>CGROUP<span style=color:#f92672>=</span><span style=color:#66d9ef>$(</span>mount|grep -w cpu|awk <span style=color:#e6db74>&#39;{print $3}&#39;</span><span style=color:#66d9ef>)</span>
+</span></span><span style=display:flex><span>echo $$ &gt; $CGROUP/tasks <span style=color:#f92672>||</span> exit <span style=color:#ae81ff>1</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>while</span> : ; <span style=color:#66d9ef>do</span> : ; <span style=color:#66d9ef>done</span>
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>loop.sh &amp;            <span style=color:#75715e># ルートグループに自身の PID を登録し無限ループ</span>
+</span></span><span style=display:flex><span>loop_test.sh &amp;       <span style=color:#75715e># test グループに自身の PID を登録し無限ループ</span>
+</span></span><span style=display:flex><span>loop_test_A.sh &amp;     <span style=color:#75715e># test/A グループに自身の PID を登録し無限ループ</span>
+</span></span><span style=display:flex><span>loop_test_B.sh &amp;     <span style=color:#75715e># test/B グループに自身の PID を登録し無限ループ</span>
+</span></span><span style=display:flex><span>loop_test_C.sh &amp;     <span style=color:#75715e># test/C グループに自身の PID を登録し無限ループ</span>
+</span></span></code></pre></div><p>自分自身の PID をスクリプト名にあったグループに登録し、無限ループを行うシェルスクリプト。</p></li></ul><h2 id=検証１>検証１</h2><p><code>A</code> グループに、無限ループするプロセスを一つ登録した場合の CPU 利用状況。</p><p><img src=cgroup_test1.png alt></p><pre tabindex=0><code># 結果
   PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND
  1858 root      20   0  103m 1344 1160 R 99.8  0.3   0:11.30 loop_test_A.sh
-</code></pre><ul>
-<li><code>ルート</code> -> <code>test</code> -> <code>A</code> と最下層のグループに登録されているが、CPU は 100% 利用できる。</li>
-</ul>
-<h2 id=検証２>検証２</h2>
-<p><code>A</code> <code>B</code> <code>C</code>の各グループに、無限ループをするプロセスを一つづつ登録した場合の CPU 使用状況。</p>
-<p><img src=cgroup_test2.png alt></p>
-<pre tabindex=0><code># 結果
+</code></pre><ul><li><code>ルート</code> -> <code>test</code> -> <code>A</code> と最下層のグループに登録されているが、CPU は 100% 利用できる。</li></ul><h2 id=検証２>検証２</h2><p><code>A</code> <code>B</code> <code>C</code>の各グループに、無限ループをするプロセスを一つづつ登録した場合の CPU 使用状況。</p><p><img src=cgroup_test2.png alt></p><pre tabindex=0><code># 結果
   PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND
  1858 root      20   0  103m 1344 1160 R 33.3  0.3   0:51.82 loop_test_A.sh
  1863 root      20   0  103m 1348 1160 R 33.3  0.3   0:25.00 loop_test_B.sh
  1868 root      20   0  103m 1344 1160 R 33.3  0.3   0:23.39 loop_test_C.sh
-</code></pre><ul>
-<li>各グループの cpu.shares の値は同じなので、均等に CPU を 1/3 (33.3%)づつ使用している。</li>
-</ul>
-<h2 id=検証３>検証３</h2>
-<p>検証２に加え、<code>C</code> グループに、もう一つプロセスを登録した場合の CPU の利用状況。</p>
-<p><img src=cgroup_test3.png alt></p>
-<pre tabindex=0><code># 結果
+</code></pre><ul><li>各グループの cpu.shares の値は同じなので、均等に CPU を 1/3 (33.3%)づつ使用している。</li></ul><h2 id=検証３>検証３</h2><p>検証２に加え、<code>C</code> グループに、もう一つプロセスを登録した場合の CPU の利用状況。</p><p><img src=cgroup_test3.png alt></p><pre tabindex=0><code># 結果
   PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND
  1858 root      20   0  103m 1344 1160 R 33.6  0.3   1:04.14 loop_test_A.sh
  1863 root      20   0  103m 1348 1160 R 33.3  0.3   0:37.32 loop_test_B.sh
  1868 root      20   0  103m 1344 1160 R 16.6  0.3   0:34.81 loop_test_C.sh
  1882 root      20   0  103m 1348 1160 R 16.6  0.3   0:00.88 loop_test_C.sh
-</code></pre><ul>
-<li>グループ A, B に割り当てられている CPU 時間は変わらない</li>
-<li>検証２でグループ C に割り当てられていた CPU 時間(33.3%)は、２つのプロセス（2570,2573）に分配されている</li>
-</ul>
-<h2 id=検証４>検証４</h2>
-<p>検証３に加え、<code>test</code>グループに無限ループするスクリプトを一つ、追加登録した場合の CPU 利用状況。</p>
-<p><img src=cgroup_test4.png alt></p>
-<pre tabindex=0><code># 結果
+</code></pre><ul><li>グループ A, B に割り当てられている CPU 時間は変わらない</li><li>検証２でグループ C に割り当てられていた CPU 時間(33.3%)は、２つのプロセス（2570,2573）に分配されている</li></ul><h2 id=検証４>検証４</h2><p>検証３に加え、<code>test</code>グループに無限ループするスクリプトを一つ、追加登録した場合の CPU 利用状況。</p><p><img src=cgroup_test4.png alt></p><pre tabindex=0><code># 結果
   PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND
  1887 root      20   0  103m 1348 1160 R 24.9  0.3   0:05.77 loop_test.sh
  1858 root      20   0  103m 1344 1160 R 24.9  0.3   1:15.43 loop_test_A.sh
  1863 root      20   0  103m 1348 1160 R 24.9  0.3   0:48.61 loop_test_B.sh
  1868 root      20   0  103m 1344 1160 R 12.6  0.3   0:40.46 loop_test_C.sh
  1882 root      20   0  103m 1348 1160 R 12.3  0.3   0:06.53 loop_test_C.sh
-</code></pre><ul>
-<li>CPU 時間は、test グループの１つのプロセス <code>1887</code> とグループ<code>A</code> <code>B</code> <code>C</code> で、４等分(25%)されている</li>
-<li>C グループ 配下のプロセスは、４等分された CPU時間(25%) を分配して利用している</li>
-</ul>
-<h2 id=検証５>検証５</h2>
-<p>検証４に加え、さらに<code>test</code>グループに無限ループするスクリプトを一つ、追加登録した場合の CPU 利用状況。</p>
-<p><img src=cgroup_test5.png alt></p>
-<pre tabindex=0><code># 結果
+</code></pre><ul><li>CPU 時間は、test グループの１つのプロセス <code>1887</code> とグループ<code>A</code> <code>B</code> <code>C</code> で、４等分(25%)されている</li><li>C グループ 配下のプロセスは、４等分された CPU時間(25%) を分配して利用している</li></ul><h2 id=検証５>検証５</h2><p>検証４に加え、さらに<code>test</code>グループに無限ループするスクリプトを一つ、追加登録した場合の CPU 利用状況。</p><p><img src=cgroup_test5.png alt></p><pre tabindex=0><code># 結果
   PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND
  1892 root      20   0  103m 1348 1160 R 20.3  0.3   0:01.57 loop_test.sh
  1887 root      20   0  103m 1348 1160 R 20.0  0.3   0:14.80 loop_test.sh
@@ -263,28 +85,14 @@ loop_test_C.sh &amp;     <span style=color:#75715e># test/C グループに自�
  1858 root      20   0  103m 1344 1160 R 20.0  0.3   1:24.45 loop_test_A.sh
  1868 root      20   0  103m 1344 1160 R 10.0  0.3   0:44.97 loop_test_C.sh
  1882 root      20   0  103m 1348 1160 R 10.0  0.3   0:11.05 loop_test_C.sh
-</code></pre><ul>
-<li>CPU 時間は、test グループの２つのプロセス <code>1892</code> <code>1887</code> とグループ<code>A</code> <code>B</code> <code>C</code> で、５等分(20%)されている</li>
-<li>test グループの２つのプロセス <code>1892</code> <code>1887</code> は、それぞれ５等分された CPU時間(20%) を利用できる</li>
-</ul>
-<h2 id=検証６>検証６</h2>
-<p>検証３に加え、ルートグループに無限ループするスクリプトを一つ、追加登録した場合の CPU 利用状況。</p>
-<p><img src=cgroup_test6.png alt></p>
-<pre tabindex=0><code># 結果
+</code></pre><ul><li>CPU 時間は、test グループの２つのプロセス <code>1892</code> <code>1887</code> とグループ<code>A</code> <code>B</code> <code>C</code> で、５等分(20%)されている</li><li>test グループの２つのプロセス <code>1892</code> <code>1887</code> は、それぞれ５等分された CPU時間(20%) を利用できる</li></ul><h2 id=検証６>検証６</h2><p>検証３に加え、ルートグループに無限ループするスクリプトを一つ、追加登録した場合の CPU 利用状況。</p><p><img src=cgroup_test6.png alt></p><pre tabindex=0><code># 結果
   PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND
  1898 root      20   0  103m 1344 1160 R 50.2  0.3   0:03.83 loop.sh
  1858 root      20   0  103m 1344 1160 R 16.6  0.3   1:32.35 loop_test_A.sh
  1863 root      20   0  103m 1348 1160 R 16.6  0.3   1:05.53 loop_test_B.sh
  1868 root      20   0  103m 1344 1160 R  8.3  0.3   0:48.92 loop_test_C.sh
  1882 root      20   0  103m 1348 1160 R  8.3  0.3   0:14.99 loop_test_C.sh
-</code></pre><ul>
-<li>CPU 時間は、ルートグループの１つのプロセス <code>1898</code> と <code>test グループ</code> で、２等分(50%)されている</li>
-<li>test グループ 配下のプロセスは、２等分された CPU時間(50%) を分配して利用している</li>
-</ul>
-<h2 id=検証７>検証７</h2>
-<p>検証６に加え、さらにルートグループに無限ループするスクリプトを一つ、追加登録した場合の CPU 利用状況。</p>
-<p><img src=cgroup_test7.png alt></p>
-<pre tabindex=0><code># 結果
+</code></pre><ul><li>CPU 時間は、ルートグループの１つのプロセス <code>1898</code> と <code>test グループ</code> で、２等分(50%)されている</li><li>test グループ 配下のプロセスは、２等分された CPU時間(50%) を分配して利用している</li></ul><h2 id=検証７>検証７</h2><p>検証６に加え、さらにルートグループに無限ループするスクリプトを一つ、追加登録した場合の CPU 利用状況。</p><p><img src=cgroup_test7.png alt></p><pre tabindex=0><code># 結果
   PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND
  1898 root      20   0  103m 1344 1160 R 33.5  0.3   0:10.72 loop.sh
  1903 root      20   0  103m 1348 1160 R 33.2  0.3   0:01.53 loop.sh
@@ -292,188 +100,14 @@ loop_test_C.sh &amp;     <span style=color:#75715e># test/C グループに自�
  1863 root      20   0  103m 1348 1160 R 11.0  0.3   1:07.82 loop_test_B.sh
  1882 root      20   0  103m 1348 1160 R  5.6  0.3   0:16.14 loop_test_C.sh
  1868 root      20   0  103m 1344 1160 R  5.3  0.3   0:50.06 loop_test_C.sh
-</code></pre><ul>
-<li>CPU 時間は、ルートグループの２つのプロセス<code>1898</code> <code>1903</code> と <code>test グループ</code> で、３等分(33%)されている</li>
-<li>ルートグループの２つのプロセス <code>1898</code> <code>1903</code> は、それぞれ３等分された CPU時間(33%) を利用できる</li>
-<li>test グループ 配下のプロセスは、３等分された CPU時間(33%) を分配して利用している</li>
-</ul>
-<h2 id=まとめ>まとめ</h2>
-<p>検証７の結果を見れば、cpu.shares の振る舞いがだいたいわかる。</p>
-<p>test グループ配下のプロセスが利用できる CPU時間は、ルートグループに属するプロセス数や CPU 利用状況によってかわるので、リソース設計が難しい。</p>
-<p>このため、test グループの CPU時間を担保したい場合は、以下のような感じで、一旦ルートグループ配下の全プロセスを別のサブグループ配下に移動してあげればよさそう。</p>
-<pre tabindex=0><code>mkdir /cgroup/root
+</code></pre><ul><li>CPU 時間は、ルートグループの２つのプロセス<code>1898</code> <code>1903</code> と <code>test グループ</code> で、３等分(33%)されている</li><li>ルートグループの２つのプロセス <code>1898</code> <code>1903</code> は、それぞれ３等分された CPU時間(33%) を利用できる</li><li>test グループ 配下のプロセスは、３等分された CPU時間(33%) を分配して利用している</li></ul><h2 id=まとめ>まとめ</h2><p>検証７の結果を見れば、cpu.shares の振る舞いがだいたいわかる。</p><p>test グループ配下のプロセスが利用できる CPU時間は、ルートグループに属するプロセス数や CPU 利用状況によってかわるので、リソース設計が難しい。</p><p>このため、test グループの CPU時間を担保したい場合は、以下のような感じで、一旦ルートグループ配下の全プロセスを別のサブグループ配下に移動してあげればよさそう。</p><pre tabindex=0><code>mkdir /cgroup/root
 cat /cgroup/tasks &gt; /cgrou/root/tasks
-</code></pre>
-</div>
-</div>
-<div id=post-footer class="post-footer main-content-wrap">
-<div class=post-footer-tags>
-<span class="text-color-light text-small">タグ</span><br>
-<a class="tag tag--primary tag--small" href=/tags/cgroup/>cgroup</a>
-</div>
-<div class=post-actions-wrap>
-<nav>
-<ul class="post-actions post-action-nav">
-<li class=post-action>
-<a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2015/06/07/MySQL-trigger/ data-tooltip="MySQL のトリガで mruby を実行する">
-<i class="fa fa-angle-left"></i>
-<span class="hide-xs hide-sm text-small icon-ml">次</span>
-</a>
-</li>
-<li class=post-action>
-<a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2015/05/25/CentOS-lxc-rpm/ data-tooltip="CentOS 用に LXC の rpm を作成する">
-<span class="hide-xs hide-sm text-small icon-mr">前</span>
-<i class="fa fa-angle-right"></i>
-</a>
-</li>
-</ul>
-</nav>
-<ul class="post-actions post-action-share">
-<li class="post-action hide-lg hide-md hide-sm">
-<a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions>
-<i class="fa fa-share-alt"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.github.io/harasou.jp/2015/06/02/cgroup-cpu-cpushare/>
-<i class="fa icon-hatebu"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.github.io/harasou.jp/2015/06/02/cgroup-cpu-cpushare/">
-<i class="fa icon-pocket"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.github.io/harasou.jp/2015/06/02/cgroup-cpu-cpushare/">
-<i class="fa fa-facebook-official"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.github.io/harasou.jp/2015/06/02/cgroup-cpu-cpushare/">
-<i class="fa fa-twitter"></i>
-</a>
-</li>
-<li class=post-action>
-<a class="post-action-btn btn btn--default" href=#>
-<i class="fa fa-list"></i>
-</a>
-</li>
-</ul>
-</div>
-</div>
-</article>
-<footer id=footer class=main-content-wrap>
-<span class=copyrights>
-&copy; 2021 harasou. All Rights Reserved
-</span>
-</footer>
-</div>
-<div id=bottom-bar class=post-bottom-bar data-behavior=5>
-<div class=post-actions-wrap>
-<nav>
-<ul class="post-actions post-action-nav">
-<li class=post-action>
-<a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2015/06/07/MySQL-trigger/ data-tooltip="MySQL のトリガで mruby を実行する">
-<i class="fa fa-angle-left"></i>
-<span class="hide-xs hide-sm text-small icon-ml">次</span>
-</a>
-</li>
-<li class=post-action>
-<a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2015/05/25/CentOS-lxc-rpm/ data-tooltip="CentOS 用に LXC の rpm を作成する">
-<span class="hide-xs hide-sm text-small icon-mr">前</span>
-<i class="fa fa-angle-right"></i>
-</a>
-</li>
-</ul>
-</nav>
-<ul class="post-actions post-action-share">
-<li class="post-action hide-lg hide-md hide-sm">
-<a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions>
-<i class="fa fa-share-alt"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.github.io/harasou.jp/2015/06/02/cgroup-cpu-cpushare/>
-<i class="fa icon-hatebu"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.github.io/harasou.jp/2015/06/02/cgroup-cpu-cpushare/">
-<i class="fa icon-pocket"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.github.io/harasou.jp/2015/06/02/cgroup-cpu-cpushare/">
-<i class="fa fa-facebook-official"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.github.io/harasou.jp/2015/06/02/cgroup-cpu-cpushare/">
-<i class="fa fa-twitter"></i>
-</a>
-</li>
-<li class=post-action>
-<a class="post-action-btn btn btn--default" href=#>
-<i class="fa fa-list"></i>
-</a>
-</li>
-</ul>
-</div>
-</div>
-<div id=share-options-bar class=share-options-bar data-behavior=5>
-<i id=btn-close-shareoptions class="fa fa-close"></i>
-<ul class=share-options>
-<li class=share-option>
-<a class=share-option-btn target=new href=http://b.hatena.ne.jp/entry/https%3A%2F%2Fharasou.github.io%2Fharasou.jp%2F2015%2F06%2F02%2Fcgroup-cpu-cpushare%2F>
-<i class="fa icon-hatebu"></i><span>Hatebuで共有</span>
-</a>
-</li>
-<li class=share-option>
-<a class=share-option-btn target=new href="http://getpocket.com/edit?url=https%3A%2F%2Fharasou.github.io%2Fharasou.jp%2F2015%2F06%2F02%2Fcgroup-cpu-cpushare%2F">
-<i class="fa icon-pocket"></i><span>Pocketで共有</span>
-</a>
-</li>
-<li class=share-option>
-<a class=share-option-btn target=new href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fharasou.github.io%2Fharasou.jp%2F2015%2F06%2F02%2Fcgroup-cpu-cpushare%2F">
-<i class="fa fa-facebook-official"></i><span>Facebookで共有</span>
-</a>
-</li>
-<li class=share-option>
-<a class=share-option-btn target=new href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fharasou.github.io%2Fharasou.jp%2F2015%2F06%2F02%2Fcgroup-cpu-cpushare%2F">
-<i class="fa fa-twitter"></i><span>Twitterで共有</span>
-</a>
-</li>
-</ul>
-</div>
-<div id=share-options-mask class=share-options-mask></div>
-</div>
-<div id=about>
-<div id=about-card>
-<div id=about-btn-close>
-<i class="fa fa-remove"></i>
-</div>
-<img id=about-card-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt=プロフィール画像>
-<h4 id=about-card-name>harasou</h4>
-<div id=about-card-bio>めくじらを立てない</div>
-<div id=about-card-job>
-<i class="fa fa-briefcase"></i>
-<br>
-Infra Engineer
-</div>
-<div id=about-card-location>
-<i class="fa fa-map-marker"></i>
-<br>
-Fukuoka Japan
-</div>
-</div>
-</div>
-<div id=cover style=background-image:url(https://harasou.github.io/harasou.jp/images/cover.jpg)></div>
-<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin=anonymous></script>
+</code></pre></div></div><div id=post-footer class="post-footer main-content-wrap"><div class=post-footer-tags><span class="text-color-light text-small">タグ</span><br><a class="tag tag--primary tag--small" href=/tags/cgroup/>cgroup</a></div><div class=post-actions-wrap><nav><ul class="post-actions post-action-nav"><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2015/06/07/MySQL-trigger/ data-tooltip="MySQL のトリガで mruby を実行する"><i class="fa fa-angle-left"></i>
+<span class="hide-xs hide-sm text-small icon-ml">次</span></a></li><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2015/05/25/CentOS-lxc-rpm/ data-tooltip="CentOS 用に LXC の rpm を作成する"><span class="hide-xs hide-sm text-small icon-mr">前</span>
+<i class="fa fa-angle-right"></i></a></li></ul></nav><ul class="post-actions post-action-share"><li class="post-action hide-lg hide-md hide-sm"><a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions><i class="fa fa-share-alt"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.github.io/harasou.jp/2015/06/02/cgroup-cpu-cpushare/><i class="fa icon-hatebu"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.github.io/harasou.jp/2015/06/02/cgroup-cpu-cpushare/"><i class="fa icon-pocket"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.github.io/harasou.jp/2015/06/02/cgroup-cpu-cpushare/"><i class="fa fa-facebook-official"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.github.io/harasou.jp/2015/06/02/cgroup-cpu-cpushare/"><i class="fa fa-twitter"></i></a></li><li class=post-action><a class="post-action-btn btn btn--default" href=#><i class="fa fa-list"></i></a></li></ul></div></div></article><footer id=footer class=main-content-wrap><span class=copyrights>&copy; 2022 harasou. All Rights Reserved</span></footer></div><div id=bottom-bar class=post-bottom-bar data-behavior=5><div class=post-actions-wrap><nav><ul class="post-actions post-action-nav"><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2015/06/07/MySQL-trigger/ data-tooltip="MySQL のトリガで mruby を実行する"><i class="fa fa-angle-left"></i>
+<span class="hide-xs hide-sm text-small icon-ml">次</span></a></li><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2015/05/25/CentOS-lxc-rpm/ data-tooltip="CentOS 用に LXC の rpm を作成する"><span class="hide-xs hide-sm text-small icon-mr">前</span>
+<i class="fa fa-angle-right"></i></a></li></ul></nav><ul class="post-actions post-action-share"><li class="post-action hide-lg hide-md hide-sm"><a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions><i class="fa fa-share-alt"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.github.io/harasou.jp/2015/06/02/cgroup-cpu-cpushare/><i class="fa icon-hatebu"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.github.io/harasou.jp/2015/06/02/cgroup-cpu-cpushare/"><i class="fa icon-pocket"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.github.io/harasou.jp/2015/06/02/cgroup-cpu-cpushare/"><i class="fa fa-facebook-official"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.github.io/harasou.jp/2015/06/02/cgroup-cpu-cpushare/"><i class="fa fa-twitter"></i></a></li><li class=post-action><a class="post-action-btn btn btn--default" href=#><i class="fa fa-list"></i></a></li></ul></div></div><div id=share-options-bar class=share-options-bar data-behavior=5><i id=btn-close-shareoptions class="fa fa-close"></i><ul class=share-options><li class=share-option><a class=share-option-btn target=new href=http://b.hatena.ne.jp/entry/https%3A%2F%2Fharasou.github.io%2Fharasou.jp%2F2015%2F06%2F02%2Fcgroup-cpu-cpushare%2F><i class="fa icon-hatebu"></i><span>Hatebuで共有</span></a></li><li class=share-option><a class=share-option-btn target=new href="http://getpocket.com/edit?url=https%3A%2F%2Fharasou.github.io%2Fharasou.jp%2F2015%2F06%2F02%2Fcgroup-cpu-cpushare%2F"><i class="fa icon-pocket"></i><span>Pocketで共有</span></a></li><li class=share-option><a class=share-option-btn target=new href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fharasou.github.io%2Fharasou.jp%2F2015%2F06%2F02%2Fcgroup-cpu-cpushare%2F"><i class="fa fa-facebook-official"></i><span>Facebookで共有</span></a></li><li class=share-option><a class=share-option-btn target=new href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fharasou.github.io%2Fharasou.jp%2F2015%2F06%2F02%2Fcgroup-cpu-cpushare%2F"><i class="fa fa-twitter"></i><span>Twitterで共有</span></a></li></ul></div><div id=share-options-mask class=share-options-mask></div></div><div id=about><div id=about-card><div id=about-btn-close><i class="fa fa-remove"></i></div><img id=about-card-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt=プロフィール画像><h4 id=about-card-name>harasou</h4><div id=about-card-bio>めくじらを立てない</div><div id=about-card-job><i class="fa fa-briefcase"></i><br>Infra Engineer</div><div id=about-card-location><i class="fa fa-map-marker"></i><br>Fukuoka Japan</div></div></div><div id=cover style=background-image:url(https://harasou.github.io/harasou.jp/images/cover.jpg)></div><script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin=anonymous></script>
 <script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin=anonymous></script>
 <script src=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin=anonymous></script>
 <script src=/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js></script>
-<script lang=javascript>window.onload=updateMinWidth,window.onresize=updateMinWidth,document.getElementById("sidebar").addEventListener("transitionend",updateMinWidth);function updateMinWidth(){var b=document.getElementById("sidebar"),a=document.getElementById("main"),c,d,e;a.style.minWidth="",c=getComputedStyle(a).getPropertyValue("min-width"),d=getComputedStyle(b).getPropertyValue("width"),e=getComputedStyle(b).getPropertyValue("left"),a.style.minWidth=`calc(${c} - ${d} - ${e})`}</script>
-<script>$(document).ready(function(){hljs.configure({classPrefix:'',useBR:!1}),$('pre.code-highlight > code, pre > code').each(function(b,a){$(this).hasClass('codeblock')||$(this).addClass('codeblock'),hljs.highlightBlock(a)})})</script>
-</body>
-</html>
+<script lang=javascript>window.onload=updateMinWidth,window.onresize=updateMinWidth,document.getElementById("sidebar").addEventListener("transitionend",updateMinWidth);function updateMinWidth(){var n,s,o,t=document.getElementById("sidebar"),e=document.getElementById("main");e.style.minWidth="",n=getComputedStyle(e).getPropertyValue("min-width"),s=getComputedStyle(t).getPropertyValue("width"),o=getComputedStyle(t).getPropertyValue("left"),e.style.minWidth=`calc(${n} - ${s} - ${o})`}</script><script>$(document).ready(function(){hljs.configure({classPrefix:'',useBR:!1}),$("pre.code-highlight > code, pre > code").each(function(t,e){$(this).hasClass("codeblock")||$(this).addClass("codeblock"),hljs.highlightBlock(e)})})</script></body></html>

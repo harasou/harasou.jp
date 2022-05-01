@@ -1,515 +1,104 @@
-<!doctype html><html lang=ja>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=x-ua-compatible content="IE=edge">
-<meta name=generator content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
-<meta name=author content="harasou">
-<meta name=keywords content>
-<meta name=description content="glibc の脆弱性 CVE-2015-7547 でも話題になった 512バイトを超える DNS パケットについてのメモ。
-DNS では、TCP が使われたり、512 バイト超えるデータが扱われることは知っていたが、詳しい仕組みなど知らなかったので、備忘録のためにまとめておく。">
-<meta property="og:description" content="glibc の脆弱性 CVE-2015-7547 でも話題になった 512バイトを超える DNS パケットについてのメモ。
-DNS では、TCP が使われたり、512 バイト超えるデータが扱われることは知っていたが、詳しい仕組みなど知らなかったので、備忘録のためにまとめておく。">
-<meta property="og:type" content="article">
-<meta property="og:title" content="512バイトを超える DNSパケット">
-<meta name=twitter:title content="512バイトを超える DNSパケット">
-<meta property="og:url" content="https://harasou.github.io/harasou.jp/2016/02/21/dns-packet-over-512/">
-<meta property="twitter:url" content="https://harasou.github.io/harasou.jp/2016/02/21/dns-packet-over-512/">
-<meta property="og:site_name" content="harasou.jp">
-<meta property="og:description" content="glibc の脆弱性 CVE-2015-7547 でも話題になった 512バイトを超える DNS パケットについてのメモ。
-DNS では、TCP が使われたり、512 バイト超えるデータが扱われることは知っていたが、詳しい仕組みなど知らなかったので、備忘録のためにまとめておく。">
-<meta name=twitter:description content="glibc の脆弱性 CVE-2015-7547 でも話題になった 512バイトを超える DNS パケットについてのメモ。
-DNS では、TCP が使われたり、512 バイト超えるデータが扱われることは知っていたが、詳しい仕組みなど知らなかったので、備忘録のためにまとめておく。">
-<meta property="og:locale" content="ja">
-<meta property="article:published_time" content="2016-02-21T11:46:00">
-<meta property="article:modified_time" content="2016-02-21T11:46:00">
-<meta property="article:tag" content="dns">
-<meta name=twitter:card content="summary">
-<meta name=twitter:site content="@harasou5">
-<meta name=twitter:creator content="@harasou5">
-<meta property="og:image" content="https://harasou.github.io/harasou.jp/2016/02/21/dns-packet-over-512/sitemap.png">
-<meta property="twitter:image" content="https://harasou.github.io/harasou.jp/2016/02/21/dns-packet-over-512/sitemap.png">
-<meta property="og:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
-<meta property="twitter:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
-<title>512バイトを超える DNSパケット</title>
-<link rel=icon href=/favicon.png>
-<link rel=canonical href=https://harasou.github.io/harasou.jp/2016/02/21/dns-packet-over-512/>
-<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin=anonymous>
-<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin=anonymous>
-<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin=anonymous>
-<link rel=stylesheet href=/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css>
-<link rel=stylesheet href=https://harasou.github.io/harasou.jp/css/style.css swappaginator=true>
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-62541096-1','auto'),ga('send','pageview'))</script>
-</head>
-<body>
-<div id=blog>
-<header id=header data-behavior=5>
-<i id=btn-open-sidebar class="fa fa-lg fa-bars"></i>
-<div class=header-title>
-<a class=header-title-link href=/harasou.jp/>harasou.jp</a>
-</div>
-<a class=header-right-picture href=/#about>
-<img class=header-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=90" alt=プロフィール画像>
-</a>
-</header>
-<nav id=sidebar data-behavior=5>
-<div class=sidebar-container>
-<div class=sidebar-profile>
-<a href=/#about>
-<img class=sidebar-profile-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt=プロフィール画像>
-</a>
-<h4 class=sidebar-profile-name>harasou</h4>
-<h5 class=sidebar-profile-bio>めくじらを立てない</h5>
-</div>
-<ul class=sidebar-buttons>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=/harasou.jp/harasou.jp/>
-<i class="sidebar-button-icon fa fa-lg fa-home"></i>
-<span class=sidebar-button-desc>ホーム</span>
-</a>
-</li>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=/harasou.jp/harasou.jp/tags>
-<i class="sidebar-button-icon fa fa-lg fa-tags"></i>
-<span class=sidebar-button-desc>タグ</span>
-</a>
-</li>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=/harasou.jp/harasou.jp/archives>
-<i class="sidebar-button-icon fa fa-lg fa-archive"></i>
-<span class=sidebar-button-desc>アーカイブ</span>
-</a>
-</li>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=/harasou.jp/harasou.jp/#about>
-<i class="sidebar-button-icon fa fa-lg fa-question"></i>
-<span class=sidebar-button-desc>プロフィール</span>
-</a>
-</li>
-</ul>
-<ul class=sidebar-buttons>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=https://github.com/harasou target=_blank rel=noopener>
-<i class="sidebar-button-icon fa fa-lg fa-github"></i>
-<span class=sidebar-button-desc>GitHub</span>
-</a>
-</li>
-</ul>
-<ul class=sidebar-buttons>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=/harasou.jp/harasou.jp/index.xml>
-<i class="sidebar-button-icon fa fa-lg fa-rss"></i>
-<span class=sidebar-button-desc>RSS</span>
-</a>
-</li>
-</ul>
-</div>
-</nav>
-<div id=main data-behavior=5 class=hasCoverMetaIn>
-<article class=post itemscope itemtype=http://schema.org/BlogPosting>
-<div class="post-header main-content-wrap text-left">
-<h1 class=post-title itemprop=headline>
-512バイトを超える DNSパケット
-</h1>
-<div class="postShorten-meta post-meta">
-<time itemprop=datePublished datetime=2016-02-21T11:46:00+09:00>
-2016/2/21
-</time>
-</div>
-</div>
-<div class="post-content markdown" itemprop=articleBody>
-<div class=main-content-wrap>
-<p>glibc の脆弱性 <a href=https://www.jpcert.or.jp/at/2016/at160009.html>CVE-2015-7547</a> でも話題になった 512バイトを超える DNS パケットについてのメモ。</p>
-<p>DNS では、TCP が使われたり、512 バイト超えるデータが扱われることは知っていたが、詳しい仕組みなど知らなかったので、備忘録のためにまとめておく。</p>
-<h1 id=そもそもなぜ-512-バイト>そもそもなぜ 512 バイト？</h1>
-<p>調べてみると、</p>
-<blockquote>
-<p>インターネットで使われている IP(IPv4)の仕様では 一度に受信可能なデータグラム(ヘッダーを含むパケッ ト)として、
+<!doctype html><html lang=ja><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=generator content="Hugo 0.98.0 with theme Tranquilpeak 0.4.7-BETA"><meta name=author content="harasou"><meta name=keywords content><meta name=description content="glibc の脆弱性 CVE-2015-7547 でも話題になった 512バイトを超える DNS パケットについてのメモ。
+DNS では、TCP が使われたり、512 バイト超えるデータが扱われることは知っていたが、詳しい仕組みなど知らなかったので、備忘録のためにまとめておく。"><meta property="og:description" content="glibc の脆弱性 CVE-2015-7547 でも話題になった 512バイトを超える DNS パケットについてのメモ。
+DNS では、TCP が使われたり、512 バイト超えるデータが扱われることは知っていたが、詳しい仕組みなど知らなかったので、備忘録のためにまとめておく。"><meta property="og:type" content="article"><meta property="og:title" content="512バイトを超える DNSパケット"><meta name=twitter:title content="512バイトを超える DNSパケット"><meta property="og:url" content="https://harasou.github.io/harasou.jp/2016/02/21/dns-packet-over-512/"><meta property="twitter:url" content="https://harasou.github.io/harasou.jp/2016/02/21/dns-packet-over-512/"><meta property="og:site_name" content="harasou.jp"><meta property="og:description" content="glibc の脆弱性 CVE-2015-7547 でも話題になった 512バイトを超える DNS パケットについてのメモ。
+DNS では、TCP が使われたり、512 バイト超えるデータが扱われることは知っていたが、詳しい仕組みなど知らなかったので、備忘録のためにまとめておく。"><meta name=twitter:description content="glibc の脆弱性 CVE-2015-7547 でも話題になった 512バイトを超える DNS パケットについてのメモ。
+DNS では、TCP が使われたり、512 バイト超えるデータが扱われることは知っていたが、詳しい仕組みなど知らなかったので、備忘録のためにまとめておく。"><meta property="og:locale" content="ja"><meta property="article:published_time" content="2016-02-21T11:46:00"><meta property="article:modified_time" content="2016-02-21T11:46:00"><meta property="article:tag" content="dns"><meta name=twitter:card content="summary"><meta name=twitter:site content="@harasou5"><meta name=twitter:creator content="@harasou5"><meta property="og:image" content="https://harasou.github.io/harasou.jp/2016/02/21/dns-packet-over-512/sitemap.png"><meta property="twitter:image" content="https://harasou.github.io/harasou.jp/2016/02/21/dns-packet-over-512/sitemap.png"><meta property="og:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640"><meta property="twitter:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640"><title>512バイトを超える DNSパケット</title><link rel=icon href=/favicon.png><link rel=canonical href=https://harasou.github.io/harasou.jp/2016/02/21/dns-packet-over-512/><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin=anonymous><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin=anonymous><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin=anonymous><link rel=stylesheet href=/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css><link rel=stylesheet href=https://harasou.github.io/harasou.jp/css/style.css swappaginator=true><script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(e,o,i,a,t,n,s){e.GoogleAnalyticsObject=t,e[t]=e[t]||function(){(e[t].q=e[t].q||[]).push(arguments)},e[t].l=1*new Date,n=o.createElement(i),s=o.getElementsByTagName(i)[0],n.async=1,n.src=a,s.parentNode.insertBefore(n,s)}(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-62541096-1","auto"),ga("send","pageview"))</script></head><body><div id=blog><header id=header data-behavior=5><i id=btn-open-sidebar class="fa fa-lg fa-bars"></i><div class=header-title><a class=header-title-link href=/harasou.jp/>harasou.jp</a></div><a class=header-right-picture href=/#about><img class=header-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=90" alt=プロフィール画像></a></header><nav id=sidebar data-behavior=5><div class=sidebar-container><div class=sidebar-profile><a href=/#about><img class=sidebar-profile-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt=プロフィール画像></a><h4 class=sidebar-profile-name>harasou</h4><h5 class=sidebar-profile-bio>めくじらを立てない</h5></div><ul class=sidebar-buttons><li class=sidebar-button><a class=sidebar-button-link href=/harasou.jp/harasou.jp/><i class="sidebar-button-icon fa fa-lg fa-home"></i>
+<span class=sidebar-button-desc>ホーム</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=/harasou.jp/harasou.jp/tags><i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+<span class=sidebar-button-desc>タグ</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=/harasou.jp/harasou.jp/archives><i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+<span class=sidebar-button-desc>アーカイブ</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=/harasou.jp/harasou.jp/#about><i class="sidebar-button-icon fa fa-lg fa-question"></i>
+<span class=sidebar-button-desc>プロフィール</span></a></li></ul><ul class=sidebar-buttons><li class=sidebar-button><a class=sidebar-button-link href=https://github.com/harasou target=_blank rel=noopener><i class="sidebar-button-icon fa fa-lg fa-github"></i>
+<span class=sidebar-button-desc>GitHub</span></a></li></ul><ul class=sidebar-buttons><li class=sidebar-button><a class=sidebar-button-link href=/harasou.jp/harasou.jp/index.xml><i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+<span class=sidebar-button-desc>RSS</span></a></li></ul></div></nav><div id=main data-behavior=5 class=hasCoverMetaIn><article class=post itemscope itemtype=http://schema.org/BlogPosting><div class="post-header main-content-wrap text-left"><h1 class=post-title itemprop=headline>512バイトを超える DNSパケット</h1><div class="postShorten-meta post-meta"><time itemprop=datePublished datetime=2016-02-21T11:46:00+09:00>2016/2/21</time></div></div><div class="post-content markdown" itemprop=articleBody><div class=main-content-wrap><p>glibc の脆弱性 <a href=https://www.jpcert.or.jp/at/2016/at160009.html>CVE-2015-7547</a> でも話題になった 512バイトを超える DNS パケットについてのメモ。</p><p>DNS では、TCP が使われたり、512 バイト超えるデータが扱われることは知っていたが、詳しい仕組みなど知らなかったので、備忘録のためにまとめておく。</p><h1 id=そもそもなぜ-512-バイト>そもそもなぜ 512 バイト？</h1><p>調べてみると、</p><blockquote><p>インターネットで使われている IP(IPv4)の仕様では 一度に受信可能なデータグラム(ヘッダーを含むパケッ ト)として、
 576 バイトを保証しなければならないと定められています。この値は、64バイトのヘッダーと 512バイトの
-データブロックを格納可能な大きさとして選択されたものです</p>
-</blockquote>
-<p>refs: <a href=https://jprs.jp/related-info/guide/008.pdf>https://jprs.jp/related-info/guide/008.pdf</a></p>
-<p>とのこと。</p>
-<p>インターネットで使われている IP の仕様では、かならず「1パケットで 512バイトのデータを送れる」ことが保証されるので、DNS では通信コストをさげるため「1パケットで送受信可能なようにデータサイズを 512バイトに制限」したらしい。</p>
-<p>(DNS の場合、IPヘッダ＋UDPヘッダ＋データで、540(20+8+512)バイト使われている)</p>
-<p>ちなみに、root DNS が 13 個しかないのも、14 個だと 512バイトを超えてしまうから。</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>$ dig . NS
-
-; &lt;&lt;&gt;&gt; DiG 9.8.3-P1 &lt;&lt;&gt;&gt; . NS
-;; global options: +cmd
-;; Got answer:
-;; -&gt;&gt;HEADER<span style=color:#e6db74>&lt;&lt;- opco</span>de: QUERY, status: NOERROR, id: <span style=color:#ae81ff>22440</span>
-;; flags: qr rd ra; QUERY: 1, ANSWER: 13, AUTHORITY: 0, ADDITIONAL: <span style=color:#ae81ff>13</span>
-   :
-;; ANSWER SECTION:
-.           <span style=color:#ae81ff>80275</span>   IN  NS  k.root-servers.net.
-.           <span style=color:#ae81ff>80275</span>   IN  NS  l.root-servers.net.
-.           <span style=color:#ae81ff>80275</span>   IN  NS  m.root-servers.net.
-.           <span style=color:#ae81ff>80275</span>   IN  NS  a.root-servers.net.
-.           <span style=color:#ae81ff>80275</span>   IN  NS  b.root-servers.net.
-.           <span style=color:#ae81ff>80275</span>   IN  NS  c.root-servers.net.
-.           <span style=color:#ae81ff>80275</span>   IN  NS  d.root-servers.net.
-.           <span style=color:#ae81ff>80275</span>   IN  NS  e.root-servers.net.
-.           <span style=color:#ae81ff>80275</span>   IN  NS  f.root-servers.net.
-.           <span style=color:#ae81ff>80275</span>   IN  NS  g.root-servers.net.
-.           <span style=color:#ae81ff>80275</span>   IN  NS  h.root-servers.net.
-.           <span style=color:#ae81ff>80275</span>   IN  NS  i.root-servers.net.
-.           <span style=color:#ae81ff>80275</span>   IN  NS  j.root-servers.net.
-
-;; ADDITIONAL SECTION:
-   :
-;; MSG SIZE  rcvd: <span style=color:#ae81ff>496</span>
-</code></pre></div><p><code>ANSWER: 13</code> <code>MSG SIZE rcvd: 496</code></p>
-<h1 id=tcpフォールバック>TCPフォールバック</h1>
-<p>初期の DNSプロトコルでは 512バイトを超えた応答を受け取るためには、TCP で再帰問い合わせ(TCPフォールバック)を
-行う必要があった。</p>
-<p>サーバは、UDP の問い合わせに対し応答が 512バイトを超える場合、応答するレコードを 512バイト以下に切り詰めた上で、切り詰められたこと示すビット(TC)を立て、UDP の応答を返す。</p>
-<p>クライアント側は、その TCビットを確認すると再度、同じ問い合わせをTCPで行い、全てのレコードがつまった応答を受け取る。</p>
-<p>(このあたりまでは、RFC 1034/1035/1123/5966 の話)</p>
-<h1 id=dnsキャッシュポイズニング対策>DNSキャッシュポイズニング対策</h1>
-<p>1990年台に問題提起された DNSキャッシュポイズニング対応として、DNSSECの標準化が開始された。</p>
-<p>しかし、DNSSEC では鍵や署名をデータに乗せるため、512バイトに収まらず TCPフォールバックが発生することでレイテンシの問題が顕在化。</p>
-<p>その対策として、UDP で 512バイト以上のデータを応答できる仕組みが検討され、1999年に RFC 26710 として <em>EDNS0</em> が標準化された。この RFC では、DNSを DNSSEC や IPv6 に対応させる場合、EDNS0 への対応が必須となっている。</p>
-<h1 id=edns0-extension-mechanisms-for-dns>EDNS0 (Extension Mechanisms for DNS)</h1>
-<p>EDNS0 を使用可能なクライアントは、DNS要求の addtional セクションに OPTレコードを記載し、EDNS0 に対応していることをサーバにしめす。サーバ側が EDNS0 に対応していれば正常な応答が返り、対応していなければ、エラーになるか、無視されて TCPフォールバックすることになる。</p>
-<h1 id=動作検証>動作検証</h1>
-<p>dig を使用して、TCPフォールバックと EDNS0 のパケットを確認してみる。</p>
-<h2 id=検証1tcpフォールバック>【検証1】TCPフォールバック</h2>
-<p>dig で 512バイトを超える応答を受ける場合、標準でTCPフォールバックが行われる。</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>$ dig @192.36.144.107 se. any
-;; Truncated, retrying in TCP mode.
- :
-;; Query time: <span style=color:#ae81ff>406</span> msec
-;; SERVER: 192.36.144.107#53<span style=color:#f92672>(</span>192.36.144.107<span style=color:#f92672>)</span>
-;; WHEN: Sat Feb <span style=color:#ae81ff>20</span> 23:30:44 <span style=color:#ae81ff>2016</span>
-;; MSG SIZE  rcvd: <span style=color:#ae81ff>2052</span>
-</code></pre></div><p>dig を実行すると始めに <code>Truncated, retrying in TCP mode.</code> の出力があり、TCPフォールバックが実行されたことがわかる。その際の tcpdump。</p>
-<ol>
-<li>
-<p>問い合わせ時のパケット。</p>
-<p><code>No.1</code>: UDP で問い合わせを行った後、<code>No.6</code>: TCPで再帰問い合わせてしている。
-<img src=fallback-tcpdump1.jpg alt></p>
-</li>
-<li>
-<p>UDP の応答。</p>
-<p><code>No2</code>: No1のレスポンス
+データブロックを格納可能な大きさとして選択されたものです</p></blockquote><p>refs: <a href=https://jprs.jp/related-info/guide/008.pdf>https://jprs.jp/related-info/guide/008.pdf</a></p><p>とのこと。</p><p>インターネットで使われている IP の仕様では、かならず「1パケットで 512バイトのデータを送れる」ことが保証されるので、DNS では通信コストをさげるため「1パケットで送受信可能なようにデータサイズを 512バイトに制限」したらしい。</p><p>(DNS の場合、IPヘッダ＋UDPヘッダ＋データで、540(20+8+512)バイト使われている)</p><p>ちなみに、root DNS が 13 個しかないのも、14 個だと 512バイトを超えてしまうから。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ dig . NS
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>; &lt;&lt;&gt;&gt; DiG 9.8.3-P1 &lt;&lt;&gt;&gt; . NS
+</span></span><span style=display:flex><span>;; global options: +cmd
+</span></span><span style=display:flex><span>;; Got answer:
+</span></span><span style=display:flex><span>;; -&gt;&gt;HEADER<span style=color:#e6db74>&lt;&lt;- opco</span>de: QUERY, status: NOERROR, id: <span style=color:#ae81ff>22440</span>
+</span></span><span style=display:flex><span>;; flags: qr rd ra; QUERY: 1, ANSWER: 13, AUTHORITY: 0, ADDITIONAL: <span style=color:#ae81ff>13</span>
+</span></span><span style=display:flex><span>   :
+</span></span><span style=display:flex><span>;; ANSWER SECTION:
+</span></span><span style=display:flex><span>.           <span style=color:#ae81ff>80275</span>   IN  NS  k.root-servers.net.
+</span></span><span style=display:flex><span>.           <span style=color:#ae81ff>80275</span>   IN  NS  l.root-servers.net.
+</span></span><span style=display:flex><span>.           <span style=color:#ae81ff>80275</span>   IN  NS  m.root-servers.net.
+</span></span><span style=display:flex><span>.           <span style=color:#ae81ff>80275</span>   IN  NS  a.root-servers.net.
+</span></span><span style=display:flex><span>.           <span style=color:#ae81ff>80275</span>   IN  NS  b.root-servers.net.
+</span></span><span style=display:flex><span>.           <span style=color:#ae81ff>80275</span>   IN  NS  c.root-servers.net.
+</span></span><span style=display:flex><span>.           <span style=color:#ae81ff>80275</span>   IN  NS  d.root-servers.net.
+</span></span><span style=display:flex><span>.           <span style=color:#ae81ff>80275</span>   IN  NS  e.root-servers.net.
+</span></span><span style=display:flex><span>.           <span style=color:#ae81ff>80275</span>   IN  NS  f.root-servers.net.
+</span></span><span style=display:flex><span>.           <span style=color:#ae81ff>80275</span>   IN  NS  g.root-servers.net.
+</span></span><span style=display:flex><span>.           <span style=color:#ae81ff>80275</span>   IN  NS  h.root-servers.net.
+</span></span><span style=display:flex><span>.           <span style=color:#ae81ff>80275</span>   IN  NS  i.root-servers.net.
+</span></span><span style=display:flex><span>.           <span style=color:#ae81ff>80275</span>   IN  NS  j.root-servers.net.
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>;; ADDITIONAL SECTION:
+</span></span><span style=display:flex><span>   :
+</span></span><span style=display:flex><span>;; MSG SIZE  rcvd: <span style=color:#ae81ff>496</span>
+</span></span></code></pre></div><p><code>ANSWER: 13</code> <code>MSG SIZE rcvd: 496</code></p><h1 id=tcpフォールバック>TCPフォールバック</h1><p>初期の DNSプロトコルでは 512バイトを超えた応答を受け取るためには、TCP で再帰問い合わせ(TCPフォールバック)を
+行う必要があった。</p><p>サーバは、UDP の問い合わせに対し応答が 512バイトを超える場合、応答するレコードを 512バイト以下に切り詰めた上で、切り詰められたこと示すビット(TC)を立て、UDP の応答を返す。</p><p>クライアント側は、その TCビットを確認すると再度、同じ問い合わせをTCPで行い、全てのレコードがつまった応答を受け取る。</p><p>(このあたりまでは、RFC 1034/1035/1123/5966 の話)</p><h1 id=dnsキャッシュポイズニング対策>DNSキャッシュポイズニング対策</h1><p>1990年台に問題提起された DNSキャッシュポイズニング対応として、DNSSECの標準化が開始された。</p><p>しかし、DNSSEC では鍵や署名をデータに乗せるため、512バイトに収まらず TCPフォールバックが発生することでレイテンシの問題が顕在化。</p><p>その対策として、UDP で 512バイト以上のデータを応答できる仕組みが検討され、1999年に RFC 26710 として <em>EDNS0</em> が標準化された。この RFC では、DNSを DNSSEC や IPv6 に対応させる場合、EDNS0 への対応が必須となっている。</p><h1 id=edns0-extension-mechanisms-for-dns>EDNS0 (Extension Mechanisms for DNS)</h1><p>EDNS0 を使用可能なクライアントは、DNS要求の addtional セクションに OPTレコードを記載し、EDNS0 に対応していることをサーバにしめす。サーバ側が EDNS0 に対応していれば正常な応答が返り、対応していなければ、エラーになるか、無視されて TCPフォールバックすることになる。</p><h1 id=動作検証>動作検証</h1><p>dig を使用して、TCPフォールバックと EDNS0 のパケットを確認してみる。</p><h2 id=検証1tcpフォールバック>【検証1】TCPフォールバック</h2><p>dig で 512バイトを超える応答を受ける場合、標準でTCPフォールバックが行われる。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ dig @192.36.144.107 se. any
+</span></span><span style=display:flex><span>;; Truncated, retrying in TCP mode.
+</span></span><span style=display:flex><span> :
+</span></span><span style=display:flex><span>;; Query time: <span style=color:#ae81ff>406</span> msec
+</span></span><span style=display:flex><span>;; SERVER: 192.36.144.107#53<span style=color:#f92672>(</span>192.36.144.107<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>;; WHEN: Sat Feb <span style=color:#ae81ff>20</span> 23:30:44 <span style=color:#ae81ff>2016</span>
+</span></span><span style=display:flex><span>;; MSG SIZE  rcvd: <span style=color:#ae81ff>2052</span>
+</span></span></code></pre></div><p>dig を実行すると始めに <code>Truncated, retrying in TCP mode.</code> の出力があり、TCPフォールバックが実行されたことがわかる。その際の tcpdump。</p><ol><li><p>問い合わせ時のパケット。</p><p><code>No.1</code>: UDP で問い合わせを行った後、<code>No.6</code>: TCPで再帰問い合わせてしている。
+<img src=fallback-tcpdump1.jpg alt></p></li><li><p>UDP の応答。</p><p><code>No2</code>: No1のレスポンス
 <img src=fallback-tcpdump2.jpg alt>
-TCビットが立てられ、応答の数(Answer RRs)は切り詰められて <code>11</code> となっている。</p>
-</li>
-<li>
-<p>TCP の応答。</p>
-<p><code>No9</code>: No6のレスポンス
+TCビットが立てられ、応答の数(Answer RRs)は切り詰められて <code>11</code> となっている。</p></li><li><p>TCP の応答。</p><p><code>No9</code>: No6のレスポンス
 <img src=fallback-tcpdump3.jpg alt>
-TCPフォールバック時の応答の数は UDP時の <code>11</code> から増えて <code>19</code>。</p>
-</li>
-</ol>
-<h2 id=検証2edns0>【検証2】EDNS0</h2>
-<p>dig では、<code>+edns=0</code> オプションをつけると EDNS0 が利用される。（<code>+busize=</code> や <code>+dnssec</code> をつけた際も EDNS0 が利用される）</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>$ dig @192.36.144.107 se. any +edns<span style=color:#f92672>=</span><span style=color:#ae81ff>0</span>
- :
-;; OPT PSEUDOSECTION:
-; EDNS: version: 0, flags:; udp: <span style=color:#ae81ff>4096</span>
- :
-;; Query time: <span style=color:#ae81ff>312</span> msec
-;; SERVER: 192.36.144.107#53<span style=color:#f92672>(</span>192.36.144.107<span style=color:#f92672>)</span>
-;; WHEN: Mon Feb <span style=color:#ae81ff>22</span> 20:49:14 <span style=color:#ae81ff>2016</span>
-;; MSG SIZE  rcvd: <span style=color:#ae81ff>2063</span>
-</code></pre></div><ol>
-<li>
-<p>問い合わせ時の一連のパケット。</p>
-<p>UDP だけで処理が完結している。
-<img src=edns0-tcpdump1.jpg alt></p>
-</li>
-<li>
-<p>UDP の問い合わせ</p>
-<p><code>No.15</code>: UDP による問い合わせ
+TCPフォールバック時の応答の数は UDP時の <code>11</code> から増えて <code>19</code>。</p></li></ol><h2 id=検証2edns0>【検証2】EDNS0</h2><p>dig では、<code>+edns=0</code> オプションをつけると EDNS0 が利用される。（<code>+busize=</code> や <code>+dnssec</code> をつけた際も EDNS0 が利用される）</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>$ dig @192.36.144.107 se. any +edns<span style=color:#f92672>=</span><span style=color:#ae81ff>0</span>
+</span></span><span style=display:flex><span> :
+</span></span><span style=display:flex><span>;; OPT PSEUDOSECTION:
+</span></span><span style=display:flex><span>; EDNS: version: 0, flags:; udp: <span style=color:#ae81ff>4096</span>
+</span></span><span style=display:flex><span> :
+</span></span><span style=display:flex><span>;; Query time: <span style=color:#ae81ff>312</span> msec
+</span></span><span style=display:flex><span>;; SERVER: 192.36.144.107#53<span style=color:#f92672>(</span>192.36.144.107<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>;; WHEN: Mon Feb <span style=color:#ae81ff>22</span> 20:49:14 <span style=color:#ae81ff>2016</span>
+</span></span><span style=display:flex><span>;; MSG SIZE  rcvd: <span style=color:#ae81ff>2063</span>
+</span></span></code></pre></div><ol><li><p>問い合わせ時の一連のパケット。</p><p>UDP だけで処理が完結している。
+<img src=edns0-tcpdump1.jpg alt></p></li><li><p>UDP の問い合わせ</p><p><code>No.15</code>: UDP による問い合わせ
 <img src=edns0-tcpdump2.jpg alt>
-addtional section に OPTレコードがある</p>
-</li>
-<li>
-<p>UDP の応答</p>
-<p><code>No.20</code>: UDP による応答
+addtional section に OPTレコードがある</p></li><li><p>UDP の応答</p><p><code>No.20</code>: UDP による応答
 <img src=edns0-tcpdump3.jpg alt>
-TCPフォールバックせずに UDP で全ての応答が返ってきている</p>
-</li>
-</ol>
-<h1 id=補足-dns-のメッセージフォーマット>[補足] DNS のメッセージフォーマット</h1>
-<p>DNS のメッセージフォーマットは、5つのセクションに分かれており、<code>Header</code> のみが必須。要求と応答ともに同じフォーマットしようされる。</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>Format
-
-    +---------------------+
-    |        Header       |
-    +---------------------+
-    |       Question      | the question <span style=color:#66d9ef>for</span> the name server
-    +---------------------+
-    |        Answer       | RRs answering the question
-    +---------------------+
-    |      Authority      | RRs pointing toward an authority
-    +---------------------+
-    |      Additional     | RRs holding additional information
-    +---------------------+
-    
-</code></pre></div><p>Header は 6つに分かれていて、以下のような感じ。</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>The header contains the following fields:
-
-      <span style=color:#ae81ff>0</span>  <span style=color:#ae81ff>1</span>  <span style=color:#ae81ff>2</span>  <span style=color:#ae81ff>3</span>  <span style=color:#ae81ff>4</span>  <span style=color:#ae81ff>5</span>  <span style=color:#ae81ff>6</span>  <span style=color:#ae81ff>7</span>  <span style=color:#ae81ff>8</span>  <span style=color:#ae81ff>9</span>  <span style=color:#ae81ff>0</span>  <span style=color:#ae81ff>1</span>  <span style=color:#ae81ff>2</span>  <span style=color:#ae81ff>3</span>  <span style=color:#ae81ff>4</span>  <span style=color:#ae81ff>5</span>
-    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-    |                      ID                       |
-    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-    |QR|   Opcode  |AA|TC|RD|RA|   Z    |   RCODE   |
-    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-    |                    QDCOUNT                    |
-    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-    |                    ANCOUNT                    |
-    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-    |                    NSCOUNT                    |
-    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-    |                    ARCOUNT                    |
-    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-</code></pre></div><ol>
-<li>
-<p>ID(16)</p>
-</li>
-<li>
-<p>フラグ(16)</p>
-<ul>
-<li><code>QR</code>(1): 問い合わせ/応答
-<ul>
-<li>0: 問い合わせ</li>
-<li>1: 応答</li>
-</ul>
-</li>
-<li><code>OPcode</code>(4): オペレーションコード
-<ul>
-<li>0: 問い合わせ</li>
-<li>1: 逆問い合わせ</li>
-<li>2: サーバ状態要求</li>
-</ul>
-</li>
-<li><code>AA</code>(1): オーソリティ応答
-<ul>
-<li>0: 反復の結果の応答</li>
-<li>1: そのネームサーバからの応答</li>
-</ul>
-</li>
-<li><code>TC</code>(1): 切り捨て
-<ul>
-<li>0: データサイズ512バイト以下</li>
-<li>1: 512バイト超</li>
-</ul>
-</li>
-<li><code>RD</code>(1): 再帰要望
-<ul>
-<li>0: 再帰問い合わせをサーバに要求しない</li>
-<li>1: 再帰問い合わせをサーバに要求</li>
-</ul>
-</li>
-<li><code>RA</code>(1): 再帰有効
-<ul>
-<li>0: 再帰問い合わせ不可能</li>
-<li>1: 再帰問い合わせ可能</li>
-</ul>
-</li>
-<li><code>Z</code>(3): (予約)
-<ul>
-<li>0: 未使用。すべて 0</li>
-</ul>
-</li>
-<li><code>RCODE</code>(4): 戻りコード
-<ul>
-<li>0: エラーなし</li>
-<li>1: フォーマットエラー</li>
-<li>2: サーバエラー</li>
-<li>3: ドメインが存在しない</li>
-<li>4: 未実装</li>
-<li>5: 拒否</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<p>質問の数(16)</p>
-</li>
-<li>
-<p>応答の数(16)</p>
-</li>
-<li>
-<p>オーソリティの数(16)</p>
-</li>
-<li>
-<p>追加情報の数(16)</p>
-</li>
-</ol>
-</div>
-</div>
-<div id=post-footer class="post-footer main-content-wrap">
-<div class=post-footer-tags>
-<span class="text-color-light text-small">タグ</span><br>
-<a class="tag tag--primary tag--small" href=/tags/dns/>dns</a>
-</div>
-<div class=post-actions-wrap>
-<nav>
-<ul class="post-actions post-action-nav">
-<li class=post-action>
-<a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2016/03/24/sparse-file/ data-tooltip="Sparse File (スパースファイル) の仕組み">
-<i class="fa fa-angle-left"></i>
-<span class="hide-xs hide-sm text-small icon-ml">次</span>
-</a>
-</li>
-<li class=post-action>
-<a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2015/12/20/gfmarkdown-release/ data-tooltip="markdown(GFM) を変換するコマンドを mruby-cli で作ってみた">
-<span class="hide-xs hide-sm text-small icon-mr">前</span>
-<i class="fa fa-angle-right"></i>
-</a>
-</li>
-</ul>
-</nav>
-<ul class="post-actions post-action-share">
-<li class="post-action hide-lg hide-md hide-sm">
-<a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions>
-<i class="fa fa-share-alt"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.github.io/harasou.jp/2016/02/21/dns-packet-over-512/>
-<i class="fa icon-hatebu"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.github.io/harasou.jp/2016/02/21/dns-packet-over-512/">
-<i class="fa icon-pocket"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.github.io/harasou.jp/2016/02/21/dns-packet-over-512/">
-<i class="fa fa-facebook-official"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.github.io/harasou.jp/2016/02/21/dns-packet-over-512/">
-<i class="fa fa-twitter"></i>
-</a>
-</li>
-<li class=post-action>
-<a class="post-action-btn btn btn--default" href=#>
-<i class="fa fa-list"></i>
-</a>
-</li>
-</ul>
-</div>
-</div>
-</article>
-<footer id=footer class=main-content-wrap>
-<span class=copyrights>
-&copy; 2021 harasou. All Rights Reserved
-</span>
-</footer>
-</div>
-<div id=bottom-bar class=post-bottom-bar data-behavior=5>
-<div class=post-actions-wrap>
-<nav>
-<ul class="post-actions post-action-nav">
-<li class=post-action>
-<a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2016/03/24/sparse-file/ data-tooltip="Sparse File (スパースファイル) の仕組み">
-<i class="fa fa-angle-left"></i>
-<span class="hide-xs hide-sm text-small icon-ml">次</span>
-</a>
-</li>
-<li class=post-action>
-<a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2015/12/20/gfmarkdown-release/ data-tooltip="markdown(GFM) を変換するコマンドを mruby-cli で作ってみた">
-<span class="hide-xs hide-sm text-small icon-mr">前</span>
-<i class="fa fa-angle-right"></i>
-</a>
-</li>
-</ul>
-</nav>
-<ul class="post-actions post-action-share">
-<li class="post-action hide-lg hide-md hide-sm">
-<a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions>
-<i class="fa fa-share-alt"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.github.io/harasou.jp/2016/02/21/dns-packet-over-512/>
-<i class="fa icon-hatebu"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.github.io/harasou.jp/2016/02/21/dns-packet-over-512/">
-<i class="fa icon-pocket"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.github.io/harasou.jp/2016/02/21/dns-packet-over-512/">
-<i class="fa fa-facebook-official"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.github.io/harasou.jp/2016/02/21/dns-packet-over-512/">
-<i class="fa fa-twitter"></i>
-</a>
-</li>
-<li class=post-action>
-<a class="post-action-btn btn btn--default" href=#>
-<i class="fa fa-list"></i>
-</a>
-</li>
-</ul>
-</div>
-</div>
-<div id=share-options-bar class=share-options-bar data-behavior=5>
-<i id=btn-close-shareoptions class="fa fa-close"></i>
-<ul class=share-options>
-<li class=share-option>
-<a class=share-option-btn target=new href=http://b.hatena.ne.jp/entry/https%3A%2F%2Fharasou.github.io%2Fharasou.jp%2F2016%2F02%2F21%2Fdns-packet-over-512%2F>
-<i class="fa icon-hatebu"></i><span>Hatebuで共有</span>
-</a>
-</li>
-<li class=share-option>
-<a class=share-option-btn target=new href="http://getpocket.com/edit?url=https%3A%2F%2Fharasou.github.io%2Fharasou.jp%2F2016%2F02%2F21%2Fdns-packet-over-512%2F">
-<i class="fa icon-pocket"></i><span>Pocketで共有</span>
-</a>
-</li>
-<li class=share-option>
-<a class=share-option-btn target=new href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fharasou.github.io%2Fharasou.jp%2F2016%2F02%2F21%2Fdns-packet-over-512%2F">
-<i class="fa fa-facebook-official"></i><span>Facebookで共有</span>
-</a>
-</li>
-<li class=share-option>
-<a class=share-option-btn target=new href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fharasou.github.io%2Fharasou.jp%2F2016%2F02%2F21%2Fdns-packet-over-512%2F">
-<i class="fa fa-twitter"></i><span>Twitterで共有</span>
-</a>
-</li>
-</ul>
-</div>
-<div id=share-options-mask class=share-options-mask></div>
-</div>
-<div id=about>
-<div id=about-card>
-<div id=about-btn-close>
-<i class="fa fa-remove"></i>
-</div>
-<img id=about-card-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt=プロフィール画像>
-<h4 id=about-card-name>harasou</h4>
-<div id=about-card-bio>めくじらを立てない</div>
-<div id=about-card-job>
-<i class="fa fa-briefcase"></i>
-<br>
-Infra Engineer
-</div>
-<div id=about-card-location>
-<i class="fa fa-map-marker"></i>
-<br>
-Fukuoka Japan
-</div>
-</div>
-</div>
-<div id=cover style=background-image:url(https://harasou.github.io/harasou.jp/images/cover.jpg)></div>
-<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin=anonymous></script>
+TCPフォールバックせずに UDP で全ての応答が返ってきている</p></li></ol><h1 id=補足-dns-のメッセージフォーマット>[補足] DNS のメッセージフォーマット</h1><p>DNS のメッセージフォーマットは、5つのセクションに分かれており、<code>Header</code> のみが必須。要求と応答ともに同じフォーマットしようされる。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>Format
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    +---------------------+
+</span></span><span style=display:flex><span>    |        Header       |
+</span></span><span style=display:flex><span>    +---------------------+
+</span></span><span style=display:flex><span>    |       Question      | the question <span style=color:#66d9ef>for</span> the name server
+</span></span><span style=display:flex><span>    +---------------------+
+</span></span><span style=display:flex><span>    |        Answer       | RRs answering the question
+</span></span><span style=display:flex><span>    +---------------------+
+</span></span><span style=display:flex><span>    |      Authority      | RRs pointing toward an authority
+</span></span><span style=display:flex><span>    +---------------------+
+</span></span><span style=display:flex><span>    |      Additional     | RRs holding additional information
+</span></span><span style=display:flex><span>    +---------------------+
+</span></span><span style=display:flex><span>    
+</span></span></code></pre></div><p>Header は 6つに分かれていて、以下のような感じ。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>The header contains the following fields:
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>      <span style=color:#ae81ff>0</span>  <span style=color:#ae81ff>1</span>  <span style=color:#ae81ff>2</span>  <span style=color:#ae81ff>3</span>  <span style=color:#ae81ff>4</span>  <span style=color:#ae81ff>5</span>  <span style=color:#ae81ff>6</span>  <span style=color:#ae81ff>7</span>  <span style=color:#ae81ff>8</span>  <span style=color:#ae81ff>9</span>  <span style=color:#ae81ff>0</span>  <span style=color:#ae81ff>1</span>  <span style=color:#ae81ff>2</span>  <span style=color:#ae81ff>3</span>  <span style=color:#ae81ff>4</span>  <span style=color:#ae81ff>5</span>
+</span></span><span style=display:flex><span>    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+</span></span><span style=display:flex><span>    |                      ID                       |
+</span></span><span style=display:flex><span>    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+</span></span><span style=display:flex><span>    |QR|   Opcode  |AA|TC|RD|RA|   Z    |   RCODE   |
+</span></span><span style=display:flex><span>    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+</span></span><span style=display:flex><span>    |                    QDCOUNT                    |
+</span></span><span style=display:flex><span>    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+</span></span><span style=display:flex><span>    |                    ANCOUNT                    |
+</span></span><span style=display:flex><span>    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+</span></span><span style=display:flex><span>    |                    NSCOUNT                    |
+</span></span><span style=display:flex><span>    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+</span></span><span style=display:flex><span>    |                    ARCOUNT                    |
+</span></span><span style=display:flex><span>    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+</span></span></code></pre></div><ol><li><p>ID(16)</p></li><li><p>フラグ(16)</p><ul><li><code>QR</code>(1): 問い合わせ/応答<ul><li>0: 問い合わせ</li><li>1: 応答</li></ul></li><li><code>OPcode</code>(4): オペレーションコード<ul><li>0: 問い合わせ</li><li>1: 逆問い合わせ</li><li>2: サーバ状態要求</li></ul></li><li><code>AA</code>(1): オーソリティ応答<ul><li>0: 反復の結果の応答</li><li>1: そのネームサーバからの応答</li></ul></li><li><code>TC</code>(1): 切り捨て<ul><li>0: データサイズ512バイト以下</li><li>1: 512バイト超</li></ul></li><li><code>RD</code>(1): 再帰要望<ul><li>0: 再帰問い合わせをサーバに要求しない</li><li>1: 再帰問い合わせをサーバに要求</li></ul></li><li><code>RA</code>(1): 再帰有効<ul><li>0: 再帰問い合わせ不可能</li><li>1: 再帰問い合わせ可能</li></ul></li><li><code>Z</code>(3): (予約)<ul><li>0: 未使用。すべて 0</li></ul></li><li><code>RCODE</code>(4): 戻りコード<ul><li>0: エラーなし</li><li>1: フォーマットエラー</li><li>2: サーバエラー</li><li>3: ドメインが存在しない</li><li>4: 未実装</li><li>5: 拒否</li></ul></li></ul></li><li><p>質問の数(16)</p></li><li><p>応答の数(16)</p></li><li><p>オーソリティの数(16)</p></li><li><p>追加情報の数(16)</p></li></ol></div></div><div id=post-footer class="post-footer main-content-wrap"><div class=post-footer-tags><span class="text-color-light text-small">タグ</span><br><a class="tag tag--primary tag--small" href=/tags/dns/>dns</a></div><div class=post-actions-wrap><nav><ul class="post-actions post-action-nav"><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2016/03/24/sparse-file/ data-tooltip="Sparse File (スパースファイル) の仕組み"><i class="fa fa-angle-left"></i>
+<span class="hide-xs hide-sm text-small icon-ml">次</span></a></li><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2015/12/20/gfmarkdown-release/ data-tooltip="markdown(GFM) を変換するコマンドを mruby-cli で作ってみた"><span class="hide-xs hide-sm text-small icon-mr">前</span>
+<i class="fa fa-angle-right"></i></a></li></ul></nav><ul class="post-actions post-action-share"><li class="post-action hide-lg hide-md hide-sm"><a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions><i class="fa fa-share-alt"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.github.io/harasou.jp/2016/02/21/dns-packet-over-512/><i class="fa icon-hatebu"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.github.io/harasou.jp/2016/02/21/dns-packet-over-512/"><i class="fa icon-pocket"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.github.io/harasou.jp/2016/02/21/dns-packet-over-512/"><i class="fa fa-facebook-official"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.github.io/harasou.jp/2016/02/21/dns-packet-over-512/"><i class="fa fa-twitter"></i></a></li><li class=post-action><a class="post-action-btn btn btn--default" href=#><i class="fa fa-list"></i></a></li></ul></div></div></article><footer id=footer class=main-content-wrap><span class=copyrights>&copy; 2022 harasou. All Rights Reserved</span></footer></div><div id=bottom-bar class=post-bottom-bar data-behavior=5><div class=post-actions-wrap><nav><ul class="post-actions post-action-nav"><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2016/03/24/sparse-file/ data-tooltip="Sparse File (スパースファイル) の仕組み"><i class="fa fa-angle-left"></i>
+<span class="hide-xs hide-sm text-small icon-ml">次</span></a></li><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2015/12/20/gfmarkdown-release/ data-tooltip="markdown(GFM) を変換するコマンドを mruby-cli で作ってみた"><span class="hide-xs hide-sm text-small icon-mr">前</span>
+<i class="fa fa-angle-right"></i></a></li></ul></nav><ul class="post-actions post-action-share"><li class="post-action hide-lg hide-md hide-sm"><a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions><i class="fa fa-share-alt"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.github.io/harasou.jp/2016/02/21/dns-packet-over-512/><i class="fa icon-hatebu"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.github.io/harasou.jp/2016/02/21/dns-packet-over-512/"><i class="fa icon-pocket"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.github.io/harasou.jp/2016/02/21/dns-packet-over-512/"><i class="fa fa-facebook-official"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.github.io/harasou.jp/2016/02/21/dns-packet-over-512/"><i class="fa fa-twitter"></i></a></li><li class=post-action><a class="post-action-btn btn btn--default" href=#><i class="fa fa-list"></i></a></li></ul></div></div><div id=share-options-bar class=share-options-bar data-behavior=5><i id=btn-close-shareoptions class="fa fa-close"></i><ul class=share-options><li class=share-option><a class=share-option-btn target=new href=http://b.hatena.ne.jp/entry/https%3A%2F%2Fharasou.github.io%2Fharasou.jp%2F2016%2F02%2F21%2Fdns-packet-over-512%2F><i class="fa icon-hatebu"></i><span>Hatebuで共有</span></a></li><li class=share-option><a class=share-option-btn target=new href="http://getpocket.com/edit?url=https%3A%2F%2Fharasou.github.io%2Fharasou.jp%2F2016%2F02%2F21%2Fdns-packet-over-512%2F"><i class="fa icon-pocket"></i><span>Pocketで共有</span></a></li><li class=share-option><a class=share-option-btn target=new href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fharasou.github.io%2Fharasou.jp%2F2016%2F02%2F21%2Fdns-packet-over-512%2F"><i class="fa fa-facebook-official"></i><span>Facebookで共有</span></a></li><li class=share-option><a class=share-option-btn target=new href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fharasou.github.io%2Fharasou.jp%2F2016%2F02%2F21%2Fdns-packet-over-512%2F"><i class="fa fa-twitter"></i><span>Twitterで共有</span></a></li></ul></div><div id=share-options-mask class=share-options-mask></div></div><div id=about><div id=about-card><div id=about-btn-close><i class="fa fa-remove"></i></div><img id=about-card-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt=プロフィール画像><h4 id=about-card-name>harasou</h4><div id=about-card-bio>めくじらを立てない</div><div id=about-card-job><i class="fa fa-briefcase"></i><br>Infra Engineer</div><div id=about-card-location><i class="fa fa-map-marker"></i><br>Fukuoka Japan</div></div></div><div id=cover style=background-image:url(https://harasou.github.io/harasou.jp/images/cover.jpg)></div><script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin=anonymous></script>
 <script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin=anonymous></script>
 <script src=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin=anonymous></script>
 <script src=/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js></script>
-<script lang=javascript>window.onload=updateMinWidth,window.onresize=updateMinWidth,document.getElementById("sidebar").addEventListener("transitionend",updateMinWidth);function updateMinWidth(){var b=document.getElementById("sidebar"),a=document.getElementById("main"),c,d,e;a.style.minWidth="",c=getComputedStyle(a).getPropertyValue("min-width"),d=getComputedStyle(b).getPropertyValue("width"),e=getComputedStyle(b).getPropertyValue("left"),a.style.minWidth=`calc(${c} - ${d} - ${e})`}</script>
-<script>$(document).ready(function(){hljs.configure({classPrefix:'',useBR:!1}),$('pre.code-highlight > code, pre > code').each(function(b,a){$(this).hasClass('codeblock')||$(this).addClass('codeblock'),hljs.highlightBlock(a)})})</script>
-</body>
-</html>
+<script lang=javascript>window.onload=updateMinWidth,window.onresize=updateMinWidth,document.getElementById("sidebar").addEventListener("transitionend",updateMinWidth);function updateMinWidth(){var n,s,o,t=document.getElementById("sidebar"),e=document.getElementById("main");e.style.minWidth="",n=getComputedStyle(e).getPropertyValue("min-width"),s=getComputedStyle(t).getPropertyValue("width"),o=getComputedStyle(t).getPropertyValue("left"),e.style.minWidth=`calc(${n} - ${s} - ${o})`}</script><script>$(document).ready(function(){hljs.configure({classPrefix:'',useBR:!1}),$("pre.code-highlight > code, pre > code").each(function(t,e){$(this).hasClass("codeblock")||$(this).addClass("codeblock"),hljs.highlightBlock(e)})})</script></body></html>

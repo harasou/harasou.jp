@@ -1,374 +1,44 @@
-<!doctype html><html lang=ja>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=x-ua-compatible content="IE=edge">
-<meta name=generator content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
-<meta name=author content="harasou">
-<meta name=keywords content>
-<meta name=description content="気づいたらブログの証明書の期限が切れていた。めんどくさて数日放置していたけど、
-さすがにエンジニアとしてまずいだろうということで自動化することに。">
-<meta property="og:description" content="気づいたらブログの証明書の期限が切れていた。めんどくさて数日放置していたけど、
-さすがにエンジニアとしてまずいだろうということで自動化することに。">
-<meta property="og:type" content="article">
-<meta property="og:title" content="lego と Cloud DNS で Let's Encrypt の自動更新">
-<meta name=twitter:title content="lego と Cloud DNS で Let's Encrypt の自動更新">
-<meta property="og:url" content="https://harasou.github.io/harasou.jp/2018/01/27/lego-and-clouddns/">
-<meta property="twitter:url" content="https://harasou.github.io/harasou.jp/2018/01/27/lego-and-clouddns/">
-<meta property="og:site_name" content="harasou.jp">
-<meta property="og:description" content="気づいたらブログの証明書の期限が切れていた。めんどくさて数日放置していたけど、
-さすがにエンジニアとしてまずいだろうということで自動化することに。">
-<meta name=twitter:description content="気づいたらブログの証明書の期限が切れていた。めんどくさて数日放置していたけど、
-さすがにエンジニアとしてまずいだろうということで自動化することに。">
-<meta property="og:locale" content="ja">
-<meta property="article:published_time" content="2018-01-27T16:26:25">
-<meta property="article:modified_time" content="2018-01-27T16:26:25">
-<meta property="article:tag" content="GCP">
-<meta name=twitter:card content="summary">
-<meta name=twitter:site content="@harasou5">
-<meta name=twitter:creator content="@harasou5">
-<meta property="og:image" content="https://harasou.github.io/harasou.jp/2018/01/27/lego-and-clouddns/le-logo-lockonly.png">
-<meta property="twitter:image" content="https://harasou.github.io/harasou.jp/2018/01/27/lego-and-clouddns/le-logo-lockonly.png">
-<meta property="og:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
-<meta property="twitter:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640">
-<title>lego と Cloud DNS で Let's Encrypt の自動更新</title>
-<link rel=icon href=/favicon.png>
-<link rel=canonical href=https://harasou.github.io/harasou.jp/2018/01/27/lego-and-clouddns/>
-<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin=anonymous>
-<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin=anonymous>
-<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin=anonymous>
-<link rel=stylesheet href=/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css>
-<link rel=stylesheet href=https://harasou.github.io/harasou.jp/css/style.css swappaginator=true>
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-62541096-1','auto'),ga('send','pageview'))</script>
-</head>
-<body>
-<div id=blog>
-<header id=header data-behavior=5>
-<i id=btn-open-sidebar class="fa fa-lg fa-bars"></i>
-<div class=header-title>
-<a class=header-title-link href=/harasou.jp/>harasou.jp</a>
-</div>
-<a class=header-right-picture href=/#about>
-<img class=header-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=90" alt=プロフィール画像>
-</a>
-</header>
-<nav id=sidebar data-behavior=5>
-<div class=sidebar-container>
-<div class=sidebar-profile>
-<a href=/#about>
-<img class=sidebar-profile-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt=プロフィール画像>
-</a>
-<h4 class=sidebar-profile-name>harasou</h4>
-<h5 class=sidebar-profile-bio>めくじらを立てない</h5>
-</div>
-<ul class=sidebar-buttons>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=/harasou.jp/harasou.jp/>
-<i class="sidebar-button-icon fa fa-lg fa-home"></i>
-<span class=sidebar-button-desc>ホーム</span>
-</a>
-</li>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=/harasou.jp/harasou.jp/tags>
-<i class="sidebar-button-icon fa fa-lg fa-tags"></i>
-<span class=sidebar-button-desc>タグ</span>
-</a>
-</li>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=/harasou.jp/harasou.jp/archives>
-<i class="sidebar-button-icon fa fa-lg fa-archive"></i>
-<span class=sidebar-button-desc>アーカイブ</span>
-</a>
-</li>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=/harasou.jp/harasou.jp/#about>
-<i class="sidebar-button-icon fa fa-lg fa-question"></i>
-<span class=sidebar-button-desc>プロフィール</span>
-</a>
-</li>
-</ul>
-<ul class=sidebar-buttons>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=https://github.com/harasou target=_blank rel=noopener>
-<i class="sidebar-button-icon fa fa-lg fa-github"></i>
-<span class=sidebar-button-desc>GitHub</span>
-</a>
-</li>
-</ul>
-<ul class=sidebar-buttons>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=/harasou.jp/harasou.jp/index.xml>
-<i class="sidebar-button-icon fa fa-lg fa-rss"></i>
-<span class=sidebar-button-desc>RSS</span>
-</a>
-</li>
-</ul>
-</div>
-</nav>
-<div id=main data-behavior=5 class=hasCoverMetaIn>
-<article class=post itemscope itemtype=http://schema.org/BlogPosting>
-<div class="post-header main-content-wrap text-left">
-<h1 class=post-title itemprop=headline>
-lego と Cloud DNS で Let's Encrypt の自動更新
-</h1>
-<div class="postShorten-meta post-meta">
-<time itemprop=datePublished datetime=2018-01-27T16:26:25+09:00>
-2018/1/27
-</time>
-</div>
-</div>
-<div class="post-content markdown" itemprop=articleBody>
-<div class=main-content-wrap>
-<p>気づいたらブログの証明書の期限が切れていた。めんどくさて数日放置していたけど、
-さすがにエンジニアとしてまずいだろうということで自動化することに。</p>
-<h2 id=lets-encrypt-dns-01>Let&rsquo;s Encrypt (DNS-01)</h2>
-<p>使用していたのは Let&rsquo;s Encrypt の証明書。証明書は ACMEというプロトコルを使用して
-発行されるが、その手順の中で「ドメインの所有者どうか」といった認証がある。</p>
-<p>この認証によく使われているのは<code>HTTP-01</code>だが、今回は<code>DNS-01</code>を使っている。</p>
-<ul>
-<li>DNS-01 の流れ
-<ol>
-<li>ACMEクラインアントが Let&rsquo;s Encrypt に <code>challenge</code> を要求</li>
-<li>受け取った <code>challenge</code> を _acme-challenge.harasou.jp の TXT レコードにセット</li>
-<li>Let&rsquo;s Encrypt が TXT レコードの <code>challenge</code> を確認できれば証明書発行</li>
-</ol>
-</li>
-</ul>
-<p>自動化にあたって、ACMEクライアントには golang製の <a href=https://github.com/xenolf/lego>lego</a> を利用し、API経由での操作が
-必要なDNSプロバイダには Google の DNS サービスである <a href="https://cloud.google.com/dns/?hl=ja">Cloud DNS</a> を使った。</p>
-<p><img src=lego-dns01.png alt></p>
-<h2 id=lego-のセットアップ>lego のセットアップ</h2>
-<p>ACMEクライアントとしては <a href=https://certbot.eff.org/>Certbot</a> が有名だが、今回は golang 製の <a href=https://github.com/xenolf/lego>lego</a> を
-利用することにする。</p>
-<pre tabindex=0><code># Linux-AMD64用のバイナリ
+<!doctype html><html lang=ja><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=generator content="Hugo 0.98.0 with theme Tranquilpeak 0.4.7-BETA"><meta name=author content="harasou"><meta name=keywords content><meta name=description content="気づいたらブログの証明書の期限が切れていた。めんどくさて数日放置していたけど、
+さすがにエンジニアとしてまずいだろうということで自動化することに。"><meta property="og:description" content="気づいたらブログの証明書の期限が切れていた。めんどくさて数日放置していたけど、
+さすがにエンジニアとしてまずいだろうということで自動化することに。"><meta property="og:type" content="article"><meta property="og:title" content="lego と Cloud DNS で Let's Encrypt の自動更新"><meta name=twitter:title content="lego と Cloud DNS で Let's Encrypt の自動更新"><meta property="og:url" content="https://harasou.github.io/harasou.jp/2018/01/27/lego-and-clouddns/"><meta property="twitter:url" content="https://harasou.github.io/harasou.jp/2018/01/27/lego-and-clouddns/"><meta property="og:site_name" content="harasou.jp"><meta property="og:description" content="気づいたらブログの証明書の期限が切れていた。めんどくさて数日放置していたけど、
+さすがにエンジニアとしてまずいだろうということで自動化することに。"><meta name=twitter:description content="気づいたらブログの証明書の期限が切れていた。めんどくさて数日放置していたけど、
+さすがにエンジニアとしてまずいだろうということで自動化することに。"><meta property="og:locale" content="ja"><meta property="article:published_time" content="2018-01-27T16:26:25"><meta property="article:modified_time" content="2018-01-27T16:26:25"><meta property="article:tag" content="GCP"><meta name=twitter:card content="summary"><meta name=twitter:site content="@harasou5"><meta name=twitter:creator content="@harasou5"><meta property="og:image" content="https://harasou.github.io/harasou.jp/2018/01/27/lego-and-clouddns/le-logo-lockonly.png"><meta property="twitter:image" content="https://harasou.github.io/harasou.jp/2018/01/27/lego-and-clouddns/le-logo-lockonly.png"><meta property="og:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640"><meta property="twitter:image" content="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=640"><title>lego と Cloud DNS で Let's Encrypt の自動更新</title><link rel=icon href=/favicon.png><link rel=canonical href=https://harasou.github.io/harasou.jp/2018/01/27/lego-and-clouddns/><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin=anonymous><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin=anonymous><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin=anonymous><link rel=stylesheet href=/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css><link rel=stylesheet href=https://harasou.github.io/harasou.jp/css/style.css swappaginator=true><script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(e,o,i,a,t,n,s){e.GoogleAnalyticsObject=t,e[t]=e[t]||function(){(e[t].q=e[t].q||[]).push(arguments)},e[t].l=1*new Date,n=o.createElement(i),s=o.getElementsByTagName(i)[0],n.async=1,n.src=a,s.parentNode.insertBefore(n,s)}(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-62541096-1","auto"),ga("send","pageview"))</script></head><body><div id=blog><header id=header data-behavior=5><i id=btn-open-sidebar class="fa fa-lg fa-bars"></i><div class=header-title><a class=header-title-link href=/harasou.jp/>harasou.jp</a></div><a class=header-right-picture href=/#about><img class=header-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=90" alt=プロフィール画像></a></header><nav id=sidebar data-behavior=5><div class=sidebar-container><div class=sidebar-profile><a href=/#about><img class=sidebar-profile-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt=プロフィール画像></a><h4 class=sidebar-profile-name>harasou</h4><h5 class=sidebar-profile-bio>めくじらを立てない</h5></div><ul class=sidebar-buttons><li class=sidebar-button><a class=sidebar-button-link href=/harasou.jp/harasou.jp/><i class="sidebar-button-icon fa fa-lg fa-home"></i>
+<span class=sidebar-button-desc>ホーム</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=/harasou.jp/harasou.jp/tags><i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+<span class=sidebar-button-desc>タグ</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=/harasou.jp/harasou.jp/archives><i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+<span class=sidebar-button-desc>アーカイブ</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=/harasou.jp/harasou.jp/#about><i class="sidebar-button-icon fa fa-lg fa-question"></i>
+<span class=sidebar-button-desc>プロフィール</span></a></li></ul><ul class=sidebar-buttons><li class=sidebar-button><a class=sidebar-button-link href=https://github.com/harasou target=_blank rel=noopener><i class="sidebar-button-icon fa fa-lg fa-github"></i>
+<span class=sidebar-button-desc>GitHub</span></a></li></ul><ul class=sidebar-buttons><li class=sidebar-button><a class=sidebar-button-link href=/harasou.jp/harasou.jp/index.xml><i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+<span class=sidebar-button-desc>RSS</span></a></li></ul></div></nav><div id=main data-behavior=5 class=hasCoverMetaIn><article class=post itemscope itemtype=http://schema.org/BlogPosting><div class="post-header main-content-wrap text-left"><h1 class=post-title itemprop=headline>lego と Cloud DNS で Let's Encrypt の自動更新</h1><div class="postShorten-meta post-meta"><time itemprop=datePublished datetime=2018-01-27T16:26:25+09:00>2018/1/27</time></div></div><div class="post-content markdown" itemprop=articleBody><div class=main-content-wrap><p>気づいたらブログの証明書の期限が切れていた。めんどくさて数日放置していたけど、
+さすがにエンジニアとしてまずいだろうということで自動化することに。</p><h2 id=lets-encrypt-dns-01>Let&rsquo;s Encrypt (DNS-01)</h2><p>使用していたのは Let&rsquo;s Encrypt の証明書。証明書は ACMEというプロトコルを使用して
+発行されるが、その手順の中で「ドメインの所有者どうか」といった認証がある。</p><p>この認証によく使われているのは<code>HTTP-01</code>だが、今回は<code>DNS-01</code>を使っている。</p><ul><li>DNS-01 の流れ<ol><li>ACMEクラインアントが Let&rsquo;s Encrypt に <code>challenge</code> を要求</li><li>受け取った <code>challenge</code> を _acme-challenge.harasou.jp の TXT レコードにセット</li><li>Let&rsquo;s Encrypt が TXT レコードの <code>challenge</code> を確認できれば証明書発行</li></ol></li></ul><p>自動化にあたって、ACMEクライアントには golang製の <a href=https://github.com/xenolf/lego>lego</a> を利用し、API経由での操作が
+必要なDNSプロバイダには Google の DNS サービスである <a href="https://cloud.google.com/dns/?hl=ja">Cloud DNS</a> を使った。</p><p><img src=lego-dns01.png alt></p><h2 id=lego-のセットアップ>lego のセットアップ</h2><p>ACMEクライアントとしては <a href=https://certbot.eff.org/>Certbot</a> が有名だが、今回は golang 製の <a href=https://github.com/xenolf/lego>lego</a> を
+利用することにする。</p><pre tabindex=0><code># Linux-AMD64用のバイナリ
 curl -L https://github.com/xenolf/lego/releases/download/v0.4.1/lego_linux_amd64.tar.xz | tar Jxvf - lego_linux_amd64
 sudo install -o root -g root -m 755 lego_linux_amd64 /usr/local/bin/lego
 </code></pre><p>バイナリ一つ落としてくれば良いので便利。最新の release を落としてきて、パスが通った
-ディレクトリに配置しておく。</p>
-<h2 id=cloud-dns-更新の準備>Cloud DNS 更新の準備</h2>
-<p>Cloud DNS を lego から更新するためには <a href="https://cloud.google.com/iam/docs/service-accounts?hl=ja">サービスアカウント</a> の作成が必要 (たぶん)。
+ディレクトリに配置しておく。</p><h2 id=cloud-dns-更新の準備>Cloud DNS 更新の準備</h2><p>Cloud DNS を lego から更新するためには <a href="https://cloud.google.com/iam/docs/service-accounts?hl=ja">サービスアカウント</a> の作成が必要 (たぶん)。
 対象のプロジェクトで、DNS の操作をサービスアカウントに許可し、lego からの利用時に
-必要な key を取得しておく。</p>
-<pre tabindex=0><code>gcloud iam service-accounts create sa-lego --display-name=&quot;lego service account&quot;
+必要な key を取得しておく。</p><pre tabindex=0><code>gcloud iam service-accounts create sa-lego --display-name=&#34;lego service account&#34;
 gcloud iam service-accounts list
 gcloud projects add-iam-policy-binding harasous-garden --member=serviceAccount:sa-lego@harasous-garden.iam.gserviceaccount.com --role=roles/dns.admin
 gcloud iam service-accounts keys create key.json --iam-account=sa-lego@harasous-garden.iam.gserviceaccount.com
-</code></pre><table>
-<thead>
-<tr>
-<th style=text-align:left>パラメータ</th>
-<th style=text-align:left>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style=text-align:left>sa-lego</td>
-<td style=text-align:left>サービスアカウントの名前。なんでもよい</td>
-</tr>
-<tr>
-<td style=text-align:left>harasous-garden</td>
-<td style=text-align:left>プロジェクトID。Cloud DNS があるプロジェクト</td>
-</tr>
-<tr>
-<td style=text-align:left><a href=mailto:sa-lego@harasous-garden.iam.gserviceaccount.com>sa-lego@harasous-garden.iam.gserviceaccount.com</a></td>
-<td style=text-align:left>サービスアカウントのEMAIL。サービスアカウント名とプロジェクトIDで決まる</td>
-</tr>
-<tr>
-<td style=text-align:left>roles/dns.admin</td>
-<td style=text-align:left>サービスアカウントの<a href="https://cloud.google.com/dns/access-control?hl=ja">役割</a></td>
-</tr>
-<tr>
-<td style=text-align:left>key.json</td>
-<td style=text-align:left>保存する key のファイル名</td>
-</tr>
-</tbody>
-</table>
-<p>Google の IAM については、全然わかってないので、他にちゃんとしたやり方がありそう
-（Cloud KMS とか）。</p>
-<h2 id=証明書の取得と更新>証明書の取得と更新</h2>
-<p>いざ、証明書の取得。Cloud DNS を使う時に必要な変数を設定して、lego コマンドを実行。
-うまく行くと <code>~/.lego/certificates</code>配下に証明書が作成される。</p>
-<pre tabindex=0><code>GCE_PROJECT=&quot;harasous-garden&quot; \
-GCE_DOMAIN=&quot;harasou.jp&quot; \
-GCE_SERVICE_ACCOUNT_FILE=&quot;key.json&quot; \
+</code></pre><table><thead><tr><th style=text-align:left>パラメータ</th><th style=text-align:left>説明</th></tr></thead><tbody><tr><td style=text-align:left>sa-lego</td><td style=text-align:left>サービスアカウントの名前。なんでもよい</td></tr><tr><td style=text-align:left>harasous-garden</td><td style=text-align:left>プロジェクトID。Cloud DNS があるプロジェクト</td></tr><tr><td style=text-align:left><a href=mailto:sa-lego@harasous-garden.iam.gserviceaccount.com>sa-lego@harasous-garden.iam.gserviceaccount.com</a></td><td style=text-align:left>サービスアカウントのEMAIL。サービスアカウント名とプロジェクトIDで決まる</td></tr><tr><td style=text-align:left>roles/dns.admin</td><td style=text-align:left>サービスアカウントの<a href="https://cloud.google.com/dns/access-control?hl=ja">役割</a></td></tr><tr><td style=text-align:left>key.json</td><td style=text-align:left>保存する key のファイル名</td></tr></tbody></table><p>Google の IAM については、全然わかってないので、他にちゃんとしたやり方がありそう
+（Cloud KMS とか）。</p><h2 id=証明書の取得と更新>証明書の取得と更新</h2><p>いざ、証明書の取得。Cloud DNS を使う時に必要な変数を設定して、lego コマンドを実行。
+うまく行くと <code>~/.lego/certificates</code>配下に証明書が作成される。</p><pre tabindex=0><code>GCE_PROJECT=&#34;harasous-garden&#34; \
+GCE_DOMAIN=&#34;harasou.jp&#34; \
+GCE_SERVICE_ACCOUNT_FILE=&#34;key.json&#34; \
 lego --domains=harasou.jp --email=harasou5+letsencrypt@gmail.com --dns=gcloud run
-</code></pre><p>cron に以下のような感じで登録すれば、2ヶ月に一回勝手に更新される。便利。</p>
-<pre tabindex=0><code>GCE_PROJECT=&quot;harasous-garden&quot;
-GCE_DOMAIN=&quot;harasou.jp&quot;
-GCE_SERVICE_ACCOUNT_FILE=&quot;key.json&quot;
+</code></pre><p>cron に以下のような感じで登録すれば、2ヶ月に一回勝手に更新される。便利。</p><pre tabindex=0><code>GCE_PROJECT=&#34;harasous-garden&#34;
+GCE_DOMAIN=&#34;harasou.jp&#34;
+GCE_SERVICE_ACCOUNT_FILE=&#34;key.json&#34;
 
 00 00 01 */2 * /usr/local/bin/lego --domains=harasou.jp --email=harasou5+letsencrypt@gmail.com --dns=gcloud renew &amp;&amp; sudo systemctl reload nginx.service
-</code></pre>
-</div>
-</div>
-<div id=post-footer class="post-footer main-content-wrap">
-<div class=post-footer-tags>
-<span class="text-color-light text-small">タグ</span><br>
-<a class="tag tag--primary tag--small" href=/tags/gcp/>GCP</a>
-</div>
-<div class=post-actions-wrap>
-<nav>
-<ul class="post-actions post-action-nav">
-<li class=post-action>
-<a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2018/01/28/gaego-static-hosting/ data-tooltip="GAE/Go で静的サイトを公開する">
-<i class="fa fa-angle-left"></i>
-<span class="hide-xs hide-sm text-small icon-ml">次</span>
-</a>
-</li>
-<li class=post-action>
-<a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2017/12/04/fuse/ data-tooltip="libfuse で Hello World !">
-<span class="hide-xs hide-sm text-small icon-mr">前</span>
-<i class="fa fa-angle-right"></i>
-</a>
-</li>
-</ul>
-</nav>
-<ul class="post-actions post-action-share">
-<li class="post-action hide-lg hide-md hide-sm">
-<a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions>
-<i class="fa fa-share-alt"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.github.io/harasou.jp/2018/01/27/lego-and-clouddns/>
-<i class="fa icon-hatebu"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.github.io/harasou.jp/2018/01/27/lego-and-clouddns/">
-<i class="fa icon-pocket"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.github.io/harasou.jp/2018/01/27/lego-and-clouddns/">
-<i class="fa fa-facebook-official"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.github.io/harasou.jp/2018/01/27/lego-and-clouddns/">
-<i class="fa fa-twitter"></i>
-</a>
-</li>
-<li class=post-action>
-<a class="post-action-btn btn btn--default" href=#>
-<i class="fa fa-list"></i>
-</a>
-</li>
-</ul>
-</div>
-</div>
-</article>
-<footer id=footer class=main-content-wrap>
-<span class=copyrights>
-&copy; 2021 harasou. All Rights Reserved
-</span>
-</footer>
-</div>
-<div id=bottom-bar class=post-bottom-bar data-behavior=5>
-<div class=post-actions-wrap>
-<nav>
-<ul class="post-actions post-action-nav">
-<li class=post-action>
-<a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2018/01/28/gaego-static-hosting/ data-tooltip="GAE/Go で静的サイトを公開する">
-<i class="fa fa-angle-left"></i>
-<span class="hide-xs hide-sm text-small icon-ml">次</span>
-</a>
-</li>
-<li class=post-action>
-<a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2017/12/04/fuse/ data-tooltip="libfuse で Hello World !">
-<span class="hide-xs hide-sm text-small icon-mr">前</span>
-<i class="fa fa-angle-right"></i>
-</a>
-</li>
-</ul>
-</nav>
-<ul class="post-actions post-action-share">
-<li class="post-action hide-lg hide-md hide-sm">
-<a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions>
-<i class="fa fa-share-alt"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.github.io/harasou.jp/2018/01/27/lego-and-clouddns/>
-<i class="fa icon-hatebu"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.github.io/harasou.jp/2018/01/27/lego-and-clouddns/">
-<i class="fa icon-pocket"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.github.io/harasou.jp/2018/01/27/lego-and-clouddns/">
-<i class="fa fa-facebook-official"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.github.io/harasou.jp/2018/01/27/lego-and-clouddns/">
-<i class="fa fa-twitter"></i>
-</a>
-</li>
-<li class=post-action>
-<a class="post-action-btn btn btn--default" href=#>
-<i class="fa fa-list"></i>
-</a>
-</li>
-</ul>
-</div>
-</div>
-<div id=share-options-bar class=share-options-bar data-behavior=5>
-<i id=btn-close-shareoptions class="fa fa-close"></i>
-<ul class=share-options>
-<li class=share-option>
-<a class=share-option-btn target=new href=http://b.hatena.ne.jp/entry/https%3A%2F%2Fharasou.github.io%2Fharasou.jp%2F2018%2F01%2F27%2Flego-and-clouddns%2F>
-<i class="fa icon-hatebu"></i><span>Hatebuで共有</span>
-</a>
-</li>
-<li class=share-option>
-<a class=share-option-btn target=new href="http://getpocket.com/edit?url=https%3A%2F%2Fharasou.github.io%2Fharasou.jp%2F2018%2F01%2F27%2Flego-and-clouddns%2F">
-<i class="fa icon-pocket"></i><span>Pocketで共有</span>
-</a>
-</li>
-<li class=share-option>
-<a class=share-option-btn target=new href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fharasou.github.io%2Fharasou.jp%2F2018%2F01%2F27%2Flego-and-clouddns%2F">
-<i class="fa fa-facebook-official"></i><span>Facebookで共有</span>
-</a>
-</li>
-<li class=share-option>
-<a class=share-option-btn target=new href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fharasou.github.io%2Fharasou.jp%2F2018%2F01%2F27%2Flego-and-clouddns%2F">
-<i class="fa fa-twitter"></i><span>Twitterで共有</span>
-</a>
-</li>
-</ul>
-</div>
-<div id=share-options-mask class=share-options-mask></div>
-</div>
-<div id=about>
-<div id=about-card>
-<div id=about-btn-close>
-<i class="fa fa-remove"></i>
-</div>
-<img id=about-card-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt=プロフィール画像>
-<h4 id=about-card-name>harasou</h4>
-<div id=about-card-bio>めくじらを立てない</div>
-<div id=about-card-job>
-<i class="fa fa-briefcase"></i>
-<br>
-Infra Engineer
-</div>
-<div id=about-card-location>
-<i class="fa fa-map-marker"></i>
-<br>
-Fukuoka Japan
-</div>
-</div>
-</div>
-<div id=cover style=background-image:url(https://harasou.github.io/harasou.jp/images/cover.jpg)></div>
-<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin=anonymous></script>
+</code></pre></div></div><div id=post-footer class="post-footer main-content-wrap"><div class=post-footer-tags><span class="text-color-light text-small">タグ</span><br><a class="tag tag--primary tag--small" href=/tags/gcp/>GCP</a></div><div class=post-actions-wrap><nav><ul class="post-actions post-action-nav"><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2018/01/28/gaego-static-hosting/ data-tooltip="GAE/Go で静的サイトを公開する"><i class="fa fa-angle-left"></i>
+<span class="hide-xs hide-sm text-small icon-ml">次</span></a></li><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2017/12/04/fuse/ data-tooltip="libfuse で Hello World !"><span class="hide-xs hide-sm text-small icon-mr">前</span>
+<i class="fa fa-angle-right"></i></a></li></ul></nav><ul class="post-actions post-action-share"><li class="post-action hide-lg hide-md hide-sm"><a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions><i class="fa fa-share-alt"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.github.io/harasou.jp/2018/01/27/lego-and-clouddns/><i class="fa icon-hatebu"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.github.io/harasou.jp/2018/01/27/lego-and-clouddns/"><i class="fa icon-pocket"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.github.io/harasou.jp/2018/01/27/lego-and-clouddns/"><i class="fa fa-facebook-official"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.github.io/harasou.jp/2018/01/27/lego-and-clouddns/"><i class="fa fa-twitter"></i></a></li><li class=post-action><a class="post-action-btn btn btn--default" href=#><i class="fa fa-list"></i></a></li></ul></div></div></article><footer id=footer class=main-content-wrap><span class=copyrights>&copy; 2022 harasou. All Rights Reserved</span></footer></div><div id=bottom-bar class=post-bottom-bar data-behavior=5><div class=post-actions-wrap><nav><ul class="post-actions post-action-nav"><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2018/01/28/gaego-static-hosting/ data-tooltip="GAE/Go で静的サイトを公開する"><i class="fa fa-angle-left"></i>
+<span class="hide-xs hide-sm text-small icon-ml">次</span></a></li><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=/harasou.jp/2017/12/04/fuse/ data-tooltip="libfuse で Hello World !"><span class="hide-xs hide-sm text-small icon-mr">前</span>
+<i class="fa fa-angle-right"></i></a></li></ul></nav><ul class="post-actions post-action-share"><li class="post-action hide-lg hide-md hide-sm"><a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions><i class="fa fa-share-alt"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href=http://b.hatena.ne.jp/entry/https://harasou.github.io/harasou.jp/2018/01/27/lego-and-clouddns/><i class="fa icon-hatebu"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="http://getpocket.com/edit?url=https://harasou.github.io/harasou.jp/2018/01/27/lego-and-clouddns/"><i class="fa icon-pocket"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://harasou.github.io/harasou.jp/2018/01/27/lego-and-clouddns/"><i class="fa fa-facebook-official"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://harasou.github.io/harasou.jp/2018/01/27/lego-and-clouddns/"><i class="fa fa-twitter"></i></a></li><li class=post-action><a class="post-action-btn btn btn--default" href=#><i class="fa fa-list"></i></a></li></ul></div></div><div id=share-options-bar class=share-options-bar data-behavior=5><i id=btn-close-shareoptions class="fa fa-close"></i><ul class=share-options><li class=share-option><a class=share-option-btn target=new href=http://b.hatena.ne.jp/entry/https%3A%2F%2Fharasou.github.io%2Fharasou.jp%2F2018%2F01%2F27%2Flego-and-clouddns%2F><i class="fa icon-hatebu"></i><span>Hatebuで共有</span></a></li><li class=share-option><a class=share-option-btn target=new href="http://getpocket.com/edit?url=https%3A%2F%2Fharasou.github.io%2Fharasou.jp%2F2018%2F01%2F27%2Flego-and-clouddns%2F"><i class="fa icon-pocket"></i><span>Pocketで共有</span></a></li><li class=share-option><a class=share-option-btn target=new href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fharasou.github.io%2Fharasou.jp%2F2018%2F01%2F27%2Flego-and-clouddns%2F"><i class="fa fa-facebook-official"></i><span>Facebookで共有</span></a></li><li class=share-option><a class=share-option-btn target=new href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fharasou.github.io%2Fharasou.jp%2F2018%2F01%2F27%2Flego-and-clouddns%2F"><i class="fa fa-twitter"></i><span>Twitterで共有</span></a></li></ul></div><div id=share-options-mask class=share-options-mask></div></div><div id=about><div id=about-card><div id=about-btn-close><i class="fa fa-remove"></i></div><img id=about-card-picture src="https://www.gravatar.com/avatar/ae9a272994f212bdbddfa0f4367b0f3d?s=110" alt=プロフィール画像><h4 id=about-card-name>harasou</h4><div id=about-card-bio>めくじらを立てない</div><div id=about-card-job><i class="fa fa-briefcase"></i><br>Infra Engineer</div><div id=about-card-location><i class="fa fa-map-marker"></i><br>Fukuoka Japan</div></div></div><div id=cover style=background-image:url(https://harasou.github.io/harasou.jp/images/cover.jpg)></div><script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin=anonymous></script>
 <script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin=anonymous></script>
 <script src=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin=anonymous></script>
 <script src=/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js></script>
-<script lang=javascript>window.onload=updateMinWidth,window.onresize=updateMinWidth,document.getElementById("sidebar").addEventListener("transitionend",updateMinWidth);function updateMinWidth(){var b=document.getElementById("sidebar"),a=document.getElementById("main"),c,d,e;a.style.minWidth="",c=getComputedStyle(a).getPropertyValue("min-width"),d=getComputedStyle(b).getPropertyValue("width"),e=getComputedStyle(b).getPropertyValue("left"),a.style.minWidth=`calc(${c} - ${d} - ${e})`}</script>
-<script>$(document).ready(function(){hljs.configure({classPrefix:'',useBR:!1}),$('pre.code-highlight > code, pre > code').each(function(b,a){$(this).hasClass('codeblock')||$(this).addClass('codeblock'),hljs.highlightBlock(a)})})</script>
-</body>
-</html>
+<script lang=javascript>window.onload=updateMinWidth,window.onresize=updateMinWidth,document.getElementById("sidebar").addEventListener("transitionend",updateMinWidth);function updateMinWidth(){var n,s,o,t=document.getElementById("sidebar"),e=document.getElementById("main");e.style.minWidth="",n=getComputedStyle(e).getPropertyValue("min-width"),s=getComputedStyle(t).getPropertyValue("width"),o=getComputedStyle(t).getPropertyValue("left"),e.style.minWidth=`calc(${n} - ${s} - ${o})`}</script><script>$(document).ready(function(){hljs.configure({classPrefix:'',useBR:!1}),$("pre.code-highlight > code, pre > code").each(function(t,e){$(this).hasClass("codeblock")||$(this).addClass("codeblock"),hljs.highlightBlock(e)})})</script></body></html>
